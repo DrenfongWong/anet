@@ -1,0 +1,7 @@
+project Anet is
+   for Source_Dirs use ("../../include/anet");
+   for Library_Name use "anet";
+   for Library_Dir use "../../lib/anet";
+   for Library_Kind use "dynamic";
+   for Externally_Built use "true";
+end Anet;

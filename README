@@ -1,0 +1,73 @@
+Anet - Ada Networking Library
+=============================
+
+TODO.
+
+Licence
+-------
+--------------------------------------------------------------------------------
+Copyright (C) 2011, 2012 secunet Security Networks AG
+Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
+Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+
+Free use of this software is granted under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.
+--------------------------------------------------------------------------------
+
+
+Download
+--------
+
+Release version
+~~~~~~~~~~~~~~~
+No releases yet, stay tuned.
+
+Development version
+~~~~~~~~~~~~~~~~~~~
+The current development version of Anet is available through its git repository:
+
+  $ git clone http://git.codelabs.ch/git/anet.git
+
+A browsable version of the repository is also available here:
+http://git.codelabs.ch/?p=anet.git
+
+
+Build
+-----
+To compile Anet on your system, you need to have the following software
+installed:
+
+* GNAT compiler:
+  http://www.gnu.org/software/gnat/gnat.html
+
+If you want to run the unit tests before installation of Anet (which is
+recommended) you furthermore need to have the following installed:
+
+* Ahven (Test-Framework):
+  http://ahven.stronglytyped.org/
+
+* netcat6 (IPv6-aware netcat):
+  http://www.deepspace6.net/projects/netcat6.html
+
+* socat (SOcket CAT)
+  http://www.dest-unreach.org/socat/
+
+
+Testing
+-------
+Anet contains a unit test suite which can be run by entering the following
+command:
+
+  $ make tests
+
+All tests should be marked with *PASS* behind the test name.
+
+
+Installation
+------------
+To install Anet on your system, type the following:
+
+  $ make PREFIX=/usr/local install
+
+If no `PREFIX` is specified, `$(HOME)/libraries` is used as install destination.

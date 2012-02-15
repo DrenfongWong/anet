@@ -1,0 +1,13 @@
+General
+-------
+- Refactor IP address types (IPv4/IPv6 vs IP_Addr)
+- Use System.OS_Constants package
+- Use ENOENT constant instead of magic number (2)
+- Replace nc6 with socat
+- Introduce unix path type
+- Introduce iface name type
+
+Sockets
+-------
+- Revisit receiver task ATC
+- Reimplement socket error handling
