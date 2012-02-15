@@ -144,10 +144,16 @@ package body Anet_Socket_Tests is
 
    procedure IP_Addr_Conversion
    is
+      use Ada.Streams;
+
       A1_Str : constant String       := "0.0.0.0";
       A2_Str : constant String       := "10.1.1.42";
       A3_Str : constant String
         := "FF02:0000:0000:0000:0000:0000:0001:0002";
+      A2_Dat : constant Stream_Element_Array := (10, 1, 1, 42);
+      A3_Dat : constant Stream_Element_Array
+        := (255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2);
+
       Addr1  : constant IP_Addr_Type := To_IP_Addr (Str => A1_Str);
       Addr2  : constant IP_Addr_Type := To_IP_Addr (Str => A2_Str);
       Addr3  : constant IP_Addr_Type := To_IP_Addr (Str => A3_Str);
@@ -159,6 +165,11 @@ package body Anet_Socket_Tests is
       Assert (Condition => To_String (Address => Addr3) = A3_Str,
               Message   => "Addr3 mismatch");
 
+      Assert (Condition => To_IP_Addr (Data => A2_Dat) = Addr2,
+              Message   => "Addr2 mismatch (data)");
+      Assert (Condition => To_IP_Addr (Data => A3_Dat) = Addr3,
+              Message   => "Addr3 mismatch (data)");
+
       declare
          Address : IP_Addr_Type;
          pragma Unreferenced (Address);
@@ -169,6 +180,18 @@ package body Anet_Socket_Tests is
       exception
          when Constraint_Error => null;
       end;
+
+      declare
+         Address : IP_Addr_Type;
+         pragma Unreferenced (Address);
+      begin
+         Address := To_IP_Addr (Data => (1 .. 5 => 0));
+         Fail (Message => "Expected constraint error (data)");
+
+      exception
+         when Constraint_Error => null;
+      end;
+
    end IP_Addr_Conversion;
 
    -------------------------------------------------------------------------

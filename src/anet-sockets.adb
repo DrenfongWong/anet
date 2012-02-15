@@ -368,6 +368,44 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
+   function To_IP_Addr
+     (Data : Ada.Streams.Stream_Element_Array)
+      return IP_Addr_Type
+   is
+      use type Ada.Streams.Stream_Element_Offset;
+   begin
+      if Data'Length = 4 then
+         return (Family  => Family_Inet,
+                 Addr_V4 => (1 => Byte (Data (Data'First)),
+                             2 => Byte (Data (Data'First + 1)),
+                             3 => Byte (Data (Data'First + 2)),
+                             4 => Byte (Data (Data'Last))));
+      elsif Data'Length = 16 then
+         return (Family  => Family_Inet6,
+                 Addr_V6 => (1  => Byte (Data (Data'First)),
+                             2  => Byte (Data (Data'First +  1)),
+                             3  => Byte (Data (Data'First +  2)),
+                             4  => Byte (Data (Data'First +  3)),
+                             5  => Byte (Data (Data'First +  4)),
+                             6  => Byte (Data (Data'First +  5)),
+                             7  => Byte (Data (Data'First +  6)),
+                             8  => Byte (Data (Data'First +  7)),
+                             9  => Byte (Data (Data'First +  8)),
+                             10 => Byte (Data (Data'First +  9)),
+                             11 => Byte (Data (Data'First + 10)),
+                             12 => Byte (Data (Data'First + 11)),
+                             13 => Byte (Data (Data'First + 12)),
+                             14 => Byte (Data (Data'First + 13)),
+                             15 => Byte (Data (Data'First + 14)),
+                             16 => Byte (Data (Data'Last))));
+      end if;
+
+      raise Constraint_Error with
+        "Invalid data size for IP address conversion:" & Data'Length'Img;
+   end To_IP_Addr;
+
+   -------------------------------------------------------------------------
+
    function To_String (Address : IP_Addr_Type) return String
    is
    begin

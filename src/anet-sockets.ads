@@ -40,6 +40,11 @@ package Anet.Sockets is
    function To_IP_Addr (Str : String) return IP_Addr_Type;
    --  Return IP address for given string.
 
+   function To_IP_Addr
+     (Data : Ada.Streams.Stream_Element_Array)
+      return IP_Addr_Type;
+   --  Return IP address for given stream element array.
+
    function To_String (Address : IP_Addr_Type) return String;
    --  Return string representation of an IP address.
 
