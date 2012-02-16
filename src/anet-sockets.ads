@@ -106,6 +106,9 @@ package Anet.Sockets is
       Path   :        String);
    --  Bind given unix socket (Family_Unix) to specified path.
 
+   procedure Close (Socket : in out Socket_Type);
+   --  Close given socket.
+
    procedure Connect
      (Socket : in out Socket_Type;
       Path   :        String);

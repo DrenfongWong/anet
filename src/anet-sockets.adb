@@ -113,6 +113,17 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
+   procedure Close (Socket : in out Socket_Type)
+   is
+   begin
+      if Socket.Sock_FD /= -1 then
+         Thin.Close_Socket (Socket => Socket.Sock_FD);
+         Socket.Sock_FD := -1;
+      end if;
+   end Close;
+
+   -------------------------------------------------------------------------
+
    procedure Connect
      (Socket : in out Socket_Type;
       Path   :        String)
@@ -141,10 +152,7 @@ package body Anet.Sockets is
    procedure Finalize (Socket : in out Socket_Type)
    is
    begin
-      if Socket.Sock_FD /= -1 then
-         Thin.Close_Socket (Socket => Socket.Sock_FD);
-         Socket.Sock_FD := -1;
-      end if;
+      Socket.Close;
    end Finalize;
 
    -------------------------------------------------------------------------
