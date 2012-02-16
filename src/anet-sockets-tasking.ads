@@ -48,6 +48,9 @@ package Anet.Sockets.Tasking is
    procedure Stop (Receiver : in out Receiver_Type);
    --  Stop listening for data.
 
+   function Is_Listening (Receiver : Receiver_Type) return Boolean;
+   --  Returns True if the receiver is currently listening for data.
+
 private
 
    protected type Trigger_Type is
@@ -67,6 +70,9 @@ private
 
       entry Wait_For_Termination;
       --  Wait until termination is signaled.
+
+      function Is_Listening return Boolean;
+      --  Returns true if the receiver task is currently listening for data.
 
    private
       Shutdown_Requested : Boolean := False;

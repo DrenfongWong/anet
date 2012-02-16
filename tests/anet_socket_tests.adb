@@ -217,6 +217,9 @@ package body Anet_Socket_Tests is
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
 
+      Assert (Condition => Tasking.Is_Listening (Receiver => R),
+              Message   => "Receiver not listening");
+
       Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
       for I in 1 .. 30 loop
@@ -226,6 +229,9 @@ package body Anet_Socket_Tests is
       end loop;
 
       Tasking.Stop (Receiver => R);
+
+      Assert (Condition => not Tasking.Is_Listening (Receiver => R),
+              Message   => "Receiver still listening");
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);

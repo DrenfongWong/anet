@@ -39,6 +39,14 @@ package body Anet.Sockets.Tasking is
 
    -------------------------------------------------------------------------
 
+   function Is_Listening (Receiver : Receiver_Type) return Boolean
+   is
+   begin
+      return Receiver.Trigger.Is_Listening;
+   end Is_Listening;
+
+   -------------------------------------------------------------------------
+
    procedure Listen
      (Receiver : in out Receiver_Type;
       Callback :        Rcv_Item_Callback)
@@ -112,6 +120,14 @@ package body Anet.Sockets.Tasking is
       begin
          Is_Terminated := False;
       end Activate;
+
+      ----------------------------------------------------------------------
+
+      function Is_Listening return Boolean
+      is
+      begin
+         return not Is_Terminated;
+      end Is_Listening;
 
       ----------------------------------------------------------------------
 
