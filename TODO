@@ -1,7 +1,6 @@
 General
 -------
 - Refactor IP address types (IPv4/IPv6 vs IP_Addr)
-- Use ENOENT constant instead of magic number (2)
 - Introduce unix path type
 - Introduce iface name type
 

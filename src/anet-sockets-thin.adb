@@ -286,7 +286,9 @@ package body Anet.Sockets.Thin is
       end if;
 
       Res := C.int (Interfaces.C_Streams.unlink (filename => C_Path'Address));
-      if Res = C_Failure and then GNAT.OS_Lib.Errno /= 2 then
+      if Res = C_Failure and then
+        GNAT.OS_Lib.Errno /= Constants.Sys.ENOENT
+      then
          raise Socket_Error with "Unable to unlink unix socket "
            & Path & " - " & Get_Errno_String;
       end if;
