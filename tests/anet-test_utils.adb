@@ -25,6 +25,8 @@ with Ada.Direct_IO;
 with Ada.Streams.Stream_IO;
 with Ada.Text_IO;
 with Ada.Exceptions;
+with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;
 
 with Anet;
 
@@ -141,11 +143,21 @@ package body Anet.Test_Utils is
       Port     : Anet.Port_Type            := Listen_Port;
       Filename : String)
    is
-      IP_Str : constant String := Anet.Sockets.To_String (Address => Dst_IP);
-      Cmd    : constant String := "cat " & Filename
-        & " | nc6 -q 0 -u " & IP_Str & Port'Img;
+      use Ada.Strings.Unbounded;
+      use type Anet.Sockets.Family_Type;
+
+      Port_Str : constant String := Ada.Strings.Fixed.Trim
+        (Source => Port'Img,
+         Side   => Ada.Strings.Left);
+      IP_Str   : Unbounded_String := To_Unbounded_String
+        (Anet.Sockets.To_String (Address => Dst_IP));
    begin
-      OS.Execute (Command => Cmd);
+      if Dst_IP.Family = Sockets.Family_Inet6 then
+         IP_Str := "[" & IP_Str & "]";
+      end if;
+
+      OS.Execute (Command => "socat " & Filename & " UDP-DATAGRAM:"
+                  & To_String (IP_Str) & ":" & Port_Str);
    end Send_Data;
 
 end Anet.Test_Utils;
