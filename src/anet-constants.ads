@@ -14,38 +14,31 @@
 --  for more details.
 --
 
+pragma Warnings (Off);
+with System.OS_Constants;
+pragma Warnings (On);
+
 package Anet.Constants is
+
+   package Sys renames System.OS_Constants;
 
    --------------
    -- Families --
    --------------
 
    AF_UNIX             : constant := 1;        --  Unix domain family
-   AF_INET             : constant := 2;        --  IPv4 address family
-   AF_INET6            : constant := 10;       --  IPv6 address family
    AF_PACKET           : constant := 17;       --  Packet family
 
    ---------------------
    -- Protocol levels --
    ---------------------
 
-   SOL_SOCKET          : constant := 1;        --  Options for socket level
    IPPROTO_IPV6        : constant := 41;       --  IPv6
-   IPPROTO_UDP         : constant := 17;       --  UDP
-
-   ------------------
-   -- Socket modes --
-   ------------------
-
-   SOCK_STREAM         : constant := 1;        --  Stream socket
-   SOCK_DGRAM          : constant := 2;        --  Datagram socket
 
    -----------------------
    -- Socket operations --
    -----------------------
 
-   SO_BROADCAST        : constant := 6;        --  Can send broadcast msgs
-   SO_REUSEADDR        : constant := 2;        --  Bind reuse local address
    SO_BINDTODEVICE     : constant := 25;       --  Bind to interface device
    SO_ATTACH_FILTER    : constant := 26;       --  Socket filtering
    IPV6_ADD_MEMBERSHIP : constant := 20;       --  Join multicast group (IPv6)

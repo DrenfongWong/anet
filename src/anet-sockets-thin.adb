@@ -26,19 +26,19 @@ package body Anet.Sockets.Thin is
    package C renames Interfaces.C;
 
    Families : constant array (Family_Type) of C.int
-     := (Family_Inet   => Constants.AF_INET,
-         Family_Inet6  => Constants.AF_INET6,
+     := (Family_Inet   => Constants.Sys.AF_INET,
+         Family_Inet6  => Constants.Sys.AF_INET6,
          Family_Packet => Constants.AF_PACKET,
          Family_Unix   => Constants.AF_UNIX);
    --  Address family mapping.
 
    Levels : constant array (Level_Type) of C.int
-     := (Socket_Level => Constants.SOL_SOCKET);
+     := (Socket_Level => Constants.Sys.SOL_SOCKET);
    --  Protocol level mapping.
 
    Options_Bool : constant array (Option_Name_Bool) of C.int
-     := (Reuse_Address => Constants.SO_REUSEADDR,
-         Broadcast     => Constants.SO_BROADCAST);
+     := (Reuse_Address => Constants.Sys.SO_REUSEADDR,
+         Broadcast     => Constants.Sys.SO_BROADCAST);
    --  Mapping for option names with boolean value.
 
    Options_Str : constant array (Option_Name_Str) of C.int
@@ -46,8 +46,8 @@ package body Anet.Sockets.Thin is
    --  Mapping for option names with string value.
 
    Modes : constant array (Mode_Type) of C.int
-     := (Stream_Socket   => Constants.SOCK_STREAM,
-         Datagram_Socket => Constants.SOCK_DGRAM);
+     := (Stream_Socket   => Constants.Sys.SOCK_STREAM,
+         Datagram_Socket => Constants.Sys.SOCK_DGRAM);
    --  Socket mode mapping.
 
    Get_Requests : constant array (Netdev_Request_Name) of C.int
@@ -446,10 +446,10 @@ package body Anet.Sockets.Thin is
    is
       use type Interfaces.C.unsigned_short;
    begin
-      if Sock_Addr.Sin_Family = Constants.AF_INET then
+      if Sock_Addr.Sin_Family = Constants.Sys.AF_INET then
          Address := (Family  => Family_Inet,
                      Addr_V4 => Sock_Addr.Sin_Addr);
-      elsif Sock_Addr.Sin_Family = Constants.AF_INET6 then
+      elsif Sock_Addr.Sin_Family = Constants.Sys.AF_INET6 then
          Address := (Family  => Family_Inet6,
                      Addr_V6 => Sock_Addr.Sin6_Addr);
       else
@@ -914,7 +914,7 @@ package body Anet.Sockets.Thin is
          when Family_Inet  =>
             return
               (Family     => Family_Inet,
-               Sin_Family => Constants.AF_INET,
+               Sin_Family => Constants.Sys.AF_INET,
                Sin_Port   => C.unsigned_short
                  (Byte_Swapping.Host_To_Network (Input => Port)),
                Sin_Addr   => Address.Addr_V4,
@@ -922,7 +922,7 @@ package body Anet.Sockets.Thin is
          when Family_Inet6 =>
             return
               (Family     => Family_Inet6,
-               Sin_Family => Constants.AF_INET6,
+               Sin_Family => Constants.Sys.AF_INET6,
                Sin_Port   => C.unsigned_short
                  (Byte_Swapping.Host_To_Network (Input => Port)),
                Sin6_Addr  => Address.Addr_V6,

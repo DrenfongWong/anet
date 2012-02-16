@@ -101,7 +101,7 @@ package body Anet.IPv4 is
       IP_Header.ID       := 0;
       IP_Header.Frag_Off := 0;
       IP_Header.TTL      := 64;
-      IP_Header.Protocol := Constants.IPPROTO_UDP;
+      IP_Header.Protocol := Constants.Sys.IPPROTO_UDP;
       IP_Header.Checksum := 0;
       IP_Header.Saddr    := Src_IP;
       IP_Header.Daddr    := Dst_IP;
@@ -194,7 +194,7 @@ package body Anet.IPv4 is
          end if;
       end;
 
-      if IP_Header.Protocol /= Constants.IPPROTO_UDP then
+      if IP_Header.Protocol /= Constants.Sys.IPPROTO_UDP then
          raise Invalid_IP_Packet with "Protocol is not UDP";
       end if;
 

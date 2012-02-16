@@ -39,7 +39,7 @@ package body Anet.Sockets.Filters is
    begin
       Res := C_Setsockopt
         (S       => Interfaces.C.int (Socket.Sock_FD),
-         Level   => Constants.SOL_SOCKET,
+         Level   => Constants.Sys.SOL_SOCKET,
          Optname => Constants.SO_ATTACH_FILTER,
          Optval  => Meta'Address,
          Optlen  => Meta'Size / 8);

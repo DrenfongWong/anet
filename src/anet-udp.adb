@@ -98,7 +98,7 @@ package body Anet.UDP is
       Pseudo_Hdr.Source_Address := Src_IP;
       Pseudo_Hdr.Dest_Address   := Dst_IP;
       Pseudo_Hdr.Reserved       := 0;
-      Pseudo_Hdr.Protocol       := Constants.IPPROTO_UDP;
+      Pseudo_Hdr.Protocol       := Constants.Sys.IPPROTO_UDP;
       Pseudo_Hdr.Length         := Byte_Swapping.Host_To_Network
         (Input => Payload'Length + Hdr_Buffer'Length);
 
