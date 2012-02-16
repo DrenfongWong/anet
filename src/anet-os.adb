@@ -25,7 +25,12 @@ with Ada.Directories;
 with Ada.Streams.Stream_IO;
 with Ada.IO_Exceptions;
 
+with Interfaces.C;
+with Interfaces.C_Streams;
+
 with GNAT.OS_Lib;
+
+with Anet.Constants;
 
 package body Anet.OS is
 
@@ -35,20 +40,19 @@ package body Anet.OS is
      (Filename       : String;
       Ignore_Missing : Boolean := True)
    is
+      use Interfaces;
+      use type C.int;
+
+      Res    : C.int;
+      C_Path : constant C.char_array := C.To_C (Filename);
    begin
-      if Ignore_Missing and then
-        not Ada.Directories.Exists (Name => Filename)
+      Res := C.int (C_Streams.unlink (filename => C_Path'Address));
+      if Res = C_Failure and then
+        (GNAT.OS_Lib.Errno /= Constants.Sys.ENOENT or else not Ignore_Missing)
       then
-         return;
+         raise IO_Error with "Unable to delete file '" & Filename & "' - "
+           & Get_Errno_String;
       end if;
-
-      begin
-         Ada.Directories.Delete_File (Name => Filename);
-
-      exception
-         when others =>
-            raise IO_Error with "Unable to delete file '" & Filename & "'";
-      end;
    end Delete_File;
 
    -------------------------------------------------------------------------
