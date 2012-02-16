@@ -7,4 +7,3 @@ General
 Sockets
 -------
 - Revisit receiver task ATC
-- Reimplement socket error handling
