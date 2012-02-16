@@ -48,9 +48,6 @@ recommended) you furthermore need to have the following installed:
 * Ahven (Test-Framework):
   http://ahven.stronglytyped.org/
 
-* netcat6 (IPv6-aware netcat):
-  http://www.deepspace6.net/projects/netcat6.html
-
 * socat (SOcket CAT)
   http://www.dest-unreach.org/socat/
 
