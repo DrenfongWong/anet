@@ -22,6 +22,7 @@
 --
 
 with Ada.Streams;
+with Ada.Exceptions;
 
 with Anet.OS;
 with Anet.Sockets.Tasking;
@@ -32,6 +33,81 @@ package body Anet_Socket_Tests is
    use Ahven;
    use Anet;
    use Anet.Sockets;
+
+   procedure Error_Handler
+     (E         :     Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : out Boolean);
+   --  Receiver error handler callback for testing purposes. It ignores the
+   --  exception and tells the receiver to terminate by setting the stop flag.
+
+   -------------------------------------------------------------------------
+
+   procedure Error_Callbacks
+   is
+      Sock : aliased Socket_Type;
+   begin
+      Sock.Create;
+      Sock.Bind (Address => Loopback_Addr_V4,
+                 Port    => Test_Utils.Listen_Port);
+
+      declare
+         R : Tasking.Receiver_Type (S => Sock'Access);
+      begin
+         Tasking.Listen (Receiver => R,
+                         Callback => Test_Utils.Raise_Error'Access);
+
+         Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+
+         --  By default all errors should be ignored
+
+         Assert (Condition => Tasking.Is_Listening (Receiver => R),
+                 Message   => "Receiver not listening");
+
+         Tasking.Stop (Receiver => R);
+
+      exception
+         when others =>
+            Tasking.Stop (Receiver => R);
+            raise;
+      end;
+
+      declare
+         R : Tasking.Receiver_Type (S => Sock'Access);
+      begin
+         Tasking.Register_Error_Handler (Receiver => R,
+                                         Callback => Error_Handler'Access);
+         Tasking.Listen (Receiver => R,
+                         Callback => Test_Utils.Raise_Error'Access);
+
+         Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+
+         Assert (Condition => not Tasking.Is_Listening (Receiver => R),
+                 Message   => "Receiver still listening");
+
+      exception
+         when others =>
+            Tasking.Stop (Receiver => R);
+            raise;
+      end;
+
+      OS.Delete_File (Filename => Test_Utils.Dump_File);
+
+   exception
+      when others =>
+         OS.Delete_File (Filename => Test_Utils. Dump_File);
+         raise;
+   end Error_Callbacks;
+
+   -------------------------------------------------------------------------
+
+   procedure Error_Handler
+     (E         :     Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : out Boolean)
+   is
+      pragma Unreferenced (E);
+   begin
+      Stop_Flag := True;
+   end Error_Handler;
 
    -------------------------------------------------------------------------
 
@@ -133,6 +209,9 @@ package body Anet_Socket_Tests is
       T.Add_Test_Routine
         (Routine => Listen_Callbacks'Access,
          Name    => "Data reception callback handling");
+      T.Add_Test_Routine
+        (Routine => Error_Callbacks'Access,
+         Name    => "Error callback handling");
       T.Add_Test_Routine
         (Routine => IP_Addr_Conversion'Access,
          Name    => "IP address type conversion");

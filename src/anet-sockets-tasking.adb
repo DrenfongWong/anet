@@ -29,6 +29,12 @@ package body Anet.Sockets.Tasking is
    --  This placeholder callback is needed for initialization of data reception
    --  callbacks.
 
+   procedure No_Op_Cb
+     (E         :     Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : out Boolean) is null;
+   --  This placeholder callback is needed for initialization of error handling
+   --  callbacks.
+
    -------------------------------------------------------------------------
 
    function Get_Rcv_Msg_Count (Receiver : Receiver_Type) return Count_Type
@@ -58,6 +64,16 @@ package body Anet.Sockets.Tasking is
 
    -------------------------------------------------------------------------
 
+   procedure Register_Error_Handler
+     (Receiver : in out Receiver_Type;
+      Callback :        Error_Handler_Callback)
+   is
+   begin
+      Receiver.R_Task.Set_Error_Handler (Cb => Callback);
+   end Register_Error_Handler;
+
+   -------------------------------------------------------------------------
+
    procedure Stop (Receiver : in out Receiver_Type)
    is
    begin
@@ -69,17 +85,31 @@ package body Anet.Sockets.Tasking is
 
    task body Receiver_Task
    is
-      Callback : Rcv_Item_Callback := Empty_Cb'Access;
+      Data_Callback  : Rcv_Item_Callback      := Empty_Cb'Access;
+      Error_Callback : Error_Handler_Callback := No_Op_Cb'Access;
+      Stop           : Boolean                := False;
    begin
-      select
-         accept Listen (Cb : Rcv_Item_Callback)
-         do
-            Callback := Cb;
-         end Listen;
+      Setup_Loop :
+      loop
+         select
+            accept Listen (Cb : Rcv_Item_Callback)
+            do
+               Data_Callback := Cb;
+            end Listen;
 
-      or
-         terminate;
-      end select;
+            exit Setup_Loop;
+
+         or
+            accept Set_Error_Handler (Cb : Error_Handler_Callback)
+            do
+               Error_Callback := Cb;
+            end Set_Error_Handler;
+
+         or
+
+            terminate;
+         end select;
+      end loop Setup_Loop;
 
       select
          Parent.Trigger.Stop;
@@ -95,13 +125,17 @@ package body Anet.Sockets.Tasking is
                                      Item => Buffer,
                                      Last => Last);
 
-               Callback (Item => Buffer (Buffer'First .. Last),
-                         Src  => Sender);
+               Data_Callback (Item => Buffer (Buffer'First .. Last),
+                              Src  => Sender);
                Parent.Item_Count := Parent.Item_Count + 1;
 
             exception
-               when Sockets.Socket_Error => exit Reception_Loop;
-               when others               => null;
+               when Ex : others =>
+                  Error_Callback (E         => Ex,
+                                  Stop_Flag => Stop);
+                  if Stop then
+                     exit Reception_Loop;
+                  end if;
             end;
          end loop Reception_Loop;
       end select;

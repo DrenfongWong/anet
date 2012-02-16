@@ -99,6 +99,12 @@ package Anet.Test_Utils is
       Src  : Anet.Sockets.Sender_Info_Type);
    --  This procedure dumps the given data to the testfile.
 
+   procedure Raise_Error
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Sockets.Sender_Info_Type);
+   --  This procedure raises a constraint error. It is used to verify error
+   --  handling of the receiver type.
+
    Open_File_Error : exception;
 
 end Anet.Test_Utils;

@@ -138,6 +138,16 @@ package body Anet.Test_Utils is
 
    -------------------------------------------------------------------------
 
+   procedure Raise_Error
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Sockets.Sender_Info_Type)
+   is
+   begin
+      raise Constraint_Error with "DO NOT PANIC: Explicit raise";
+   end Raise_Error;
+
+   -------------------------------------------------------------------------
+
    procedure Send_Data
      (Dst_IP   : Anet.Sockets.IP_Addr_Type := Anet.Sockets.Loopback_Addr_V4;
       Port     : Anet.Port_Type            := Listen_Port;

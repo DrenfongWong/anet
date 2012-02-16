@@ -57,6 +57,9 @@ package Anet_Socket_Tests is
    procedure Listen_Callbacks;
    --  Test data reception callback handling.
 
+   procedure Error_Callbacks;
+   --  Test error callback handling.
+
    procedure IP_Addr_Conversion;
    --  Verify IP address type conversion functions.
 

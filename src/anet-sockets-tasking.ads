@@ -21,6 +21,8 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Exceptions;
+
 package Anet.Sockets.Tasking is
 
    type Count_Type is mod System.Max_Binary_Modulus;
@@ -30,6 +32,12 @@ package Anet.Sockets.Tasking is
       Src  : Sender_Info_Type);
    --  Data reception callback procedure. The Item argument contains the
    --  received data, the Src argument identifies the sender of the data.
+
+   type Error_Handler_Callback is not null access procedure
+     (E         :     Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : out Boolean);
+   --  Error handling callback procedure. E is the exception to handle. The
+   --  stop flag signals the receiver to stop listening for data and terminate.
 
    type Receiver_Type (S : not null access Socket_Type) is limited private;
    --  Listens for incoming data on the given socket and processes it by
@@ -44,6 +52,14 @@ package Anet.Sockets.Tasking is
    --  Start listening for data on given socket. The given callback is
    --  asynchronously executed upon data reception. Call stop procedure to
    --  properly shutdown the receiver.
+
+   procedure Register_Error_Handler
+     (Receiver : in out Receiver_Type;
+      Callback :        Error_Handler_Callback);
+   --  Register given callback for error handling. The error handler will be
+   --  invoked if an exception occurs processing incoming data.
+   --  The error handler must be registered before telling the receiver to
+   --  listen for data.
 
    procedure Stop (Receiver : in out Receiver_Type);
    --  Stop listening for data.
@@ -85,6 +101,12 @@ private
       entry Listen (Cb : Rcv_Item_Callback);
       --  Start listening for data on parent's socket. The callback procedure
       --  is called upon reception of new data.
+
+      entry Set_Error_Handler (Cb : Error_Handler_Callback);
+      --  Register given callback for error handling. The error handler will be
+      --  invoked if an exception occurs processing incoming data.
+      --  The task will cease to listen for data if the callback signals it to
+      --  terminate by setting the Stop flag to True.
 
    end Receiver_Task;
 
