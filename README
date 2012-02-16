@@ -1,7 +1,9 @@
 Anet - Ada Networking Library
 =============================
 
-TODO.
+The Anet library provides BSD-style sockets (packet, IP, UDP and local UNIX) and
+can be used to implement networking applications.
+
 
 Licence
 -------
