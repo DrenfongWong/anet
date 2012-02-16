@@ -21,12 +21,9 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C_Streams;
-
-with GNAT.OS_Lib;
-
 with Anet.Byte_Swapping;
 with Anet.Constants;
+with Anet.OS;
 
 package body Anet.Sockets.Thin is
 
@@ -285,13 +282,7 @@ package body Anet.Sockets.Thin is
          raise Socket_Error with "Invalid path name " & Path;
       end if;
 
-      Res := C.int (Interfaces.C_Streams.unlink (filename => C_Path'Address));
-      if Res = C_Failure and then
-        GNAT.OS_Lib.Errno /= Constants.Sys.ENOENT
-      then
-         raise Socket_Error with "Unable to unlink unix socket "
-           & Path & " - " & Get_Errno_String;
-      end if;
+      OS.Delete_File (Filename => Path);
 
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
