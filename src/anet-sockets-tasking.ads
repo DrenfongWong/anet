@@ -43,7 +43,7 @@ package Anet.Sockets.Tasking is
       Callback :        Rcv_Item_Callback);
    --  Start listening for data on given socket. The given callback is
    --  asynchronously executed upon data reception. Call stop procedure to
-   --  properly shutdown the listener.
+   --  properly shutdown the receiver.
 
    procedure Stop (Receiver : in out Receiver_Type);
    --  Stop listening for data.
