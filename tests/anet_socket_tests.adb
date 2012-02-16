@@ -24,7 +24,7 @@
 with Ada.Streams;
 
 with Anet.OS;
-with Anet.Sockets;
+with Anet.Sockets.Tasking;
 with Anet.Test_Utils;
 
 package body Anet_Socket_Tests is
@@ -205,23 +205,27 @@ package body Anet_Socket_Tests is
 
    procedure Listen_Callbacks
    is
-      C    : Count_Type := 0;
-      Sock : Socket_Type;
+      use type Anet.Sockets.Tasking.Count_Type;
+
+      C    : Tasking.Count_Type := 0;
+      Sock : aliased Socket_Type;
+      R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
       Sock.Create;
       Sock.Bind (Address => Loopback_Addr_V4,
                  Port    => Test_Utils.Listen_Port);
-      Sock.Listen (Callback => Test_Utils.Dump'Access);
+      Tasking.Listen (Receiver => R,
+                      Callback => Test_Utils.Dump'Access);
 
       Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
       for I in 1 .. 30 loop
-         C := Get_Rcv_Msg_Count (Socket => Sock);
+         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Sock.Stop;
+      Tasking.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -234,7 +238,7 @@ package body Anet_Socket_Tests is
 
    exception
       when others =>
-         Sock.Stop;
+         Tasking.Stop (Receiver => R);
          OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Listen_Callbacks;
@@ -460,21 +464,23 @@ package body Anet_Socket_Tests is
 
    procedure Send_Multicast_V6
    is
+      use type Anet.Sockets.Tasking.Count_Type;
+
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
-      C    : Count_Type := 0;
-      Sock : Socket_Type;
+      C    : Tasking.Count_Type := 0;
+      Sock : aliased Socket_Type;
+      R    : Tasking.Receiver_Type (S => Sock'Access);
       Grp  : constant IP_Addr_Type := To_IP_Addr
         (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
    begin
       Sock.Create (Family => Family_Inet6);
-
       Sock.Bind (Address => Grp,
                  Port    => Test_Utils.Listen_Port);
-
       Sock.Join_Multicast_Group (Group => Grp);
 
-      Sock.Listen (Callback => Test_Utils.Dump'Access);
+      Tasking.Listen (Receiver => R,
+                      Callback => Test_Utils.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -485,12 +491,12 @@ package body Anet_Socket_Tests is
                  Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
-         C := Get_Rcv_Msg_Count (Socket => Sock);
+         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Sock.Stop;
+      Tasking.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -504,7 +510,7 @@ package body Anet_Socket_Tests is
 
    exception
       when others =>
-         Sock.Stop;
+         Tasking.Stop (Receiver => R);
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_Multicast_V6;
@@ -541,7 +547,6 @@ package body Anet_Socket_Tests is
 
       Sock.Connect (Path => Path);
       Sock.Send (Item => Data);
-      Sock.Stop;
 
       select
          delay 3.0;
@@ -558,7 +563,6 @@ package body Anet_Socket_Tests is
 
    exception
       when others =>
-         Sock.Stop;
          if not Receiver'Terminated then
             abort Receiver;
          end if;
@@ -570,16 +574,20 @@ package body Anet_Socket_Tests is
 
    procedure Send_V4
    is
+      use type Anet.Sockets.Tasking.Count_Type;
+
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
-      C    : Count_Type := 0;
-      Sock : Socket_Type;
+      C    : Tasking.Count_Type := 0;
+      Sock : aliased Socket_Type;
+      R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
       Sock.Create;
       Sock.Bind (Address => Loopback_Addr_V4,
                  Port    => Test_Utils.Listen_Port);
 
-      Sock.Listen (Callback => Test_Utils.Dump'Access);
+      Tasking.Listen (Receiver => R,
+                      Callback => Test_Utils.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -590,12 +598,12 @@ package body Anet_Socket_Tests is
                  Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
-         C := Get_Rcv_Msg_Count (Socket => Sock);
+         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Sock.Stop;
+      Tasking.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -609,7 +617,7 @@ package body Anet_Socket_Tests is
 
    exception
       when others =>
-         Sock.Stop;
+         Tasking.Stop (Receiver => R);
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_V4;
@@ -618,16 +626,20 @@ package body Anet_Socket_Tests is
 
    procedure Send_V6
    is
+      use type Anet.Sockets.Tasking.Count_Type;
+
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
-      C    : Count_Type := 0;
-      Sock : Socket_Type;
+      C    : Tasking.Count_Type := 0;
+      Sock : aliased Socket_Type;
+      R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
       Sock.Create (Family => Family_Inet6);
       Sock.Bind (Address => Loopback_Addr_V6,
                  Port    => Test_Utils.Listen_Port);
 
-      Sock.Listen (Callback => Test_Utils.Dump'Access);
+      Tasking.Listen (Receiver => R,
+                      Callback => Test_Utils.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -638,12 +650,12 @@ package body Anet_Socket_Tests is
                  Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
-         C := Get_Rcv_Msg_Count (Socket => Sock);
+         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Sock.Stop;
+      Tasking.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -657,7 +669,7 @@ package body Anet_Socket_Tests is
 
    exception
       when others =>
-         Sock.Stop;
+         Tasking.Stop (Receiver => R);
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_V6;

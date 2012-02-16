@@ -25,12 +25,6 @@ with Anet.Sockets.Thin;
 
 package body Anet.Sockets is
 
-   procedure Empty_Cb
-     (Item : Ada.Streams.Stream_Element_Array;
-      Src  : Sender_Info_Type) is null;
-   --  This placeholder callback is needed for initialization of data reception
-   --  callbacks.
-
    function Get_Iface_Index
      (Name : String)
       return Positive
@@ -155,14 +149,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   function Get_Rcv_Msg_Count (Socket : Socket_Type) return Count_Type
-   is
-   begin
-      return Socket.Item_Count;
-   end Get_Rcv_Msg_Count;
-
-   -------------------------------------------------------------------------
-
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
       Group  : IP_Addr_Type;
@@ -173,17 +159,6 @@ package body Anet.Sockets is
                                  Group  => Group,
                                  Iface  => Iface);
    end Join_Multicast_Group;
-
-   -------------------------------------------------------------------------
-
-   procedure Listen
-     (Socket   : in out Socket_Type;
-      Callback :        Rcv_Item_Callback)
-   is
-   begin
-      Socket.Trigger.Activate;
-      Socket.R_Task.Listen (Cb => Callback);
-   end Listen;
 
    -------------------------------------------------------------------------
 
@@ -325,19 +300,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Stop (Socket : in out Socket_Type)
-   is
-   begin
-      if Socket.Sock_FD = -1 then
-         return;
-      end if;
-
-      Socket.Trigger.Shutdown;
-      Socket.Trigger.Wait_For_Termination;
-   end Stop;
-
-   -------------------------------------------------------------------------
-
    function To_IP_Addr (Str : String) return IP_Addr_Type
    is
    begin
@@ -423,95 +385,5 @@ package body Anet.Sockets is
             return To_String (Address => Address.Addr_V6);
       end case;
    end To_String;
-
-   -------------------------------------------------------------------------
-
-   task body Receiver_Task
-   is
-      Callback : Rcv_Item_Callback := Empty_Cb'Access;
-   begin
-      select
-         accept Listen (Cb : Rcv_Item_Callback)
-         do
-            Callback := Cb;
-         end Listen;
-
-      or
-         terminate;
-      end select;
-
-      select
-         Parent.Trigger.Stop;
-      then abort
-         Reception_Loop :
-         loop
-            declare
-               Sender : Sender_Info_Type;
-               Buffer : Ada.Streams.Stream_Element_Array (1 .. 2048);
-               Last   : Ada.Streams.Stream_Element_Offset;
-            begin
-               Parent.Receive (Src  => Sender,
-                               Item => Buffer,
-                               Last => Last);
-
-               Callback (Item => Buffer (Buffer'First .. Last),
-                         Src  => Sender);
-               Parent.Item_Count := Parent.Item_Count + 1;
-
-            exception
-               when Sockets.Socket_Error => exit Reception_Loop;
-               when others               => null;
-            end;
-         end loop Reception_Loop;
-      end select;
-      Parent.Trigger.Signal_Termination;
-   end Receiver_Task;
-
-   -------------------------------------------------------------------------
-
-   protected body Trigger_Type
-   is
-
-      ----------------------------------------------------------------------
-
-      procedure Activate
-      is
-      begin
-         Is_Terminated := False;
-      end Activate;
-
-      ----------------------------------------------------------------------
-
-      procedure Shutdown
-      is
-      begin
-         Shutdown_Requested := True;
-      end Shutdown;
-
-      ----------------------------------------------------------------------
-
-      procedure Signal_Termination
-      is
-      begin
-         Is_Terminated := True;
-      end Signal_Termination;
-
-      ----------------------------------------------------------------------
-
-      entry Stop when Shutdown_Requested
-      is
-      begin
-         null;
-      end Stop;
-
-      ----------------------------------------------------------------------
-
-      entry Wait_For_Termination when Is_Terminated
-      is
-      begin
-         null;
-      end Wait_For_Termination;
-
-   end Trigger_Type;
 
 end Anet.Sockets;

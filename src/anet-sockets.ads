@@ -70,8 +70,6 @@ package Anet.Sockets is
    All_DHCP_Relay_Agents_and_Servers : constant IP_Addr_Type;
    --  All DHCP relay agents and servers multicast group (FF02::1:2).
 
-   type Count_Type is mod System.Max_Binary_Modulus;
-
    type Sender_Info_Type is record
       IP_Addr : IP_Addr_Type;
       Port    : Port_Type                   := 0;
@@ -79,12 +77,6 @@ package Anet.Sockets is
    end record;
    --  Sender information. This record stores information about a sender of
    --  data.
-
-   type Rcv_Item_Callback is not null access procedure
-     (Item : Ada.Streams.Stream_Element_Array;
-      Src  : Sender_Info_Type);
-   --  Data reception callback procedure. The Item argument contains the
-   --  received data, the Src argument identifies the sender of the data.
 
    type Socket_Type is tagged limited private;
    --  Communication socket.
@@ -125,9 +117,6 @@ package Anet.Sockets is
    --  Accept first connection request from listening socket and return new
    --  connected socket.
 
-   function Get_Rcv_Msg_Count (Socket : Socket_Type) return Count_Type;
-   --  Returns the number of received and processed DHCP messages.
-
    procedure Send
      (Socket   : Socket_Type;
       Item     : Ada.Streams.Stream_Element_Array;
@@ -164,16 +153,6 @@ package Anet.Sockets is
      (Socket  : Socket_Type;
       Backlog : Positive := 1);
    --  Listen for specified amount of requests on given socket.
-
-   procedure Listen
-     (Socket   : in out Socket_Type;
-      Callback :        Rcv_Item_Callback);
-   --  Start listening for data on given socket. The given callback is
-   --  asynchronously executed upon data reception. Call stop procedure to
-   --  properly shutdown the listener.
-
-   procedure Stop (Socket : in out Socket_Type);
-   --  Stop listening for data.
 
    type Option_Name_Bool is
      (Broadcast,
@@ -254,49 +233,9 @@ private
      := (Family  => Family_Inet6,
          Addr_V6 => (255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2));
 
-   protected type Trigger_Type is
-
-      procedure Activate;
-      --  Activate trigger.
-
-      procedure Shutdown;
-      --  Signal shutdown to all tasks waiting on the Stop entry.
-
-      entry Stop;
-      --  Entry used for listener ATC.
-
-      procedure Signal_Termination;
-      --  Signal termination to all tasks waiting on the Wait_For_Termination
-      --  entry.
-
-      entry Wait_For_Termination;
-      --  Wait until termination is signaled.
-
-   private
-      Shutdown_Requested : Boolean := False;
-      Is_Terminated      : Boolean := True;
-   end Trigger_Type;
-   --  This trigger is used to terminate the receiver task by means of ATC.
-
-   task type Receiver_Task (Parent : not null access Socket_Type) is
-
-      entry Listen (Cb : Rcv_Item_Callback);
-      --  Start listening for data on parent's socket. The callback procedure
-      --  is called upon reception of new data.
-
-   end Receiver_Task;
-
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD : Integer := -1;
       Family  : Family_Type;
-
-      --  Data listener
-
-      Item_Count : Count_Type := 0;
-      pragma Atomic (Item_Count);
-
-      Trigger : Trigger_Type;
-      R_Task  : Receiver_Task (Parent => Socket_Type'Access);
    end record;
 
    overriding
