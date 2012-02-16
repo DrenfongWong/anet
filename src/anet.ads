@@ -29,6 +29,7 @@
 --
 
 pragma License (Modified_GPL);
+pragma Detect_Blocking;
 
 with Ada.Streams;
 
