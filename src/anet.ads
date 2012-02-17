@@ -89,7 +89,7 @@ package Anet is
    Any_Addr : constant IPv4_Addr_Type;
    --  0.0.0.0
 
-   Loopback_Addr : constant IPv4_Addr_Type;
+   Loopback_Addr_V4 : constant IPv4_Addr_Type;
    --  127.0.0.1
 
    Bcast_Addr : constant IPv4_Addr_Type;
@@ -103,6 +103,9 @@ package Anet is
 
    function To_String (Address : IPv6_Addr_Type) return String;
    --  Return string representation of an IPv6 address.
+
+   Loopback_Addr_V6 : constant IPv6_Addr_Type;
+   --  IPv6 loopback address (::1).
 
    Max_Iface_Name_Len : constant := 16;
    --  Maximum length of an interface name (IFNAMSIZ).
@@ -126,9 +129,10 @@ private
 
    Bcast_HW_Addr : constant Hardware_Addr_Type (1 .. 6) := (others => 255);
 
-   Any_Addr      : constant IPv4_Addr_Type := (others => 0);
-   Loopback_Addr : constant IPv4_Addr_Type := (127, 0, 0, 1);
-   Bcast_Addr    : constant IPv4_Addr_Type := (others => 255);
-   Any_Port      : constant Port_Type      := 0;
+   Any_Addr         : constant IPv4_Addr_Type := (others => 0);
+   Loopback_Addr_V4 : constant IPv4_Addr_Type := (127, 0, 0, 1);
+   Loopback_Addr_V6 : constant IPv6_Addr_Type := (16 => 1, others => 0);
+   Bcast_Addr       : constant IPv4_Addr_Type := (others => 255);
+   Any_Port         : constant Port_Type      := 0;
 
 end Anet;
