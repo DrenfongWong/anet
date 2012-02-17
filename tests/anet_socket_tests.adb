@@ -343,7 +343,7 @@ package body Anet_Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         Sender : Sender_Info_Type;
+         Sender : Sender_Info_Type (Family => Family_Inet6);
       begin
          Sock.Create (Family => Family_Inet6);
          Sock.Bind (Address => Grp,
@@ -400,7 +400,7 @@ package body Anet_Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         Sender : Sender_Info_Type;
+         Sender : Sender_Info_Type (Family => Family_Unix);
          S2     : Socket_Type;
       begin
          begin
@@ -506,7 +506,7 @@ package body Anet_Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         Sender : Sender_Info_Type;
+         Sender : Sender_Info_Type (Family => Family_Inet6);
       begin
          Sock.Create (Family => Family_Inet6);
          Sock.Bind (Address => Loopback_Addr_V6,

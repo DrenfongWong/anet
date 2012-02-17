@@ -198,11 +198,10 @@ package body Anet.Sockets is
                               Data   => Item,
                               Last   => Last);
       else
-         Thin.Receive_Socket (Socket   => Socket.Sock_FD,
-                              Data     => Item,
-                              Last     => Last,
-                              Src_IP   => Src.IP_Addr,
-                              Src_Port => Src.Port);
+         Thin.Receive_Socket (Socket => Socket.Sock_FD,
+                              Data   => Item,
+                              Last   => Last,
+                              Source => Src);
       end if;
    end Receive;
 

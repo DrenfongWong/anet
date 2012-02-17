@@ -22,6 +22,7 @@
 --
 
 with Ada.Streams;
+with Ada.Strings.Unbounded;
 
 private with Ada.Finalization;
 
@@ -70,10 +71,19 @@ package Anet.Sockets is
    All_DHCP_Relay_Agents_and_Servers : constant IP_Addr_Type;
    --  All DHCP relay agents and servers multicast group (FF02::1:2).
 
-   type Sender_Info_Type is record
-      IP_Addr : IP_Addr_Type;
-      Port    : Port_Type                   := 0;
-      HW_Addr : Hardware_Addr_Type (1 .. 6) := (others => 0);
+   type Sender_Info_Type (Family : Family_Type := Family_Inet) is record
+      case Family is
+         when Family_Inet  =>
+            Addr_V4 : IPv4_Addr_Type := (others => 0);
+            Port_V4 : Port_Type      := 0;
+         when Family_Inet6 =>
+            Addr_V6 : IPv6_Addr_Type := (others => 0);
+            Port_V6 : Port_Type      := 0;
+         when Family_Packet =>
+            HW_Addr : Hardware_Addr_Type (1 .. 6) := (others => 0);
+         when Family_Unix =>
+            Path    : Ada.Strings.Unbounded.Unbounded_String;
+      end case;
    end record;
    --  Sender information. This record stores information about a sender of
    --  data.

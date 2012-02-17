@@ -117,7 +117,7 @@ package body Anet.Sockets.Tasking is
          Reception_Loop :
          loop
             declare
-               Sender : Sender_Info_Type;
+               Sender : Sender_Info_Type (Family => Parent.S.all.Family);
                Buffer : Ada.Streams.Stream_Element_Array (1 .. 2048);
                Last   : Ada.Streams.Stream_Element_Offset;
             begin

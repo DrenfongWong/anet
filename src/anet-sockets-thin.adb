@@ -441,23 +441,21 @@ package body Anet.Sockets.Thin is
 
    procedure Get_Socket_Info
      (Sock_Addr :     Sockaddr_In_Type;
-      Address   : out IP_Addr_Type;
-      Port      : out Port_Type)
+      Source    : out Sender_Info_Type)
    is
       use type Interfaces.C.unsigned_short;
    begin
       if Sock_Addr.Sin_Family = Constants.Sys.AF_INET then
-         Address := (Family  => Family_Inet,
-                     Addr_V4 => Sock_Addr.Sin_Addr);
+         Source.Addr_V4 := Sock_Addr.Sin_Addr;
+         Source.Port_V4 := Byte_Swapping.Host_To_Network
+           (Input => Port_Type (Sock_Addr.Sin_Port));
       elsif Sock_Addr.Sin_Family = Constants.Sys.AF_INET6 then
-         Address := (Family  => Family_Inet6,
-                     Addr_V6 => Sock_Addr.Sin6_Addr);
+         Source.Addr_V6 := Sock_Addr.Sin6_Addr;
+         Source.Port_V6 := Byte_Swapping.Host_To_Network
+           (Input => Port_Type (Sock_Addr.Sin_Port));
       else
          raise Socket_Error with "Invalid source address family";
       end if;
-
-      Port := Byte_Swapping.Host_To_Network
-        (Input => Port_Type (Sock_Addr.Sin_Port));
    end Get_Socket_Info;
 
    -------------------------------------------------------------------------
@@ -620,11 +618,10 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Receive_Socket
-     (Socket   :     Integer;
-      Data     : out Ada.Streams.Stream_Element_Array;
-      Last     : out Ada.Streams.Stream_Element_Offset;
-      Src_IP   : out IP_Addr_Type;
-      Src_Port : out Port_Type)
+     (Socket :     Integer;
+      Data   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset;
+      Source : out Sender_Info_Type)
    is
       use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
@@ -647,8 +644,7 @@ package body Anet.Sockets.Thin is
       Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
 
       Get_Socket_Info (Sock_Addr => Sin,
-                       Address   => Src_IP,
-                       Port      => Src_Port);
+                       Source    => Source);
    end Receive_Socket;
 
    -------------------------------------------------------------------------
