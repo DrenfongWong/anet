@@ -89,14 +89,14 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Bind
+   procedure Bind_Packet
      (Socket : in out Socket_Type;
       Iface  :        String)
    is
    begin
       Thin.Bind_Socket (Socket => Socket.Sock_FD,
                         Iface  => Iface);
-   end Bind;
+   end Bind_Packet;
 
    -------------------------------------------------------------------------
 

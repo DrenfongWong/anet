@@ -79,7 +79,7 @@ package Anet.Sockets is
    --  Open given socket and bind it to specified IP address and port. If an
    --  interface name is given the socket is bound to it.
 
-   procedure Bind
+   procedure Bind_Packet
      (Socket : in out Socket_Type;
       Iface  :        String);
    --  Bind given packet socket (Family_Packet) to specified interface.
