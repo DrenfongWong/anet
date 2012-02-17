@@ -33,7 +33,8 @@ project Anet_Lib is
    for Library_Version use "libanet.so." & Anet_Common.Version;
 
    package Compiler is
-      for Default_Switches ("ada") use Anet_Common.Compiler_Switches;
+      for Default_Switches ("ada") use Anet_Common.Compiler_Switches
+        & "-gnatwale";
    end Compiler;
 
    package Binder is
