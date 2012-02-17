@@ -29,7 +29,7 @@ package Anet.Sockets.Tasking is
 
    type Rcv_Item_Callback is not null access procedure
      (Item : Ada.Streams.Stream_Element_Array;
-      Src  : Sender_Info_Type);
+      Src  : Socket_Addr_Type);
    --  Data reception callback procedure. The Item argument contains the
    --  received data, the Src argument identifies the sender of the data.
 

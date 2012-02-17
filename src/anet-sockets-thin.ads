@@ -108,7 +108,7 @@ package Anet.Sockets.Thin is
      (Socket   :     Integer;
       Data     : out Ada.Streams.Stream_Element_Array;
       Last     : out Ada.Streams.Stream_Element_Offset;
-      Source   : out Sender_Info_Type);
+      Source   : out Socket_Addr_Type);
    --  Receive data from given socket. Last is the index value which designates
    --  the last stream element in data. The source IP and port specify the
    --  sender socket from which the data was received.
@@ -178,7 +178,7 @@ package Anet.Sockets.Thin is
 
    procedure Get_Socket_Info
      (Sock_Addr :     Sockaddr_In_Type;
-      Source    : out Sender_Info_Type);
+      Source    : out Socket_Addr_Type);
    --  Get IP address and port from given low-level inet sock address.
 
    function Get_Iface_Index (Name : String) return Positive;

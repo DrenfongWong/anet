@@ -25,7 +25,7 @@ package body Anet.Sockets.Tasking is
 
    procedure Empty_Cb
      (Item : Ada.Streams.Stream_Element_Array;
-      Src  : Sender_Info_Type) is null;
+      Src  : Socket_Addr_Type) is null;
    --  This placeholder callback is needed for initialization of data reception
    --  callbacks.
 
@@ -117,7 +117,7 @@ package body Anet.Sockets.Tasking is
          Reception_Loop :
          loop
             declare
-               Sender : Sender_Info_Type (Family => Parent.S.all.Family);
+               Sender : Socket_Addr_Type (Family => Parent.S.all.Family);
                Buffer : Ada.Streams.Stream_Element_Array (1 .. 2048);
                Last   : Ada.Streams.Stream_Element_Offset;
             begin

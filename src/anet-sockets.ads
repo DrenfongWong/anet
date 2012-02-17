@@ -71,7 +71,7 @@ package Anet.Sockets is
    All_DHCP_Relay_Agents_and_Servers : constant IP_Addr_Type;
    --  All DHCP relay agents and servers multicast group (FF02::1:2).
 
-   type Sender_Info_Type (Family : Family_Type := Family_Inet) is record
+   type Socket_Addr_Type (Family : Family_Type := Family_Inet) is record
       case Family is
          when Family_Inet  =>
             Addr_V4 : IPv4_Addr_Type := (others => 0);
@@ -85,8 +85,9 @@ package Anet.Sockets is
             Path    : Ada.Strings.Unbounded.Unbounded_String;
       end case;
    end record;
-   --  Sender information. This record stores information about a sender of
-   --  data.
+   --  Socket address information. This record is used to specify
+   --  family-specific address information such as the IP address and port of a
+   --  sender of data.
 
    type Socket_Type is tagged limited private;
    --  Communication socket.
@@ -154,7 +155,7 @@ package Anet.Sockets is
 
    procedure Receive
      (Socket :     Socket_Type;
-      Src    : out Sender_Info_Type;
+      Src    : out Socket_Addr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given socket. This procedure blocks until data has

@@ -63,7 +63,7 @@ package body Anet.Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Sender_Info_Type)
+      Src  : Anet.Sockets.Socket_Addr_Type)
    is
       pragma Unreferenced (Src);
    begin
@@ -140,7 +140,7 @@ package body Anet.Test_Utils is
 
    procedure Raise_Error
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Sender_Info_Type)
+      Src  : Anet.Sockets.Socket_Addr_Type)
    is
    begin
       raise Constraint_Error with "DO NOT PANIC: Explicit raise";
