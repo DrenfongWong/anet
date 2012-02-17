@@ -35,8 +35,8 @@ package body Anet_Socket_Tests is
    use Anet.Sockets;
 
    procedure Error_Handler
-     (E         :     Ada.Exceptions.Exception_Occurrence;
-      Stop_Flag : out Boolean);
+     (E         :        Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : in out Boolean);
    --  Receiver error handler callback for testing purposes. It ignores the
    --  exception and tells the receiver to terminate by setting the stop flag.
 
@@ -101,8 +101,8 @@ package body Anet_Socket_Tests is
    -------------------------------------------------------------------------
 
    procedure Error_Handler
-     (E         :     Ada.Exceptions.Exception_Occurrence;
-      Stop_Flag : out Boolean)
+     (E         :        Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : in out Boolean)
    is
       pragma Unreferenced (E);
    begin

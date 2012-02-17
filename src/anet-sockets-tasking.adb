@@ -30,8 +30,8 @@ package body Anet.Sockets.Tasking is
    --  callbacks.
 
    procedure No_Op_Cb
-     (E         :     Ada.Exceptions.Exception_Occurrence;
-      Stop_Flag : out Boolean) is null;
+     (E         :        Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : in out Boolean) is null;
    --  This placeholder callback is needed for initialization of error handling
    --  callbacks.
 
@@ -124,7 +124,6 @@ package body Anet.Sockets.Tasking is
                Parent.S.all.Receive (Src  => Sender,
                                      Item => Buffer,
                                      Last => Last);
-
                Data_Callback (Item => Buffer (Buffer'First .. Last),
                               Src  => Sender);
                Parent.Item_Count := Parent.Item_Count + 1;
