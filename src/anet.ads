@@ -89,6 +89,9 @@ package Anet is
    Any_Addr : constant IPv4_Addr_Type;
    --  0.0.0.0
 
+   Loopback_Addr : constant IPv4_Addr_Type;
+   --  127.0.0.1
+
    Bcast_Addr : constant IPv4_Addr_Type;
    --  255.255.255.255
 
@@ -123,8 +126,9 @@ private
 
    Bcast_HW_Addr : constant Hardware_Addr_Type (1 .. 6) := (others => 255);
 
-   Any_Addr   : constant IPv4_Addr_Type := (others => 0);
-   Bcast_Addr : constant IPv4_Addr_Type := (others => 255);
-   Any_Port   : constant Port_Type      := 0;
+   Any_Addr      : constant IPv4_Addr_Type := (others => 0);
+   Loopback_Addr : constant IPv4_Addr_Type := (127, 0, 0, 1);
+   Bcast_Addr    : constant IPv4_Addr_Type := (others => 255);
+   Any_Port      : constant Port_Type      := 0;
 
 end Anet;
