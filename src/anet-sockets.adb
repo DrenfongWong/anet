@@ -66,9 +66,8 @@ package body Anet.Sockets is
 
    procedure Bind
      (Socket  : in out Socket_Type;
-      Address :        IP_Addr_Type := Any_Addr_V4;
-      Port    :        Port_Type;
-      Iface   :        String       := "")
+      Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
+      Iface   :        String           := "")
    is
    begin
       Thin.Set_Socket_Option
@@ -77,8 +76,7 @@ package body Anet.Sockets is
          Value  => True);
 
       Thin.Bind_Socket (Socket  => Socket.Sock_FD,
-                        Address => Address,
-                        Port    => Port);
+                        Address => Address);
 
       if Iface'Length /= 0 then
          Thin.Set_Socket_Option
@@ -159,7 +157,7 @@ package body Anet.Sockets is
 
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
-      Group  : IP_Addr_Type;
+      Group  : Socket_Addr_Type;
       Iface  : String := "")
    is
    begin
@@ -208,24 +206,22 @@ package body Anet.Sockets is
    -------------------------------------------------------------------------
 
    procedure Send
-     (Socket   : Socket_Type;
-      Item     : Ada.Streams.Stream_Element_Array;
-      Dst_IP   : IP_Addr_Type;
-      Dst_Port : Port_Type)
+     (Socket : Socket_Type;
+      Item   : Ada.Streams.Stream_Element_Array;
+      Dst    : Socket_Addr_Type)
    is
       use type Ada.Streams.Stream_Element_Offset;
 
       Len : Ada.Streams.Stream_Element_Offset;
    begin
-      Thin.Send_Socket (Socket   => Socket.Sock_FD,
-                        Data     => Item,
-                        Last     => Len,
-                        Dst_IP   => Dst_IP,
-                        Dst_Port => Dst_Port);
+      Thin.Send_Socket (Socket => Socket.Sock_FD,
+                        Data   => Item,
+                        Last   => Len,
+                        Dst    => Dst);
 
       if Len /= Item'Length then
          raise Socket_Error with "Incomplete send operation to "
-           & To_String (Address => Dst_IP) & ", only" & Len'Img & " of"
+           & To_String (Address => Dst) & ", only" & Len'Img & " of"
            & Item'Length'Img & " bytes sent";
       end if;
    end Send;
@@ -307,89 +303,20 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   function To_IP_Addr (Str : String) return IP_Addr_Type
-   is
-   begin
-      if Str = "" then
-         raise Constraint_Error with "Unable to convert empty string to IP";
-      end if;
-
-      declare
-         Addr : IPv4_Addr_Type;
-      begin
-         Addr := To_IPv4_Addr (Str);
-
-         return IP : IP_Addr_Type (Family => Family_Inet) do
-            IP.Addr_V4 := Addr;
-         end return;
-
-      exception
-         when Constraint_Error => null;
-
-            --  Ignore constraint error because we will try to convert the
-            --  string to an IPv6 address.
-
-      end;
-
-      declare
-         Addr : IPv6_Addr_Type;
-      begin
-         Addr := To_IPv6_Addr (Str);
-
-         return IP : IP_Addr_Type (Family => Family_Inet6) do
-            IP.Addr_V6 := Addr;
-         end return;
-      end;
-   end To_IP_Addr;
-
-   -------------------------------------------------------------------------
-
-   function To_IP_Addr
-     (Data : Ada.Streams.Stream_Element_Array)
-      return IP_Addr_Type
-   is
-      use type Ada.Streams.Stream_Element_Offset;
-   begin
-      if Data'Length = 4 then
-         return (Family  => Family_Inet,
-                 Addr_V4 => (1 => Byte (Data (Data'First)),
-                             2 => Byte (Data (Data'First + 1)),
-                             3 => Byte (Data (Data'First + 2)),
-                             4 => Byte (Data (Data'Last))));
-      elsif Data'Length = 16 then
-         return (Family  => Family_Inet6,
-                 Addr_V6 => (1  => Byte (Data (Data'First)),
-                             2  => Byte (Data (Data'First +  1)),
-                             3  => Byte (Data (Data'First +  2)),
-                             4  => Byte (Data (Data'First +  3)),
-                             5  => Byte (Data (Data'First +  4)),
-                             6  => Byte (Data (Data'First +  5)),
-                             7  => Byte (Data (Data'First +  6)),
-                             8  => Byte (Data (Data'First +  7)),
-                             9  => Byte (Data (Data'First +  8)),
-                             10 => Byte (Data (Data'First +  9)),
-                             11 => Byte (Data (Data'First + 10)),
-                             12 => Byte (Data (Data'First + 11)),
-                             13 => Byte (Data (Data'First + 12)),
-                             14 => Byte (Data (Data'First + 13)),
-                             15 => Byte (Data (Data'First + 14)),
-                             16 => Byte (Data (Data'Last))));
-      end if;
-
-      raise Constraint_Error with
-        "Invalid data size for IP address conversion:" & Data'Length'Img;
-   end To_IP_Addr;
-
-   -------------------------------------------------------------------------
-
-   function To_String (Address : IP_Addr_Type) return String
+   function To_String (Address : Socket_Addr_Type) return String
    is
    begin
       case Address.Family is
-         when Family_Inet  =>
-            return To_String (Address => Address.Addr_V4);
-         when Family_Inet6 =>
-            return To_String (Address => Address.Addr_V6);
+         when Family_Inet   =>
+            return To_String (Address => Address.Addr_V4)
+              & "(" & Address.Port_V4'Img & " )";
+         when Family_Inet6  =>
+            return To_String (Address => Address.Addr_V6)
+              & "(" & Address.Port_V6'Img & " )";
+         when Family_Packet =>
+            return To_String (Address => Address.HW_Addr);
+         when Family_Unix   =>
+            return Ada.Strings.Unbounded.To_String (Source => Address.Path);
       end case;
    end To_String;
 

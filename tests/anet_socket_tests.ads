@@ -60,9 +60,6 @@ package Anet_Socket_Tests is
    procedure Error_Callbacks;
    --  Test error callback handling.
 
-   procedure IP_Addr_Conversion;
-   --  Verify IP address type conversion functions.
-
    procedure Get_Loopback_Interface_Index;
    --  Test get interface index function on loopback device.
 

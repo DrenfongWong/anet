@@ -40,6 +40,18 @@ package body Anet_Socket_Tests is
    --  Receiver error handler callback for testing purposes. It ignores the
    --  exception and tells the receiver to terminate by setting the stop flag.
 
+   Test_Addr_V4 : constant Socket_Addr_Type
+     := (Family  => Family_Inet,
+         Addr_V4 => Loopback_Addr_V4,
+         Port_V4 => Test_Utils.Listen_Port);
+   --  IPv4 test address constant.
+
+   Test_Addr_V6 : constant Socket_Addr_Type
+     := (Family  => Family_Inet6,
+         Addr_V6 => Loopback_Addr_V6,
+         Port_V6 => Test_Utils.Listen_Port);
+   --  IPv6 test address constant.
+
    -------------------------------------------------------------------------
 
    procedure Error_Callbacks
@@ -47,8 +59,7 @@ package body Anet_Socket_Tests is
       Sock : aliased Socket_Type;
    begin
       Sock.Create;
-      Sock.Bind (Address => Loopback_Addr_V4,
-                 Port    => Test_Utils.Listen_Port);
+      Sock.Bind (Address => Test_Addr_V4);
 
       declare
          R : Tasking.Receiver_Type (S => Sock'Access);
@@ -149,9 +160,8 @@ package body Anet_Socket_Tests is
 
    procedure Get_Loopback_Interface_IP
    is
-      Ref_IP : constant IPv4_Addr_Type := (127, 0, 0, 1);
    begin
-      Assert (Condition => Get_Iface_IP (Name => "lo") = Ref_IP,
+      Assert (Condition => Get_Iface_IP (Name => "lo") = Loopback_Addr_V4,
               Message   => "Loopback IP not 127.0.0.1");
    end Get_Loopback_Interface_IP;
 
@@ -213,9 +223,6 @@ package body Anet_Socket_Tests is
         (Routine => Error_Callbacks'Access,
          Name    => "Error callback handling");
       T.Add_Test_Routine
-        (Routine => IP_Addr_Conversion'Access,
-         Name    => "IP address type conversion");
-      T.Add_Test_Routine
         (Routine => Get_Loopback_Interface_Index'Access,
          Name    => "Get iface index for loopback");
       T.Add_Test_Routine
@@ -228,60 +235,6 @@ package body Anet_Socket_Tests is
 
    -------------------------------------------------------------------------
 
-   procedure IP_Addr_Conversion
-   is
-      use Ada.Streams;
-
-      A1_Str : constant String       := "0.0.0.0";
-      A2_Str : constant String       := "10.1.1.42";
-      A3_Str : constant String
-        := "FF02:0000:0000:0000:0000:0000:0001:0002";
-      A2_Dat : constant Stream_Element_Array := (10, 1, 1, 42);
-      A3_Dat : constant Stream_Element_Array
-        := (255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2);
-
-      Addr1  : constant IP_Addr_Type := To_IP_Addr (Str => A1_Str);
-      Addr2  : constant IP_Addr_Type := To_IP_Addr (Str => A2_Str);
-      Addr3  : constant IP_Addr_Type := To_IP_Addr (Str => A3_Str);
-   begin
-      Assert (Condition => To_String (Address => Addr1) = A1_Str,
-              Message   => "Addr1 mismatch");
-      Assert (Condition => To_String (Address => Addr2) = A2_Str,
-              Message   => "Addr2 mismatch");
-      Assert (Condition => To_String (Address => Addr3) = A3_Str,
-              Message   => "Addr3 mismatch");
-
-      Assert (Condition => To_IP_Addr (Data => A2_Dat) = Addr2,
-              Message   => "Addr2 mismatch (data)");
-      Assert (Condition => To_IP_Addr (Data => A3_Dat) = Addr3,
-              Message   => "Addr3 mismatch (data)");
-
-      declare
-         Address : IP_Addr_Type;
-         pragma Unreferenced (Address);
-      begin
-         Address := To_IP_Addr (Str => "");
-         Fail (Message => "Expected constraint error");
-
-      exception
-         when Constraint_Error => null;
-      end;
-
-      declare
-         Address : IP_Addr_Type;
-         pragma Unreferenced (Address);
-      begin
-         Address := To_IP_Addr (Data => (1 .. 5 => 0));
-         Fail (Message => "Expected constraint error (data)");
-
-      exception
-         when Constraint_Error => null;
-      end;
-
-   end IP_Addr_Conversion;
-
-   -------------------------------------------------------------------------
-
    procedure Listen_Callbacks
    is
       use type Anet.Sockets.Tasking.Count_Type;
@@ -291,8 +244,7 @@ package body Anet_Socket_Tests is
       R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
       Sock.Create;
-      Sock.Bind (Address => Loopback_Addr_V4,
-                 Port    => Test_Utils.Listen_Port);
+      Sock.Bind (Address => Test_Addr_V4);
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
 
@@ -335,8 +287,12 @@ package body Anet_Socket_Tests is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
       Sock   : Socket_Type;
-      Grp    : constant IP_Addr_Type := To_IP_Addr
+      Grp    : constant IPv6_Addr_Type := To_IPv6_Addr
         (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
+      Addr   : constant Socket_Addr_Type
+        := (Family  => Family_Inet6,
+            Addr_V6 => Grp,
+            Port_V6 => Test_Utils.Listen_Port);
 
       task Receiver is
          entry Wait;
@@ -346,9 +302,8 @@ package body Anet_Socket_Tests is
          Sender : Socket_Addr_Type (Family => Family_Inet6);
       begin
          Sock.Create (Family => Family_Inet6);
-         Sock.Bind (Address => Grp,
-                    Port    => Test_Utils.Listen_Port);
-         Sock.Join_Multicast_Group (Group => Grp);
+         Sock.Bind (Address => Addr);
+         Sock.Join_Multicast_Group (Group => Addr);
 
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -358,8 +313,9 @@ package body Anet_Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Anet.Test_Utils.Send_Data (Dst_IP   => Grp,
-                                 Filename => "data/chunk1.dat");
+      Anet.Test_Utils.Send_Data
+        (Dst      => Addr,
+         Filename => "data/chunk1.dat");
 
       select
          delay 3.0;
@@ -459,8 +415,7 @@ package body Anet_Socket_Tests is
          Sender : Socket_Addr_Type;
       begin
          Sock.Create;
-         Sock.Bind (Address => Loopback_Addr_V4,
-                    Port    => Test_Utils.Listen_Port);
+         Sock.Bind (Address => Test_Addr_V4);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -509,8 +464,7 @@ package body Anet_Socket_Tests is
          Sender : Socket_Addr_Type (Family => Family_Inet6);
       begin
          Sock.Create (Family => Family_Inet6);
-         Sock.Bind (Address => Loopback_Addr_V6,
-                    Port    => Test_Utils.Listen_Port);
+         Sock.Bind (Address => Test_Addr_V6);
 
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -520,7 +474,7 @@ package body Anet_Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Anet.Test_Utils.Send_Data (Dst_IP   => Loopback_Addr_V6,
+      Anet.Test_Utils.Send_Data (Dst      => Test_Addr_V6,
                                  Filename => "data/chunk1.dat");
 
       select
@@ -556,13 +510,16 @@ package body Anet_Socket_Tests is
       C    : Tasking.Count_Type := 0;
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
-      Grp  : constant IP_Addr_Type := To_IP_Addr
-        (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
+      Grp  : constant IPv6_Addr_Type :=
+        To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
+      Addr : constant Socket_Addr_Type :=
+        (Family  => Family_Inet6,
+         Addr_V6 => Grp,
+         Port_V6 => Test_Utils.Listen_Port);
    begin
       Sock.Create (Family => Family_Inet6);
-      Sock.Bind (Address => Grp,
-                 Port    => Test_Utils.Listen_Port);
-      Sock.Join_Multicast_Group (Group => Grp);
+      Sock.Bind (Address => Addr);
+      Sock.Join_Multicast_Group (Group => Addr);
 
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
@@ -571,9 +528,8 @@ package body Anet_Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item     => Data,
-                 Dst_IP   => Grp,
-                 Dst_Port => Test_Utils.Listen_Port);
+      Sock.Send (Item => Data,
+                 Dst  => Addr);
 
       for I in 1 .. 30 loop
          C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
@@ -668,8 +624,7 @@ package body Anet_Socket_Tests is
       R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
       Sock.Create;
-      Sock.Bind (Address => Loopback_Addr_V4,
-                 Port    => Test_Utils.Listen_Port);
+      Sock.Bind (Address => Test_Addr_V4);
 
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
@@ -678,9 +633,8 @@ package body Anet_Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item     => Data,
-                 Dst_IP   => Loopback_Addr_V4,
-                 Dst_Port => Test_Utils.Listen_Port);
+      Sock.Send (Item => Data,
+                 Dst  => Test_Addr_V4);
 
       for I in 1 .. 30 loop
          C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
@@ -720,8 +674,7 @@ package body Anet_Socket_Tests is
       R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
       Sock.Create (Family => Family_Inet6);
-      Sock.Bind (Address => Loopback_Addr_V6,
-                 Port    => Test_Utils.Listen_Port);
+      Sock.Bind (Address => Test_Addr_V6);
 
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
@@ -730,9 +683,8 @@ package body Anet_Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item     => Data,
-                 Dst_IP   => Loopback_Addr_V6,
-                 Dst_Port => Test_Utils.Listen_Port);
+      Sock.Send (Item => Data,
+                 Dst  => Test_Addr_V6);
 
       for I in 1 .. 30 loop
          C := Tasking.Get_Rcv_Msg_Count (Receiver => R);

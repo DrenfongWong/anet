@@ -74,8 +74,7 @@ package Anet.Sockets.Thin is
 
    procedure Bind_Socket
      (Socket  : Integer;
-      Address : IP_Addr_Type;
-      Port    : Port_Type);
+      Address : Socket_Addr_Type);
    --  Bind given socket to specified IP address and port.
 
    procedure Bind_Socket
@@ -130,13 +129,12 @@ package Anet.Sockets.Thin is
    --  index value which designates the last stream element in data.
 
    procedure Send_Socket
-     (Socket   :     Integer;
-      Data     :     Ada.Streams.Stream_Element_Array;
-      Last     : out Ada.Streams.Stream_Element_Offset;
-      Dst_IP   :     IP_Addr_Type;
-      Dst_Port :     Port_Type);
-   --  Send data to another socket specified by destination IP and port. Last
-   --  is the index value which designates the last sent stream element.
+     (Socket :     Integer;
+      Data   :     Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset;
+      Dst    :     Socket_Addr_Type);
+   --  Send data to another socket specified by destination. Last is the index
+   --  value which designates the last sent stream element.
 
    procedure Send_Socket
      (Socket :     Integer;
@@ -171,7 +169,7 @@ package Anet.Sockets.Thin is
 
    procedure Join_Multicast_Group
      (Socket : Integer;
-      Group  : IP_Addr_Type;
+      Group  : Socket_Addr_Type;
       Iface  : String := "");
    --  Join the given multicast group on the interface specified by name. If no
    --  interface name is provided, the kernel selects the interface.

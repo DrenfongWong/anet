@@ -76,8 +76,9 @@ package Anet.Test_Utils is
    --  Hex stream of reference DHCP Ack bootp message.
 
    procedure Send_Data
-     (Dst_IP   : Anet.Sockets.IP_Addr_Type := Anet.Sockets.Loopback_Addr_V4;
-      Port     : Anet.Port_Type            := Listen_Port;
+     (Dst      : Sockets.Socket_Addr_Type := (Addr_V4 => Loopback_Addr_V4,
+                                              Port_V4 => Listen_Port,
+                                              others => <>);
       Filename : String);
    --  Send data from file given by filename to socket.
 

@@ -41,36 +41,6 @@ package Anet.Sockets is
    type Mode_Type is (Stream_Socket, Datagram_Socket);
    --  Supported socket modes.
 
-   type IP_Addr_Type (Family : Family_Inet_Type := Family_Inet) is private;
-   --  IP address type. This type is used to represent IP adresses, IPv4 or
-   --  IPv6 depending on family.
-
-   function To_IP_Addr (Str : String) return IP_Addr_Type;
-   --  Return IP address for given string.
-
-   function To_IP_Addr
-     (Data : Ada.Streams.Stream_Element_Array)
-      return IP_Addr_Type;
-   --  Return IP address for given stream element array.
-
-   function To_String (Address : IP_Addr_Type) return String;
-   --  Return string representation of an IP address.
-
-   Any_Addr_V4 : constant IP_Addr_Type;
-   --  IPv4 any inet address (0.0.0.0).
-
-   Loopback_Addr_V4 : constant IP_Addr_Type;
-   --  IPv4 localhost address (127.0.0.1).
-
-   Broadcast_Addr_V4 : constant IP_Addr_Type;
-   --  IPv4 broadcast address (255.255.255.255).
-
-   Loopback_Addr_V6 : constant IP_Addr_Type;
-   --  IPv6 loopback address (::1).
-
-   All_DHCP_Relay_Agents_and_Servers : constant IP_Addr_Type;
-   --  All DHCP relay agents and servers multicast group (FF02::1:2).
-
    type Socket_Addr_Type (Family : Family_Type := Family_Inet) is record
       case Family is
          when Family_Inet  =>
@@ -89,6 +59,9 @@ package Anet.Sockets is
    --  family-specific address information such as the IP address and port of a
    --  sender of data.
 
+   function To_String (Address : Socket_Addr_Type) return String;
+   --  Return string representation for given socket address type.
+
    type Socket_Type is tagged limited private;
    --  Communication socket.
 
@@ -101,9 +74,8 @@ package Anet.Sockets is
 
    procedure Bind
      (Socket  : in out Socket_Type;
-      Address :        IP_Addr_Type := Any_Addr_V4;
-      Port    :        Port_Type;
-      Iface   :        String       := "");
+      Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
+      Iface   :        String           := "");
    --  Open given socket and bind it to specified IP address and port. If an
    --  interface name is given the socket is bound to it.
 
@@ -132,10 +104,9 @@ package Anet.Sockets is
    --  connected socket.
 
    procedure Send
-     (Socket   : Socket_Type;
-      Item     : Ada.Streams.Stream_Element_Array;
-      Dst_IP   : IP_Addr_Type;
-      Dst_Port : Port_Type);
+     (Socket : Socket_Type;
+      Item   : Ada.Streams.Stream_Element_Array;
+      Dst    : Socket_Addr_Type);
    --  Send given data to the specified destination via the given socket.
 
    procedure Send
@@ -190,7 +161,7 @@ package Anet.Sockets is
 
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
-      Group  : IP_Addr_Type;
+      Group  : Socket_Addr_Type;
       Iface  : String := "");
    --  Join the given multicast group on the interface specified by name. If no
    --  interface name is provided, the kernel selects the interface.
@@ -218,34 +189,6 @@ package Anet.Sockets is
    Socket_Error : exception;
 
 private
-
-   type IP_Addr_Type (Family : Family_Inet_Type := Family_Inet) is record
-      case Family is
-         when Family_Inet  => Addr_V4 : IPv4_Addr_Type := (others => 0);
-         when Family_Inet6 => Addr_V6 : IPv6_Addr_Type := (others => 0);
-      end case;
-   end record;
-
-   Any_Addr_V4 : constant IP_Addr_Type
-     := (Family  => Family_Inet,
-         Addr_V4 => (others => 0));
-
-   Loopback_Addr_V4 : constant IP_Addr_Type
-     := (Family  => Family_Inet,
-         Addr_V4 => (127, 0, 0, 1));
-
-   Loopback_Addr_V6 : constant IP_Addr_Type
-     := (Family  => Family_Inet6,
-         Addr_V6 => (16     => 1,
-                     others => 0));
-
-   Broadcast_Addr_V4 : constant IP_Addr_Type
-     := (Family  => Family_Inet,
-         Addr_V4 => (255, 255, 255, 255));
-
-   All_DHCP_Relay_Agents_and_Servers : constant IP_Addr_Type
-     := (Family  => Family_Inet6,
-         Addr_V6 => (255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2));
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD : Integer := -1;

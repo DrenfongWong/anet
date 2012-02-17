@@ -156,11 +156,8 @@ package body Anet.Sockets.Thin is
       return C.int;
    pragma Import (C, C_Recvfrom, "recvfrom");
 
-   function To_Sock_Addr
-     (Address : IP_Addr_Type;
-      Port    : Port_Type)
-      return Sockaddr_In_Type;
-   --  Return inet sock address for given IP address and port.
+   function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type;
+   --  Return inet sock address for given socket address.
 
    function Ioctl_Get
      (Socket     : Integer;
@@ -219,15 +216,13 @@ package body Anet.Sockets.Thin is
 
    procedure Bind_Socket
      (Socket  : Integer;
-      Address : IP_Addr_Type;
-      Port    : Port_Type)
+      Address : Socket_Addr_Type)
    is
       use type C.int;
 
       Res   : C.int;
       Value : aliased constant Sockaddr_In_Type
-        := To_Sock_Addr (Address => Address,
-                         Port    => Port);
+        := To_Sock_Addr (Address => Address);
    begin
       Res := C_Bind (S       => C.int (Socket),
                      Name    => Value'Address,
@@ -235,8 +230,7 @@ package body Anet.Sockets.Thin is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind socket to "
-           & To_String (Address => Address) & Port'Img & " - "
-           & Get_Errno_String;
+           & To_String (Address => Address) & " - " & Get_Errno_String;
       end if;
    end Bind_Socket;
 
@@ -529,7 +523,7 @@ package body Anet.Sockets.Thin is
 
    procedure Join_Multicast_Group
      (Socket : Integer;
-      Group  : IP_Addr_Type;
+      Group  : Socket_Addr_Type;
       Iface  : String := "")
    is
       use type Interfaces.C.int;
@@ -714,19 +708,16 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Send_Socket
-     (Socket   :     Integer;
-      Data     :     Ada.Streams.Stream_Element_Array;
-      Last     : out Ada.Streams.Stream_Element_Offset;
-      Dst_IP   :     IP_Addr_Type;
-      Dst_Port :     Port_Type)
+     (Socket :     Integer;
+      Data   :     Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset;
+      Dst    :     Socket_Addr_Type)
    is
       use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.int;
-      Sin : aliased constant Sockaddr_In_Type
-        := To_Sock_Addr (Address => Dst_IP,
-                         Port    => Dst_Port);
+      Sin : aliased constant Sockaddr_In_Type := To_Sock_Addr (Address => Dst);
    begin
       Res := C_Sendto (S     => C.int (Socket),
                        Buf   => Data'Address,
@@ -737,8 +728,7 @@ package body Anet.Sockets.Thin is
 
       if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
-           & To_String (Address => Dst_IP) & Dst_Port'Img & " - "
-           & Get_Errno_String;
+           & To_String (Address => Dst) & " - " & Get_Errno_String;
       end if;
 
       Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
@@ -900,10 +890,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function To_Sock_Addr
-     (Address : IP_Addr_Type;
-      Port    : Port_Type)
-      return Sockaddr_In_Type
+   function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type
    is
    begin
       case Address.Family is
@@ -912,7 +899,7 @@ package body Anet.Sockets.Thin is
               (Family     => Family_Inet,
                Sin_Family => Constants.Sys.AF_INET,
                Sin_Port   => C.unsigned_short
-                 (Byte_Swapping.Host_To_Network (Input => Port)),
+                 (Byte_Swapping.Host_To_Network (Input => Address.Port_V4)),
                Sin_Addr   => Address.Addr_V4,
                Sin_Zero   => <>);
          when Family_Inet6 =>
@@ -920,9 +907,12 @@ package body Anet.Sockets.Thin is
               (Family     => Family_Inet6,
                Sin_Family => Constants.Sys.AF_INET6,
                Sin_Port   => C.unsigned_short
-                 (Byte_Swapping.Host_To_Network (Input => Port)),
+                 (Byte_Swapping.Host_To_Network (Input => Address.Port_V6)),
                Sin6_Addr  => Address.Addr_V6,
                others     => 0);
+         when others =>
+            raise Socket_Error with "Unable to convert '" & To_String
+              (Address => Address) & "' to IPv4 or IPv6 socket address";
       end case;
    end To_Sock_Addr;
 

@@ -149,25 +149,34 @@ package body Anet.Test_Utils is
    -------------------------------------------------------------------------
 
    procedure Send_Data
-     (Dst_IP   : Anet.Sockets.IP_Addr_Type := Anet.Sockets.Loopback_Addr_V4;
-      Port     : Anet.Port_Type            := Listen_Port;
+     (Dst      : Sockets.Socket_Addr_Type := (Addr_V4 => Loopback_Addr_V4,
+                                              Port_V4 => Listen_Port,
+                                              others => <>);
       Filename : String)
    is
       use Ada.Strings.Unbounded;
       use type Anet.Sockets.Family_Type;
 
-      Port_Str : constant String := Ada.Strings.Fixed.Trim
-        (Source => Port'Img,
-         Side   => Ada.Strings.Left);
-      IP_Str   : Unbounded_String := To_Unbounded_String
-        (Anet.Sockets.To_String (Address => Dst_IP));
+      Port_Str : Unbounded_String;
+      IP_Str   : Unbounded_String;
    begin
-      if Dst_IP.Family = Sockets.Family_Inet6 then
-         IP_Str := "[" & IP_Str & "]";
+      if Dst.Family = Sockets.Family_Inet then
+         IP_Str   := To_Unbounded_String (To_String (Address => Dst.Addr_V4));
+         Port_Str := To_Unbounded_String
+           (Source => Ada.Strings.Fixed.Trim (Source => Dst.Port_V4'Img,
+                                              Side   => Ada.Strings.Left));
+      elsif Dst.Family = Sockets.Family_Inet6 then
+         IP_Str   := To_Unbounded_String
+           ("[" & To_String (Address => Dst.Addr_V6) & "]");
+         Port_Str := To_Unbounded_String
+           (Source => Ada.Strings.Fixed.Trim (Source => Dst.Port_V6'Img,
+                                              Side   => Ada.Strings.Left));
+      else
+         raise Constraint_Error with "Invalid family type " & Dst.Family'Img;
       end if;
 
       OS.Execute (Command => "socat " & Filename & " UDP-DATAGRAM:"
-                  & To_String (IP_Str) & ":" & Port_Str);
+                  & To_String (IP_Str) & ":" & To_String (Port_Str));
    end Send_Data;
 
 end Anet.Test_Utils;
