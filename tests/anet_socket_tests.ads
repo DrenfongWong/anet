@@ -40,7 +40,10 @@ package Anet_Socket_Tests is
    --  Test sending over IPv6 multicast.
 
    procedure Send_Unix;
-   --  Test sending over a Unix socket.
+   --  Test sending over a streaming Unix socket.
+
+   procedure Send_Unix_Datagram;
+   --  Test sending over a datagram Unix socket.
 
    procedure Receive_V4;
    --  Test data reception with IPv4 socket.

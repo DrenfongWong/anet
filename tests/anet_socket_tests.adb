@@ -203,7 +203,10 @@ package body Anet_Socket_Tests is
          Name    => "Send data (IPv6 multicast)");
       T.Add_Test_Routine
         (Routine => Send_Unix'Access,
-         Name    => "Send data (Unix)");
+         Name    => "Send data (Unix, streaming)");
+      T.Add_Test_Routine
+        (Routine => Send_Unix_Datagram'Access,
+         Name    => "Send data (Unix, datagram)");
       T.Add_Test_Routine
         (Routine => Receive_V4'Access,
          Name    => "Receive data (IPv4)");
@@ -510,12 +513,12 @@ package body Anet_Socket_Tests is
       C    : Tasking.Count_Type := 0;
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
-      Grp  : constant IPv6_Addr_Type :=
-        To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
-      Addr : constant Socket_Addr_Type :=
-        (Family  => Family_Inet6,
-         Addr_V6 => Grp,
-         Port_V6 => Test_Utils.Listen_Port);
+      Grp  : constant IPv6_Addr_Type
+        := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
+      Addr : constant Socket_Addr_Type
+        := (Family  => Family_Inet6,
+            Addr_V6 => Grp,
+            Port_V6 => Test_Utils.Listen_Port);
    begin
       Sock.Create (Family => Family_Inet6);
       Sock.Bind (Address => Addr);
@@ -610,6 +613,60 @@ package body Anet_Socket_Tests is
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_Unix;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_Unix_Datagram is
+      Data : constant Ada.Streams.Stream_Element_Array
+        := OS.Read_File (Filename => "data/chunk1.dat");
+
+      Path : constant String := "/tmp/mysock";
+      Cmd  : constant String := "socat UNIX-RECV:" & Path & " "
+        & Test_Utils.Dump_File;
+      Sock : Socket_Type;
+
+      task Receiver is
+         entry Wait;
+      end Receiver;
+
+      task body Receiver is
+      begin
+         OS.Execute (Command => Cmd);
+
+         accept Wait;
+      end Receiver;
+   begin
+      Sock.Create (Family => Family_Unix,
+                   Mode   => Datagram_Socket);
+
+      --  Give receiver/socat enough time to create socket
+
+      delay 0.1;
+
+      Sock.Connect (Path => Path);
+      Sock.Send (Item => Data);
+
+      select
+         delay 3.0;
+      then abort
+         Receiver.Wait;
+      end select;
+
+      Assert (Condition => Test_Utils.Equal_Files
+              (Filename1 => "data/chunk1.dat",
+               Filename2 => Test_Utils.Dump_File),
+              Message   => "Result mismatch");
+
+      OS.Delete_File (Filename => Test_Utils.Dump_File);
+
+   exception
+      when others =>
+         if not Receiver'Terminated then
+            abort Receiver;
+         end if;
+         OS.Delete_File (Filename => Test_Utils.Dump_File);
+         raise;
+   end Send_Unix_Datagram;
 
    -------------------------------------------------------------------------
 
