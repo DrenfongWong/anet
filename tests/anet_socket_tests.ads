@@ -54,7 +54,7 @@ package Anet_Socket_Tests is
    procedure Receive_Multicast_V6;
    --  Test IPv6 multicast data reception.
 
-   procedure Receive_Unix;
+   procedure Receive_Unix_Streaming;
    --  Test data reception with streaming UNIX socket.
 
    procedure Receive_Unix_Datagram;
