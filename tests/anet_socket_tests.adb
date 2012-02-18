@@ -202,7 +202,7 @@ package body Anet_Socket_Tests is
         (Routine => Send_Multicast_V6'Access,
          Name    => "Send data (IPv6 multicast)");
       T.Add_Test_Routine
-        (Routine => Send_Unix'Access,
+        (Routine => Send_Unix_Streaming'Access,
          Name    => "Send data (Unix, streaming)");
       T.Add_Test_Routine
         (Routine => Send_Unix_Datagram'Access,
@@ -621,62 +621,8 @@ package body Anet_Socket_Tests is
 
    -------------------------------------------------------------------------
 
-   procedure Send_Unix
+   procedure Send_Unix_Datagram
    is
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
-
-      Path : constant String := "/tmp/mysock";
-      Cmd  : constant String := "socat UNIX-LISTEN:" & Path & " "
-        & Test_Utils.Dump_File;
-      Sock : Socket_Type;
-
-      task Receiver is
-         entry Wait;
-      end Receiver;
-
-      task body Receiver is
-      begin
-         OS.Execute (Command => Cmd);
-
-         accept Wait;
-      end Receiver;
-   begin
-      Sock.Create (Family => Family_Unix,
-                   Mode   => Stream_Socket);
-
-      --  Give receiver/socat enough time to create socket
-
-      delay 0.1;
-
-      Sock.Connect (Path => Path);
-      Sock.Send (Item => Data);
-
-      select
-         delay 3.0;
-      then abort
-         Receiver.Wait;
-      end select;
-
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
-              Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
-
-   exception
-      when others =>
-         if not Receiver'Terminated then
-            abort Receiver;
-         end if;
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
-         raise;
-   end Send_Unix;
-
-   -------------------------------------------------------------------------
-
-   procedure Send_Unix_Datagram is
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
 
@@ -727,6 +673,61 @@ package body Anet_Socket_Tests is
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_Unix_Datagram;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_Unix_Streaming
+   is
+      Data : constant Ada.Streams.Stream_Element_Array
+        := OS.Read_File (Filename => "data/chunk1.dat");
+
+      Path : constant String := "/tmp/mysock";
+      Cmd  : constant String := "socat UNIX-LISTEN:" & Path & " "
+        & Test_Utils.Dump_File;
+      Sock : Socket_Type;
+
+      task Receiver is
+         entry Wait;
+      end Receiver;
+
+      task body Receiver is
+      begin
+         OS.Execute (Command => Cmd);
+
+         accept Wait;
+      end Receiver;
+   begin
+      Sock.Create (Family => Family_Unix,
+                   Mode   => Stream_Socket);
+
+      --  Give receiver/socat enough time to create socket
+
+      delay 0.1;
+
+      Sock.Connect (Path => Path);
+      Sock.Send (Item => Data);
+
+      select
+         delay 3.0;
+      then abort
+         Receiver.Wait;
+      end select;
+
+      Assert (Condition => Test_Utils.Equal_Files
+              (Filename1 => "data/chunk1.dat",
+               Filename2 => Test_Utils.Dump_File),
+              Message   => "Result mismatch");
+
+      OS.Delete_File (Filename => Test_Utils.Dump_File);
+
+   exception
+      when others =>
+         if not Receiver'Terminated then
+            abort Receiver;
+         end if;
+         OS.Delete_File (Filename => Test_Utils.Dump_File);
+         raise;
+   end Send_Unix_Streaming;
 
    -------------------------------------------------------------------------
 

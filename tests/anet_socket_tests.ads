@@ -39,7 +39,7 @@ package Anet_Socket_Tests is
    procedure Send_Multicast_V6;
    --  Test sending over IPv6 multicast.
 
-   procedure Send_Unix;
+   procedure Send_Unix_Streaming;
    --  Test sending over a streaming Unix socket.
 
    procedure Send_Unix_Datagram;
