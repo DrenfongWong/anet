@@ -55,7 +55,10 @@ package Anet_Socket_Tests is
    --  Test IPv6 multicast data reception.
 
    procedure Receive_Unix;
-   --  Test data reception with UNIX socket.
+   --  Test data reception with streaming UNIX socket.
+
+   procedure Receive_Unix_Datagram;
+   --  Test data reception with datagram UNIX socket.
 
    procedure Listen_Callbacks;
    --  Test data reception callback handling.
