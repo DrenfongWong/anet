@@ -69,8 +69,8 @@ package Anet.Sockets is
      (Socket : out Socket_Type;
       Family :     Family_Type := Family_Inet;
       Mode   :     Mode_Type   := Datagram_Socket);
-   --  Create a new socket with given family (IPv4, IPv6, packet) and mode
-   --  (UDP, TCP).
+   --  Create a new socket with given family (IPv4, IPv6, packet, Unix) and
+   --  mode (UDP, TCP).
 
    procedure Bind
      (Socket  : in out Socket_Type;
