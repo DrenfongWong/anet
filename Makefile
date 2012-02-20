@@ -57,9 +57,7 @@ install_static:
 
 install_dynamic:
 	install -m 444 $(LIBDIR)/$(SO_LIBRARY) $(PREFIX)/lib/anet
-	cd $(PREFIX)/lib/anet && \
-	ln -sf $(SO_LIBRARY) libanet.so && \
-	ln -sf $(SO_LIBRARY) libanet.so.$(MAJOR)
+	cd $(PREFIX)/lib/anet && ln -sf $(SO_LIBRARY) libanet.so
 
 doc:
 	@$(MAKE) -C doc
