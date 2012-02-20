@@ -309,10 +309,10 @@ package body Anet.Sockets is
       case Address.Family is
          when Family_Inet   =>
             return To_String (Address => Address.Addr_V4)
-              & "(" & Address.Port_V4'Img & " )";
+              & " (" & Address.Port_V4'Img & " )";
          when Family_Inet6  =>
             return To_String (Address => Address.Addr_V6)
-              & "(" & Address.Port_V6'Img & " )";
+              & " (" & Address.Port_V6'Img & " )";
          when Family_Packet =>
             return To_String (Address => Address.HW_Addr);
          when Family_Unix   =>

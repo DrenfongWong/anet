@@ -23,6 +23,7 @@
 
 with Ada.Streams;
 with Ada.Exceptions;
+with Ada.Strings.Unbounded;
 
 with Anet.OS;
 with Anet.Sockets.Tasking;
@@ -237,6 +238,9 @@ package body Anet_Socket_Tests is
       T.Add_Test_Routine
         (Routine => Get_Loopback_Interface_IP'Access,
          Name    => "Get iface IP addr for loopback");
+      T.Add_Test_Routine
+        (Routine => Socket_Addr_To_String'Access,
+         Name    => "Socket address to string conversion");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -828,5 +832,39 @@ package body Anet_Socket_Tests is
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_V6;
+
+   -------------------------------------------------------------------------
+
+   procedure Socket_Addr_To_String
+   is
+      use Ada.Strings.Unbounded;
+
+      Port_Str       : constant String := Test_Utils.Listen_Port'Img;
+      Test_V4_Str    : constant String := "127.0.0.1 (" & Port_Str & " )";
+      Test_V6_Str    : constant String
+        := "0000:0000:0000:0000:0000:0000:0000:0001 (" & Port_Str & " )";
+      Test_L2_Str    : constant String := "FF:FF:FF:FF:FF:FF";
+      Test_Addr_L2   : constant Socket_Addr_Type
+        := (Family  => Family_Packet,
+            HW_Addr => (16#ff#, 16#ff#, 16#ff#, 16#ff#, 16#ff#, 16#ff#));
+      Test_Unix_Str  : constant Unbounded_String
+        := To_Unbounded_String ("/tmp/foosocket");
+      Test_Addr_Unix : constant Socket_Addr_Type
+        := (Family => Family_Unix,
+            Path   => Test_Unix_Str);
+   begin
+      Assert
+        (Condition => To_String (Address => Test_Addr_V4) = Test_V4_Str,
+         Message   => "IPv4 string mismatch");
+      Assert
+        (Condition => To_String (Address => Test_Addr_V6) = Test_V6_Str,
+         Message   => "IPv6 string mismatch");
+      Assert
+        (Condition => To_String (Address => Test_Addr_L2) = Test_L2_Str,
+         Message   => "Packet address string mismatch");
+      Assert
+        (Condition => To_String (Address => Test_Addr_Unix) = Test_Unix_Str,
+         Message   => "UNIX path mismatch");
+   end Socket_Addr_To_String;
 
 end Anet_Socket_Tests;

@@ -75,4 +75,7 @@ package Anet_Socket_Tests is
    procedure Get_Loopback_Interface_IP;
    --  Test get interface IP function on loopback device.
 
+   procedure Socket_Addr_To_String;
+   --  Test string conversion of socket address type.
+
 end Anet_Socket_Tests;
