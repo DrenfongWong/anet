@@ -1,7 +1,6 @@
 General
 -------
 - Introduce unix path type
-- Introduce iface name type
 
 Sockets
 -------
