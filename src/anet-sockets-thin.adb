@@ -264,19 +264,15 @@ package body Anet.Sockets.Thin is
 
    procedure Bind_Unix_Socket
      (Socket : Integer;
-      Path   : String)
+      Path   : Unix_Path_Type)
    is
       use type C.int;
 
       Res    : C.int;
-      C_Path : constant C.char_array := C.To_C (Path);
+      C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : aliased Sockaddr_Un_Type;
    begin
-      if C_Path'Length > Max_Unix_Path_Len then
-         raise Socket_Error with "Invalid path name " & Path;
-      end if;
-
-      OS.Delete_File (Filename => Path);
+      OS.Delete_File (Filename => String (Path));
 
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
@@ -286,7 +282,7 @@ package body Anet.Sockets.Thin is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind unix socket to path "
-           & Path & " - " & Get_Errno_String;
+           & String (Path) & " - " & Get_Errno_String;
       end if;
    end Bind_Unix_Socket;
 
@@ -312,7 +308,7 @@ package body Anet.Sockets.Thin is
 
    procedure Connect_Socket
      (Socket : Integer;
-      Path   : String)
+      Path   : Unix_Path_Type)
    is
       use type C.int;
 
@@ -324,13 +320,9 @@ package body Anet.Sockets.Thin is
       pragma Import (C, C_Connect, "connect");
 
       Res    : C.int;
-      C_Path : constant C.char_array := C.To_C (Path);
+      C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : aliased Sockaddr_Un_Type;
    begin
-      if C_Path'Length > Max_Unix_Path_Len then
-         raise Socket_Error with "Invalid path name " & Path;
-      end if;
-
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
       Res := C_Connect (S       => C.int (Socket),
@@ -339,7 +331,7 @@ package body Anet.Sockets.Thin is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to connect unix socket to path "
-           & Path & " - " & Get_Errno_String;
+           & String (Path) & " - " & Get_Errno_String;
       end if;
    end Connect_Socket;
 

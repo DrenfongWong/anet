@@ -84,12 +84,12 @@ package Anet.Sockets.Thin is
 
    procedure Bind_Unix_Socket
      (Socket : Integer;
-      Path   : String);
+      Path   : Unix_Path_Type);
    --  Bind given unix socket (Family_Unix) to specified path.
 
    procedure Connect_Socket
      (Socket : Integer;
-      Path   : String);
+      Path   : Unix_Path_Type);
    --  Connect given unix socket (Family_Unix) to specified path.
 
    procedure Listen_Socket

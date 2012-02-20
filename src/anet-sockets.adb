@@ -102,7 +102,7 @@ package body Anet.Sockets is
 
    procedure Bind_Unix
      (Socket : in out Socket_Type;
-      Path   :        String)
+      Path   :        Unix_Path_Type)
    is
    begin
       Thin.Bind_Unix_Socket (Socket => Socket.Sock_FD,
@@ -124,7 +124,7 @@ package body Anet.Sockets is
 
    procedure Connect
      (Socket : in out Socket_Type;
-      Path   :        String)
+      Path   :        Unix_Path_Type)
    is
    begin
       Thin.Connect_Socket (Socket => Socket.Sock_FD,

@@ -107,9 +107,6 @@ package Anet is
    Loopback_Addr_V6 : constant IPv6_Addr_Type;
    --  IPv6 loopback address (::1).
 
-   Max_Unix_Path_Len  : constant := 108;
-   --  Maximum length of an unix pathname.
-
    C_Failure : constant := -1;
    --  Used to test return codes of imported C functions.
 

@@ -355,7 +355,7 @@ package body Anet_Socket_Tests is
          begin
             Sock.Create (Family => Family_Unix,
                          Mode   => Datagram_Socket);
-            Sock.Bind_Unix (Path => Path);
+            Sock.Bind_Unix (Path => Unix_Path_Type (Path));
             Sock.Receive (Src  => Sender,
                           Item => Buffer,
                           Last => Last);
@@ -394,9 +394,9 @@ package body Anet_Socket_Tests is
 
    procedure Receive_Unix_Streaming
    is
-      Path   : constant String := "obj/mysock2";
-      Cmd    : constant String := "socat -u EXEC:'cat data/chunk1.dat"
-        & "' UNIX-CLIENT:" & Path;
+      Path   : constant Unix_Path_Type := "obj/mysock2";
+      Cmd    : constant String         := "socat -u EXEC:'cat data/chunk1.dat"
+        & "' UNIX-CLIENT:" & String (Path);
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
@@ -614,9 +614,9 @@ package body Anet_Socket_Tests is
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
 
-      Path : constant String := "/tmp/mysock";
-      Cmd  : constant String := "socat UNIX-RECV:" & Path & " "
-        & Test_Utils.Dump_File;
+      Path : constant Unix_Path_Type := "/tmp/mysock";
+      Cmd  : constant String         := "socat UNIX-RECV:" & String (Path)
+        & " " & Test_Utils.Dump_File;
       Sock : Socket_Type;
 
       task Receiver is
@@ -692,7 +692,7 @@ package body Anet_Socket_Tests is
 
       delay 0.1;
 
-      Sock.Connect (Path => Path);
+      Sock.Connect (Path => Unix_Path_Type (Path));
       Sock.Send (Item => Data);
 
       select

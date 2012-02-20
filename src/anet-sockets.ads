@@ -41,6 +41,15 @@ package Anet.Sockets is
    type Iface_Name_Type is array (Iface_Name_Range range <>) of Character;
    --  Interface name type.
 
+   Max_Unix_Path_Len  : constant := 108;
+   --  Maximum length of an unix path (UNIX_PATH_MAX).
+
+   subtype Unix_Path_Range is Positive range 1 .. Max_Unix_Path_Len - 1;
+   --  Range of unix paths (1 .. UNIX_PATH_MAX - 1).
+
+   type Unix_Path_Type is array (Unix_Path_Range range <>) of Character;
+   --  Unix path type.
+
    type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
    --  Address families (IPv4, IPv6, raw).
 
@@ -95,7 +104,7 @@ package Anet.Sockets is
 
    procedure Bind_Unix
      (Socket : in out Socket_Type;
-      Path   :        String);
+      Path   :        Unix_Path_Type);
    --  Bind given unix socket (Family_Unix) to specified path.
 
    procedure Close (Socket : in out Socket_Type);
@@ -103,7 +112,7 @@ package Anet.Sockets is
 
    procedure Connect
      (Socket : in out Socket_Type;
-      Path   :        String);
+      Path   :        Unix_Path_Type);
    --  Connect given unix socket (Family_Unix) to specified path.
 
    procedure Accept_Socket
