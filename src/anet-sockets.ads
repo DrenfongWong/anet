@@ -32,6 +32,15 @@ with System;
 
 package Anet.Sockets is
 
+   Max_Iface_Name_Len : constant := 16;
+   --  Maximum length of an interface name (IFNAMSIZ).
+
+   subtype Iface_Name_Range is Positive range 1 .. Max_Iface_Name_Len - 1;
+   --  Range of interface name (1 .. IFNAMSIZ - 1).
+
+   type Iface_Name_Type is array (Iface_Name_Range range <>) of Character;
+   --  Interface name type.
+
    type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
    --  Address families (IPv4, IPv6, raw).
 
@@ -75,13 +84,13 @@ package Anet.Sockets is
    procedure Bind
      (Socket  : in out Socket_Type;
       Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        String           := "");
+      Iface   :        Iface_Name_Type  := "");
    --  Open given socket and bind it to specified IP address and port. If an
    --  interface name is given the socket is bound to it.
 
    procedure Bind_Packet
      (Socket : in out Socket_Type;
-      Iface  :        String);
+      Iface  :        Iface_Name_Type);
    --  Bind given packet socket (Family_Packet) to specified interface.
 
    procedure Bind_Unix
@@ -113,7 +122,7 @@ package Anet.Sockets is
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;
       To     : Hardware_Addr_Type;
-      Iface  : String);
+      Iface  : Iface_Name_Type);
    --  Send data on packet socket to given hardware address over interface
    --  specified by name. The socket must be of type Family_Packet for this to
    --  work.
@@ -162,26 +171,26 @@ package Anet.Sockets is
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
       Group  : Socket_Addr_Type;
-      Iface  : String := "");
+      Iface  : Iface_Name_Type := "");
    --  Join the given multicast group on the interface specified by name. If no
    --  interface name is provided, the kernel selects the interface.
 
-   function Get_Iface_Index (Name : String) return Positive;
+   function Get_Iface_Index (Name : Iface_Name_Type) return Positive;
    --  Get interface index of interface given by name.
 
-   function Get_Iface_Mac (Name : String) return Hardware_Addr_Type;
+   function Get_Iface_Mac (Name : Iface_Name_Type) return Hardware_Addr_Type;
    --  Get hardware address of interface given by name.
 
-   function Get_Iface_IP (Name : String) return IPv4_Addr_Type;
+   function Get_Iface_IP (Name : Iface_Name_Type) return IPv4_Addr_Type;
    --  Get IP address of interface given by name. If given interface has no
    --  assigned IP an exception is raised.
 
-   function Is_Iface_Up (Name : String) return Boolean;
+   function Is_Iface_Up (Name : Iface_Name_Type) return Boolean;
    --  Check if interface given by name is up. True is returned if the
    --  interface is up.
 
    procedure Set_Iface_State
-     (Name  : String;
+     (Name  : Iface_Name_Type;
       State : Boolean);
    --  Set state of interface given by name. If state is True the interface is
    --  brought up.

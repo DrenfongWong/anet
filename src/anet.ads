@@ -107,9 +107,6 @@ package Anet is
    Loopback_Addr_V6 : constant IPv6_Addr_Type;
    --  IPv6 loopback address (::1).
 
-   Max_Iface_Name_Len : constant := 16;
-   --  Maximum length of an interface name (IFNAMSIZ).
-
    Max_Unix_Path_Len  : constant := 108;
    --  Maximum length of an unix pathname.
 

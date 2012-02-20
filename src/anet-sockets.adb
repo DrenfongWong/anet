@@ -26,27 +26,27 @@ with Anet.Sockets.Thin;
 package body Anet.Sockets is
 
    function Get_Iface_Index
-     (Name : String)
+     (Name : Iface_Name_Type)
       return Positive
       renames Thin.Get_Iface_Index;
 
    function Get_Iface_Mac
-     (Name : String)
+     (Name : Iface_Name_Type)
       return Hardware_Addr_Type
       renames Thin.Get_Iface_Mac;
 
    function Get_Iface_IP
-     (Name : String)
+     (Name : Iface_Name_Type)
       return IPv4_Addr_Type
       renames Thin.Get_Iface_IP;
 
    function Is_Iface_Up
-     (Name : String)
+     (Name : Iface_Name_Type)
       return Boolean
       renames Thin.Is_Iface_Up;
 
    procedure Set_Iface_State
-     (Name  : String;
+     (Name  : Iface_Name_Type;
       State : Boolean)
       renames Thin.Set_Iface_State;
 
@@ -67,7 +67,7 @@ package body Anet.Sockets is
    procedure Bind
      (Socket  : in out Socket_Type;
       Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        String           := "")
+      Iface   :        Iface_Name_Type  := "")
    is
    begin
       Thin.Set_Socket_Option
@@ -83,7 +83,7 @@ package body Anet.Sockets is
            (Socket => Socket.Sock_FD,
             Level  => Thin.Socket_Level,
             Option => Bind_To_Device,
-            Value  => Iface);
+            Value  => String (Iface));
       end if;
    end Bind;
 
@@ -91,7 +91,7 @@ package body Anet.Sockets is
 
    procedure Bind_Packet
      (Socket : in out Socket_Type;
-      Iface  :        String)
+      Iface  :        Iface_Name_Type)
    is
    begin
       Thin.Bind_Socket (Socket => Socket.Sock_FD,
@@ -158,7 +158,7 @@ package body Anet.Sockets is
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
       Group  : Socket_Addr_Type;
-      Iface  : String := "")
+      Iface  : Iface_Name_Type := "")
    is
    begin
       Thin.Join_Multicast_Group (Socket => Socket.Sock_FD,
@@ -232,7 +232,7 @@ package body Anet.Sockets is
      (Socket :     Socket_Type;
       Item   :     Ada.Streams.Stream_Element_Array;
       To     :     Hardware_Addr_Type;
-      Iface  :     String)
+      Iface  :     Iface_Name_Type)
    is
       use type Ada.Streams.Stream_Element_Offset;
 

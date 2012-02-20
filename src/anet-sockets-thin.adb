@@ -162,7 +162,7 @@ package body Anet.Sockets.Thin is
    function Ioctl_Get
      (Socket     : Integer;
       Request    : Netdev_Request_Name;
-      Iface_Name : String)
+      Iface_Name : Iface_Name_Type)
       return If_Req_Type;
    --  Execute netdevice ioctl get request on interface with given name. The
    --  specified socket must have been created beforehand. The procedure
@@ -176,7 +176,7 @@ package body Anet.Sockets.Thin is
    --  type. The specified socket must have been created beforehand.
 
    function Query_Iface
-     (Iface_Name : String;
+     (Iface_Name : Iface_Name_Type;
       Request    : Netdev_Request_Name)
       return If_Req_Type;
    --  Query interface with given request.
@@ -238,7 +238,7 @@ package body Anet.Sockets.Thin is
 
    procedure Bind_Socket
      (Socket : Integer;
-      Iface  : String)
+      Iface  : Iface_Name_Type)
    is
       use type C.int;
 
@@ -256,7 +256,7 @@ package body Anet.Sockets.Thin is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind packet socket to interface "
-           & Iface & " - " & Get_Errno_String;
+           & String (Iface) & " - " & Get_Errno_String;
       end if;
    end Bind_Socket;
 
@@ -381,7 +381,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Get_Iface_Index (Name : String) return Positive
+   function Get_Iface_Index (Name : Iface_Name_Type) return Positive
    is
       Req : constant If_Req_Type := Query_Iface
         (Iface_Name => Name,
@@ -392,7 +392,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Get_Iface_IP (Name : String) return IPv4_Addr_Type
+   function Get_Iface_IP (Name : Iface_Name_Type) return IPv4_Addr_Type
    is
       Req : constant If_Req_Type := Query_Iface
         (Iface_Name => Name,
@@ -415,7 +415,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Get_Iface_Mac (Name : String) return Hardware_Addr_Type
+   function Get_Iface_Mac (Name : Iface_Name_Type) return Hardware_Addr_Type
    is
       Req  : constant If_Req_Type := Query_Iface
         (Iface_Name => Name,
@@ -487,16 +487,12 @@ package body Anet.Sockets.Thin is
    function Ioctl_Get
      (Socket     : Integer;
       Request    : Netdev_Request_Name;
-      Iface_Name : String)
+      Iface_Name : Iface_Name_Type)
       return If_Req_Type
    is
-      C_Name  : constant C.char_array := C.To_C (Iface_Name);
+      C_Name  : constant C.char_array := C.To_C (String (Iface_Name));
       If_Req  : aliased If_Req_Type (Name => Request);
    begin
-      if C_Name'Length > Max_Iface_Name_Len then
-         raise Socket_Error with "Invalid interface name " & Iface_Name;
-      end if;
-
       If_Req.Ifr_Name (1 .. C_Name'Length) := C_Name;
 
       Ioctl (Socket  => Socket,
@@ -508,7 +504,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Is_Iface_Up (Name : String) return Boolean
+   function Is_Iface_Up (Name : Iface_Name_Type) return Boolean
    is
       use type Interfaces.C.short;
 
@@ -524,7 +520,7 @@ package body Anet.Sockets.Thin is
    procedure Join_Multicast_Group
      (Socket : Integer;
       Group  : Socket_Addr_Type;
-      Iface  : String := "")
+      Iface  : Iface_Name_Type := "")
    is
       use type Interfaces.C.int;
 
@@ -585,7 +581,7 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    function Query_Iface
-     (Iface_Name : String;
+     (Iface_Name : Iface_Name_Type;
       Request    : Netdev_Request_Name)
       return If_Req_Type
    is
@@ -741,7 +737,7 @@ package body Anet.Sockets.Thin is
       Data   :     Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset;
       To     :     Hardware_Addr_Type;
-      Iface  :     String)
+      Iface  :     Iface_Name_Type)
    is
       use type C.int;
       use type Ada.Streams.Stream_Element_Offset;
@@ -766,7 +762,7 @@ package body Anet.Sockets.Thin is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to send packet data on interface "
-           & Iface & " to " & To_String (Address => To)
+           & String (Iface) & " to " & To_String (Address => To)
            & " - " & Get_Errno_String;
       end if;
 
@@ -801,7 +797,7 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Set_Iface_State
-     (Name  : String;
+     (Name  : Iface_Name_Type;
       State : Boolean)
    is
       Sock : Integer := -1;
@@ -809,13 +805,9 @@ package body Anet.Sockets.Thin is
       Create_Socket (Socket => Sock);
 
       declare
-         C_Name : constant C.char_array := C.To_C (Name);
+         C_Name : constant C.char_array := C.To_C (String (Name));
          Req    : aliased If_Req_Type (Name => If_Flags);
       begin
-         if C_Name'Length > Max_Iface_Name_Len then
-            raise Socket_Error with "Invalid interface name " & Name;
-         end if;
-
          Req.Ifr_Name (1 .. C_Name'Length) := C_Name;
 
          if State then

@@ -127,18 +127,6 @@ package body Anet_Socket_Tests is
    is
    begin
       declare
-         Too_Long : constant String (2 .. 18) := (others => 'b');
-         Index    : Positive;
-         pragma Unreferenced (Index);
-      begin
-         Index := Get_Iface_Index (Name => Too_Long);
-         Fail (Message => "Expected socket error (too long)");
-
-      exception
-         when Socket_Error => null;
-      end;
-
-      declare
          Index : Positive;
          pragma Unreferenced (Index);
       begin
@@ -149,12 +137,8 @@ package body Anet_Socket_Tests is
          when Socket_Error => null;
       end;
 
-      declare
-         Valid : constant String (2 .. 3) := "lo";
-      begin
-         Assert (Condition => Get_Iface_Index (Name => Valid) = 1,
-                 Message   => "Loopback index not 1");
-      end;
+      Assert (Condition => Get_Iface_Index (Name => "lo") = 1,
+              Message   => "Loopback index not 1");
    end Get_Loopback_Interface_Index;
 
    -------------------------------------------------------------------------
