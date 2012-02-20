@@ -97,7 +97,7 @@ package Anet.Sockets is
       Path   :        String);
    --  Connect given unix socket (Family_Unix) to specified path.
 
-   procedure Accept_Unix
+   procedure Accept_Socket
      (Socket     :     Socket_Type;
       New_Socket : out Socket_Type);
    --  Accept first connection request from listening socket and return new

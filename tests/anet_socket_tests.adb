@@ -431,7 +431,7 @@ package body Anet_Socket_Tests is
                          Mode   => Stream_Socket);
             Sock.Bind_Unix (Path => Path);
             Sock.Listen_Unix;
-            Sock.Accept_Unix (New_Socket => S2);
+            Sock.Accept_Socket (New_Socket => S2);
             S2.Receive (Src  => Sender,
                         Item => Buffer,
                         Last => Last);
