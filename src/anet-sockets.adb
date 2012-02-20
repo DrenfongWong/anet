@@ -155,6 +155,18 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
+   function Is_Valid_Iface (Name : String) return Boolean
+   is
+   begin
+      if Name'Length in Iface_Name_Range then
+         return True;
+      else
+         return False;
+      end if;
+   end Is_Valid_Iface;
+
+   -------------------------------------------------------------------------
+
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
       Group  : Socket_Addr_Type;

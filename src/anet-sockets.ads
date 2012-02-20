@@ -41,6 +41,9 @@ package Anet.Sockets is
    type Iface_Name_Type is array (Iface_Name_Range range <>) of Character;
    --  Interface name type.
 
+   function Is_Valid_Iface (Name : String) return Boolean;
+   --  Returns true if the given name is a valid interface name.
+
    Max_Unix_Path_Len  : constant := 108;
    --  Maximum length of an unix path (UNIX_PATH_MAX).
 

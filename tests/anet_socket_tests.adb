@@ -225,6 +225,9 @@ package body Anet_Socket_Tests is
       T.Add_Test_Routine
         (Routine => Socket_Addr_To_String'Access,
          Name    => "Socket address to string conversion");
+      T.Add_Test_Routine
+        (Routine => Valid_Iface_Names'Access,
+         Name    => "Interface name validation");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -850,5 +853,20 @@ package body Anet_Socket_Tests is
         (Condition => To_String (Address => Test_Addr_Unix) = Test_Unix_Str,
          Message   => "UNIX path mismatch");
    end Socket_Addr_To_String;
+
+   -------------------------------------------------------------------------
+
+   procedure Valid_Iface_Names
+   is
+      Too_Long : constant String :=
+        (1 .. Sockets.Max_Iface_Name_Len + 1 => 'a');
+   begin
+      Assert (Condition => Is_Valid_Iface (Name => "lo"),
+              Message   => "Invalid interface name 'lo'");
+      Assert (Condition => not Is_Valid_Iface (Name => ""),
+              Message   => "Valid empty interface name");
+      Assert (Condition => not Is_Valid_Iface (Name => Too_Long),
+              Message   => "Valid interface name '" & Too_Long & "'");
+   end Valid_Iface_Names;
 
 end Anet_Socket_Tests;

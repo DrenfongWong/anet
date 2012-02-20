@@ -78,4 +78,7 @@ package Anet_Socket_Tests is
    procedure Socket_Addr_To_String;
    --  Test string conversion of socket address type.
 
+   procedure Valid_Iface_Names;
+   --  Test interface name validation.
+
 end Anet_Socket_Tests;
