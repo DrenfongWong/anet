@@ -81,4 +81,7 @@ package Anet_Socket_Tests is
    procedure Valid_Iface_Names;
    --  Test interface name validation.
 
+   procedure Valid_Unix_Paths;
+   --  Test unix path validation.
+
 end Anet_Socket_Tests;

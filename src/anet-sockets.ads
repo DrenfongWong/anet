@@ -53,6 +53,9 @@ package Anet.Sockets is
    type Unix_Path_Type is array (Unix_Path_Range range <>) of Character;
    --  Unix path type.
 
+   function Is_Valid_Unix (Path : String) return Boolean;
+   --  Returns true if the given path is a valid unix path.
+
    type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
    --  Address families (IPv4, IPv6, raw).
 

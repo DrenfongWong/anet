@@ -228,6 +228,9 @@ package body Anet_Socket_Tests is
       T.Add_Test_Routine
         (Routine => Valid_Iface_Names'Access,
          Name    => "Interface name validation");
+      T.Add_Test_Routine
+        (Routine => Valid_Unix_Paths'Access,
+         Name    => "Unix path validation");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -868,5 +871,20 @@ package body Anet_Socket_Tests is
       Assert (Condition => not Is_Valid_Iface (Name => Too_Long),
               Message   => "Valid interface name '" & Too_Long & "'");
    end Valid_Iface_Names;
+
+   -------------------------------------------------------------------------
+
+   procedure Valid_Unix_Paths
+   is
+      Too_Long : constant String :=
+        (1 .. Sockets.Max_Unix_Path_Len + 1 => 'a');
+   begin
+      Assert (Condition => Is_Valid_Unix (Path => "/tmp/foopath"),
+              Message   => "Invalid path '/tmp/foopath'");
+      Assert (Condition => not Is_Valid_Unix (Path => ""),
+              Message   => "Valid empty path");
+      Assert (Condition => not Is_Valid_Unix (Path => Too_Long),
+              Message   => "Valid Path '" & Too_Long & "'");
+   end Valid_Unix_Paths;
 
 end Anet_Socket_Tests;
