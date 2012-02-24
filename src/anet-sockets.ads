@@ -91,8 +91,8 @@ package Anet.Sockets is
 
    procedure Create
      (Socket : out Socket_Type;
-      Family :     Family_Type := Family_Inet;
-      Mode   :     Mode_Type   := Datagram_Socket);
+      Family :     Family_Type;
+      Mode   :     Mode_Type);
    --  Create a new socket with given family (IPv4, IPv6, packet, Unix) and
    --  mode (UDP, TCP).
 

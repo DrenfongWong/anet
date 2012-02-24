@@ -135,8 +135,8 @@ package body Anet.Sockets is
 
    procedure Create
      (Socket : out Socket_Type;
-      Family :     Family_Type := Family_Inet;
-      Mode   :     Mode_Type   := Datagram_Socket)
+      Family :     Family_Type;
+      Mode   :     Mode_Type)
    is
    begin
       Thin.Create_Socket (Socket => Socket.Sock_FD,

@@ -59,7 +59,8 @@ package body Anet_Socket_Tests is
    is
       Sock : aliased Socket_Type;
    begin
-      Sock.Create;
+      Sock.Create (Family => Family_Inet,
+                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Addr_V4);
 
       declare
@@ -243,7 +244,8 @@ package body Anet_Socket_Tests is
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
-      Sock.Create;
+      Sock.Create (Family => Family_Inet,
+                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Addr_V4);
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
@@ -301,7 +303,8 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Inet6);
       begin
-         Sock.Create (Family => Family_Inet6);
+         Sock.Create (Family => Family_Inet6,
+                      Mode   => Datagram_Socket);
          Sock.Bind (Address => Addr);
          Sock.Join_Multicast_Group (Group => Addr);
 
@@ -471,7 +474,8 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type;
       begin
-         Sock.Create;
+         Sock.Create (Family => Family_Inet,
+                      Mode   => Datagram_Socket);
          Sock.Bind (Address => Test_Addr_V4);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -520,7 +524,8 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Inet6);
       begin
-         Sock.Create (Family => Family_Inet6);
+         Sock.Create (Family => Family_Inet6,
+                      Mode   => Datagram_Socket);
          Sock.Bind (Address => Test_Addr_V6);
 
          Sock.Receive (Src  => Sender,
@@ -574,7 +579,8 @@ package body Anet_Socket_Tests is
             Addr_V6 => Grp,
             Port_V6 => Test_Utils.Listen_Port);
    begin
-      Sock.Create (Family => Family_Inet6);
+      Sock.Create (Family => Family_Inet6,
+                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Addr);
       Sock.Join_Multicast_Group (Group => Addr);
 
@@ -735,7 +741,8 @@ package body Anet_Socket_Tests is
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
-      Sock.Create;
+      Sock.Create (Family => Family_Inet,
+                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Addr_V4);
 
       Tasking.Listen (Receiver => R,
@@ -785,7 +792,8 @@ package body Anet_Socket_Tests is
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
    begin
-      Sock.Create (Family => Family_Inet6);
+      Sock.Create (Family => Family_Inet6,
+                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Addr_V6);
 
       Tasking.Listen (Receiver => R,
