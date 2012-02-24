@@ -77,6 +77,7 @@ package body Anet.Sockets is
 
       Thin.Bind_Socket (Socket  => Socket.Sock_FD,
                         Address => Address);
+      Socket.Address := Address;
 
       if Iface'Length /= 0 then
          Thin.Set_Socket_Option
@@ -96,6 +97,7 @@ package body Anet.Sockets is
    begin
       Thin.Bind_Socket (Socket => Socket.Sock_FD,
                         Iface  => Iface);
+      Socket.Address.HW_Addr := Get_Iface_Mac (Name => Iface);
    end Bind_Packet;
 
    -------------------------------------------------------------------------
@@ -107,6 +109,8 @@ package body Anet.Sockets is
    begin
       Thin.Bind_Unix_Socket (Socket => Socket.Sock_FD,
                              Path  => Path);
+      Socket.Address.Path := Ada.Strings.Unbounded.To_Unbounded_String
+        (String (Path));
    end Bind_Unix;
 
    -------------------------------------------------------------------------
