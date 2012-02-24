@@ -57,7 +57,7 @@ package body Anet.Sockets is
       New_Socket : out Socket_Type)
    is
    begin
-      New_Socket.Family := Socket.Family;
+      New_Socket.Address := Socket.Address;
       Thin.Accept_Socket (Socket     => Socket.Sock_FD,
                           New_Socket => New_Socket.Sock_FD);
    end Accept_Socket;
@@ -138,11 +138,12 @@ package body Anet.Sockets is
       Family :     Family_Type;
       Mode   :     Mode_Type)
    is
+      Addr : Socket_Addr_Type (Family => Family);
    begin
       Thin.Create_Socket (Socket => Socket.Sock_FD,
                           Family => Family,
                           Mode   => Mode);
-      Socket.Family := Family;
+      Socket.Address := Addr;
    end Create;
 
    -------------------------------------------------------------------------
@@ -210,12 +211,12 @@ package body Anet.Sockets is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
    begin
-      if Socket.Family = Family_Packet then
+      if Socket.Address.Family = Family_Packet then
          Thin.Receive_Socket (Socket      => Socket.Sock_FD,
                               Data        => Item,
                               Last        => Last,
                               Src_HW_Addr => Src.HW_Addr);
-      elsif Socket.Family = Family_Unix then
+      elsif Socket.Address.Family = Family_Unix then
          Thin.Receive_Socket (Socket => Socket.Sock_FD,
                               Data   => Item,
                               Last   => Last);
