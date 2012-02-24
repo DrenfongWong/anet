@@ -60,6 +60,9 @@ package Anet_Socket_Tests is
    procedure Receive_Unix_Datagram;
    --  Test data reception with datagram UNIX socket.
 
+   procedure Unix_Delete_Socket;
+   --  Test socket path cleanup of UNIX domain socket.
+
    procedure Listen_Callbacks;
    --  Test data reception callback handling.
 

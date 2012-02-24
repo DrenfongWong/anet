@@ -24,6 +24,7 @@
 with Ada.Streams;
 with Ada.Exceptions;
 with Ada.Strings.Unbounded;
+with Ada.Directories;
 
 with Anet.OS;
 with Anet.Sockets.Tasking;
@@ -208,6 +209,9 @@ package body Anet_Socket_Tests is
       T.Add_Test_Routine
         (Routine => Receive_Unix_Datagram'Access,
          Name    => "Receive data (Unix, datagram)");
+      T.Add_Test_Routine
+        (Routine => Unix_Delete_Socket'Access,
+         Name    => "Unix socket removal");
       T.Add_Test_Routine
         (Routine => Listen_Callbacks'Access,
          Name    => "Data reception callback handling");
@@ -864,6 +868,25 @@ package body Anet_Socket_Tests is
         (Condition => To_String (Address => Test_Addr_Unix) = Test_Unix_Str,
          Message   => "UNIX path mismatch");
    end Socket_Addr_To_String;
+
+   -------------------------------------------------------------------------
+
+   procedure Unix_Delete_Socket
+   is
+      Path : constant String := "obj/my_socket";
+   begin
+      declare
+         Sock : Socket_Type;
+      begin
+         Sock.Create (Family => Family_Unix,
+                      Mode   => Datagram_Socket);
+         Sock.Bind_Unix (Path => Unix_Path_Type (Path));
+         Assert (Condition => Ada.Directories.Exists (Name => Path),
+                 Message   => "Path not found");
+      end;
+      Assert (Condition => not Ada.Directories.Exists (Name => Path),
+              Message   => "Socket path still there");
+   end Unix_Delete_Socket;
 
    -------------------------------------------------------------------------
 
