@@ -29,6 +29,18 @@ package Anet.Test_Utils is
 
    Listen_Port : constant := 32101;
 
+   Test_Addr_V4 : constant Sockets.Socket_Addr_Type
+     := (Family  => Sockets.Family_Inet,
+         Addr_V4 => Loopback_Addr_V4,
+         Port_V4 => Test_Utils.Listen_Port);
+   --  IPv4 test address constant.
+
+   Test_Addr_V6 : constant Sockets.Socket_Addr_Type
+     := (Family  => Sockets.Family_Inet6,
+         Addr_V6 => Loopback_Addr_V6,
+         Port_V6 => Test_Utils.Listen_Port);
+   --  IPv6 test address constant.
+
    Tmp_Dir     : constant String := "/tmp";
    --  Directory to store temporary test files.
 
@@ -76,9 +88,7 @@ package Anet.Test_Utils is
    --  Hex stream of reference DHCP Ack bootp message.
 
    procedure Send_Data
-     (Dst      : Sockets.Socket_Addr_Type := (Addr_V4 => Loopback_Addr_V4,
-                                              Port_V4 => Listen_Port,
-                                              others => <>);
+     (Dst      : Sockets.Socket_Addr_Type := Test_Addr_V4;
       Filename : String);
    --  Send data from file given by filename to socket.
 

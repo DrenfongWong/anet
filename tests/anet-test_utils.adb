@@ -149,9 +149,7 @@ package body Anet.Test_Utils is
    -------------------------------------------------------------------------
 
    procedure Send_Data
-     (Dst      : Sockets.Socket_Addr_Type := (Addr_V4 => Loopback_Addr_V4,
-                                              Port_V4 => Listen_Port,
-                                              others => <>);
+     (Dst      : Sockets.Socket_Addr_Type := Test_Addr_V4;
       Filename : String)
    is
       use Ada.Strings.Unbounded;

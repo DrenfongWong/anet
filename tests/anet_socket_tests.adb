@@ -42,18 +42,6 @@ package body Anet_Socket_Tests is
    --  Receiver error handler callback for testing purposes. It ignores the
    --  exception and tells the receiver to terminate by setting the stop flag.
 
-   Test_Addr_V4 : constant Socket_Addr_Type
-     := (Family  => Family_Inet,
-         Addr_V4 => Loopback_Addr_V4,
-         Port_V4 => Test_Utils.Listen_Port);
-   --  IPv4 test address constant.
-
-   Test_Addr_V6 : constant Socket_Addr_Type
-     := (Family  => Family_Inet6,
-         Addr_V6 => Loopback_Addr_V6,
-         Port_V6 => Test_Utils.Listen_Port);
-   --  IPv6 test address constant.
-
    task type Command_Task (Command : access constant String) is
       entry Wait;
    end Command_Task;
@@ -76,7 +64,7 @@ package body Anet_Socket_Tests is
    begin
       Sock.Create (Family => Family_Inet,
                    Mode   => Datagram_Socket);
-      Sock.Bind (Address => Test_Addr_V4);
+      Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
       declare
          R : Tasking.Receiver_Type (S => Sock'Access);
@@ -84,7 +72,7 @@ package body Anet_Socket_Tests is
          Tasking.Listen (Receiver => R,
                          Callback => Test_Utils.Raise_Error'Access);
 
-         Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+         Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
          --  By default all errors should be ignored
 
@@ -107,7 +95,7 @@ package body Anet_Socket_Tests is
          Tasking.Listen (Receiver => R,
                          Callback => Test_Utils.Raise_Error'Access);
 
-         Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+         Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
          Assert (Condition => not Tasking.Is_Listening (Receiver => R),
                  Message   => "Receiver still listening");
@@ -264,14 +252,14 @@ package body Anet_Socket_Tests is
    begin
       Sock.Create (Family => Family_Inet,
                    Mode   => Datagram_Socket);
-      Sock.Bind (Address => Test_Addr_V4);
+      Sock.Bind (Address => Test_Utils.Test_Addr_V4);
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
 
       Assert (Condition => Tasking.Is_Listening (Receiver => R),
               Message   => "Receiver not listening");
 
-      Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+      Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
       for I in 1 .. 30 loop
          C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
@@ -334,7 +322,7 @@ package body Anet_Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Anet.Test_Utils.Send_Data
+      Test_Utils.Send_Data
         (Dst      => Addr,
          Filename => "data/chunk1.dat");
 
@@ -490,7 +478,7 @@ package body Anet_Socket_Tests is
       begin
          Sock.Create (Family => Family_Inet,
                       Mode   => Datagram_Socket);
-         Sock.Bind (Address => Test_Addr_V4);
+         Sock.Bind (Address => Test_Utils.Test_Addr_V4);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -499,7 +487,7 @@ package body Anet_Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Anet.Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+      Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
       select
          delay 3.0;
@@ -540,7 +528,7 @@ package body Anet_Socket_Tests is
       begin
          Sock.Create (Family => Family_Inet6,
                       Mode   => Datagram_Socket);
-         Sock.Bind (Address => Test_Addr_V6);
+         Sock.Bind (Address => Test_Utils.Test_Addr_V6);
 
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -550,8 +538,8 @@ package body Anet_Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Anet.Test_Utils.Send_Data (Dst      => Test_Addr_V6,
-                                 Filename => "data/chunk1.dat");
+      Test_Utils.Send_Data (Dst      => Test_Utils.Test_Addr_V6,
+                            Filename => "data/chunk1.dat");
 
       select
          delay 3.0;
@@ -739,7 +727,7 @@ package body Anet_Socket_Tests is
    begin
       Sock.Create (Family => Family_Inet,
                    Mode   => Datagram_Socket);
-      Sock.Bind (Address => Test_Addr_V4);
+      Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
@@ -749,7 +737,7 @@ package body Anet_Socket_Tests is
       delay 0.2;
 
       Sock.Send (Item => Data,
-                 Dst  => Test_Addr_V4);
+                 Dst  => Test_Utils.Test_Addr_V4);
 
       for I in 1 .. 30 loop
          C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
@@ -790,7 +778,7 @@ package body Anet_Socket_Tests is
    begin
       Sock.Create (Family => Family_Inet6,
                    Mode   => Datagram_Socket);
-      Sock.Bind (Address => Test_Addr_V6);
+      Sock.Bind (Address => Test_Utils.Test_Addr_V6);
 
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
@@ -800,7 +788,7 @@ package body Anet_Socket_Tests is
       delay 0.2;
 
       Sock.Send (Item => Data,
-                 Dst  => Test_Addr_V6);
+                 Dst  => Test_Utils.Test_Addr_V6);
 
       for I in 1 .. 30 loop
          C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
@@ -833,6 +821,8 @@ package body Anet_Socket_Tests is
    is
       use Ada.Strings.Unbounded;
 
+      package TU renames Anet.Test_Utils;
+
       Port_Str       : constant String := Test_Utils.Listen_Port'Img;
       Test_V4_Str    : constant String := "127.0.0.1 (" & Port_Str & " )";
       Test_V6_Str    : constant String
@@ -848,10 +838,10 @@ package body Anet_Socket_Tests is
             Path   => Test_Unix_Str);
    begin
       Assert
-        (Condition => To_String (Address => Test_Addr_V4) = Test_V4_Str,
+        (Condition => To_String (Address => TU.Test_Addr_V4) = Test_V4_Str,
          Message   => "IPv4 string mismatch");
       Assert
-        (Condition => To_String (Address => Test_Addr_V6) = Test_V6_Str,
+        (Condition => To_String (Address => TU.Test_Addr_V6) = Test_V6_Str,
          Message   => "IPv6 string mismatch");
       Assert
         (Condition => To_String (Address => Test_Addr_L2) = Test_L2_Str,
