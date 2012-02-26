@@ -39,8 +39,8 @@ package Anet_Socket_Tests is
    procedure Send_Multicast_V6;
    --  Test sending over IPv6 multicast.
 
-   procedure Send_Unix_Streaming;
-   --  Test sending over a streaming Unix socket.
+   procedure Send_Unix_Stream;
+   --  Test sending over a UNIX stream socket.
 
    procedure Send_Unix_Datagram;
    --  Test sending over a datagram Unix socket.
@@ -54,8 +54,8 @@ package Anet_Socket_Tests is
    procedure Receive_Multicast_V6;
    --  Test IPv6 multicast data reception.
 
-   procedure Receive_Unix_Streaming;
-   --  Test data reception with streaming UNIX socket.
+   procedure Receive_Unix_Stream;
+   --  Test data reception with UNIX stream socket.
 
    procedure Receive_Unix_Datagram;
    --  Test data reception with datagram UNIX socket.

@@ -203,8 +203,8 @@ package body Anet_Socket_Tests is
         (Routine => Send_Multicast_V6'Access,
          Name    => "Send data (IPv6 multicast)");
       T.Add_Test_Routine
-        (Routine => Send_Unix_Streaming'Access,
-         Name    => "Send data (Unix, streaming)");
+        (Routine => Send_Unix_Stream'Access,
+         Name    => "Send data (Unix, stream)");
       T.Add_Test_Routine
         (Routine => Send_Unix_Datagram'Access,
          Name    => "Send data (Unix, datagram)");
@@ -218,8 +218,8 @@ package body Anet_Socket_Tests is
         (Routine => Receive_Multicast_V6'Access,
          Name    => "Receive data (IPv6 multicast)");
       T.Add_Test_Routine
-        (Routine => Receive_Unix_Streaming'Access,
-         Name    => "Receive data (Unix, streaming)");
+        (Routine => Receive_Unix_Stream'Access,
+         Name    => "Receive data (Unix, stream)");
       T.Add_Test_Routine
         (Routine => Receive_Unix_Datagram'Access,
          Name    => "Receive data (Unix, datagram)");
@@ -417,7 +417,7 @@ package body Anet_Socket_Tests is
 
    -------------------------------------------------------------------------
 
-   procedure Receive_Unix_Streaming
+   procedure Receive_Unix_Stream
    is
       Path   : constant Unix_Path_Type := "obj/mysock2";
       Cmd    : constant String         := "socat -u EXEC:'cat data/chunk1.dat"
@@ -471,7 +471,7 @@ package body Anet_Socket_Tests is
          end if;
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
-   end Receive_Unix_Streaming;
+   end Receive_Unix_Stream;
 
    -------------------------------------------------------------------------
 
@@ -681,7 +681,7 @@ package body Anet_Socket_Tests is
 
    -------------------------------------------------------------------------
 
-   procedure Send_Unix_Streaming
+   procedure Send_Unix_Stream
    is
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
@@ -723,7 +723,7 @@ package body Anet_Socket_Tests is
          end if;
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
-   end Send_Unix_Streaming;
+   end Send_Unix_Stream;
 
    -------------------------------------------------------------------------
 
