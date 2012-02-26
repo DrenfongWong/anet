@@ -54,6 +54,20 @@ package body Anet_Socket_Tests is
          Port_V6 => Test_Utils.Listen_Port);
    --  IPv6 test address constant.
 
+   task type Command_Task (Command : access constant String) is
+      entry Wait;
+   end Command_Task;
+   --  Command task. Executes given command and Waits for rendezvous.
+
+   -------------------------------------------------------------------------
+
+   task body Command_Task
+   is
+   begin
+      OS.Execute (Command => Command.all);
+      accept Wait;
+   end Command_Task;
+
    -------------------------------------------------------------------------
 
    procedure Error_Callbacks
@@ -627,20 +641,11 @@ package body Anet_Socket_Tests is
         := OS.Read_File (Filename => "data/chunk1.dat");
 
       Path : constant Unix_Path_Type := "/tmp/mysock";
-      Cmd  : constant String         := "socat UNIX-RECV:" & String (Path)
+      Cmd  : aliased constant String := "socat UNIX-RECV:" & String (Path)
         & " " & Test_Utils.Dump_File;
       Sock : Socket_Type;
 
-      task Receiver is
-         entry Wait;
-      end Receiver;
-
-      task body Receiver is
-      begin
-         OS.Execute (Command => Cmd);
-
-         accept Wait;
-      end Receiver;
+      Receiver : Command_Task (Command => Cmd'Access);
    begin
       Sock.Create (Family => Family_Unix,
                    Mode   => Datagram_Socket);
@@ -681,21 +686,12 @@ package body Anet_Socket_Tests is
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
 
-      Path : constant String := "/tmp/mysock";
-      Cmd  : constant String := "socat UNIX-LISTEN:" & Path & " "
+      Path : constant String         := "/tmp/mysock";
+      Cmd  : aliased constant String := "socat UNIX-LISTEN:" & Path & " "
         & Test_Utils.Dump_File;
       Sock : Socket_Type;
 
-      task Receiver is
-         entry Wait;
-      end Receiver;
-
-      task body Receiver is
-      begin
-         OS.Execute (Command => Cmd);
-
-         accept Wait;
-      end Receiver;
+      Receiver : Command_Task (Command => Cmd'Access);
    begin
       Sock.Create (Family => Family_Unix,
                    Mode   => Stream_Socket);
