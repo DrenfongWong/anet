@@ -365,16 +365,14 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Unix);
       begin
-         begin
-            Sock.Create (Family => Family_Unix,
-                         Mode   => Datagram_Socket);
-            Sock.Bind_Unix (Path => Unix_Path_Type (Path));
-            Sock.Receive (Src  => Sender,
-                          Item => Buffer,
-                          Last => Last);
-            Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                             Src  => Sender);
-         end;
+         Sock.Create (Family => Family_Unix,
+                      Mode   => Datagram_Socket);
+         Sock.Bind_Unix (Path => Unix_Path_Type (Path));
+         Sock.Receive (Src  => Sender,
+                       Item => Buffer,
+                       Last => Last);
+         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
+                          Src  => Sender);
 
          accept Wait;
       end Receiver;
@@ -423,18 +421,16 @@ package body Anet_Socket_Tests is
          Sender : Socket_Addr_Type (Family => Family_Unix);
          S2     : Socket_Type;
       begin
-         begin
-            Sock.Create (Family => Family_Unix,
-                         Mode   => Stream_Socket);
-            Sock.Bind_Unix (Path => Path);
-            Sock.Listen_Unix;
-            Sock.Accept_Socket (New_Socket => S2);
-            S2.Receive (Src  => Sender,
-                        Item => Buffer,
-                        Last => Last);
-            Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                             Src  => Sender);
-         end;
+         Sock.Create (Family => Family_Unix,
+                      Mode   => Stream_Socket);
+         Sock.Bind_Unix (Path => Path);
+         Sock.Listen_Unix;
+         Sock.Accept_Socket (New_Socket => S2);
+         S2.Receive (Src  => Sender,
+                     Item => Buffer,
+                     Last => Last);
+         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
+                          Src  => Sender);
 
          accept Wait;
       end Receiver;
