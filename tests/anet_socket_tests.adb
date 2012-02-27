@@ -195,6 +195,9 @@ package body Anet_Socket_Tests is
         (Routine => Send_V6_Datagram'Access,
          Name    => "Send data (IPv6, datagram)");
       T.Add_Test_Routine
+        (Routine => Send_Multicast_V4'Access,
+         Name    => "Send data (IPv4 multicast)");
+      T.Add_Test_Routine
         (Routine => Send_Multicast_V6'Access,
          Name    => "Send data (IPv6 multicast)");
       T.Add_Test_Routine
@@ -692,6 +695,64 @@ package body Anet_Socket_Tests is
          OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_V6_Stream;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_Multicast_V4
+   is
+      use type Anet.Sockets.Tasking.Count_Type;
+
+      Data : constant Ada.Streams.Stream_Element_Array
+        := OS.Read_File (Filename => "data/chunk1.dat");
+      C    : Tasking.Count_Type := 0;
+      Sock : aliased Socket_Type;
+      R    : Tasking.Receiver_Type (S => Sock'Access);
+      Grp  : constant IPv4_Addr_Type
+        := To_IPv4_Addr (Str => "224.0.0.117");
+      Addr : constant Socket_Addr_Type
+        := (Family  => Family_Inet,
+            Addr_V4 => Grp,
+            Port_V4 => Test_Utils.Listen_Port);
+   begin
+      Sock.Create (Family => Family_Inet,
+                   Mode   => Datagram_Socket);
+      Sock.Bind (Address => Addr);
+      Sock.Join_Multicast_Group (Group => Addr);
+
+      Tasking.Listen (Receiver => R,
+                      Callback => Test_Utils.Dump'Access);
+
+      --  Precautionary delay to make sure receiver task is ready.
+
+      delay 0.2;
+
+      Sock.Send (Item => Data,
+                 Dst  => Addr);
+
+      for I in 1 .. 30 loop
+         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
+         exit when C > 0;
+         delay 0.1;
+      end loop;
+
+      Tasking.Stop (Receiver => R);
+
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+
+      Assert (Condition => Test_Utils.Equal_Files
+              (Filename1 => "data/chunk1.dat",
+               Filename2 => Test_Utils.Dump_File),
+              Message   => "Result mismatch");
+
+      OS.Delete_File (Filename => Test_Utils.Dump_File);
+
+   exception
+      when others =>
+         Tasking.Stop (Receiver => R);
+         OS.Delete_File (Filename => Test_Utils.Dump_File);
+         raise;
+   end Send_Multicast_V4;
 
    -------------------------------------------------------------------------
 
