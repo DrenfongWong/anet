@@ -30,8 +30,8 @@ package Anet_Socket_Tests is
    procedure Initialize (T : in out Testcase);
    --  Initialize testcase.
 
-   procedure Send_V4;
-   --  Test sending over IPv4 socket.
+   procedure Send_V4_Datagram;
+   --  Test sending over IPv4 datagram socket.
 
    procedure Send_V6;
    --  Test sending over IPv6 socket.
