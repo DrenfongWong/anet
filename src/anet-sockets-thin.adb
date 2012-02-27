@@ -188,6 +188,18 @@ package body Anet.Sockets.Thin is
       return If_Req_Type;
    --  Query interface with given request.
 
+   procedure Join_Multicast_Group_V4
+     (Socket : Integer;
+      Group  : Socket_Addr_Type;
+      Iface  : Iface_Name_Type := "");
+   --  Join the given IPv4 multicast group on the interface specified by name.
+
+   procedure Join_Multicast_Group_V6
+     (Socket : Integer;
+      Group  : Socket_Addr_Type;
+      Iface  : Iface_Name_Type := "");
+   --  Join the given IPv6 multicast group on the interface specified by name.
+
    -------------------------------------------------------------------------
 
    procedure Accept_Socket
@@ -534,6 +546,63 @@ package body Anet.Sockets.Thin is
       Group  : Socket_Addr_Type;
       Iface  : Iface_Name_Type := "")
    is
+   begin
+      if Group.Family = Family_Inet then
+         Join_Multicast_Group_V4 (Socket => Socket,
+                                  Group  => Group,
+                                  Iface  => Iface);
+      elsif Group.Family = Family_Inet6 then
+         Join_Multicast_Group_V6 (Socket => Socket,
+                                  Group  => Group,
+                                  Iface  => Iface);
+      end if;
+   end Join_Multicast_Group;
+
+   -------------------------------------------------------------------------
+
+   procedure Join_Multicast_Group_V4
+     (Socket : Integer;
+      Group  : Socket_Addr_Type;
+      Iface  : Iface_Name_Type := "")
+   is
+      use type Interfaces.C.int;
+
+      type IP_Mreq_Type is record
+         Imr_Multiaddr : IPv4_Addr_Type;
+         Imr_Interface : C.unsigned;
+      end record;
+      pragma Convention (C, IP_Mreq_Type);
+      --  struct ip_mreq (netinet/in.h).
+
+      Mreq : IP_Mreq_Type
+        := (Imr_Multiaddr => Group.Addr_V4,
+            Imr_Interface => 0);
+      Res  : C.int;
+   begin
+      if Iface'Length /= 0 then
+         Mreq.Imr_Interface := C.unsigned (Get_Iface_Index (Name => Iface));
+      end if;
+
+      Res := C_Setsockopt
+        (S       => C.int (Socket),
+         Level   => Constants.Sys.IPPROTO_IP,
+         Optname => Constants.Sys.IP_ADD_MEMBERSHIP,
+         Optval  => Mreq'Address,
+         Optlen  => Mreq'Size / 8);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to join multicast group "
+           & To_String (Address => Group) & ": " & Get_Errno_String;
+      end if;
+   end Join_Multicast_Group_V4;
+
+   -------------------------------------------------------------------------
+
+   procedure Join_Multicast_Group_V6
+     (Socket : Integer;
+      Group  : Socket_Addr_Type;
+      Iface  : Iface_Name_Type := "")
+   is
       use type Interfaces.C.int;
 
       type IPv6_Mreq_Type is record
@@ -563,7 +632,7 @@ package body Anet.Sockets.Thin is
          raise Socket_Error with "Unable to join multicast group "
            & To_String (Address => Group) & ": " & Get_Errno_String;
       end if;
-   end Join_Multicast_Group;
+   end Join_Multicast_Group_V6;
 
    -------------------------------------------------------------------------
 
