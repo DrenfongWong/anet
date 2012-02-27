@@ -204,7 +204,7 @@ package body Anet.Sockets.Thin is
       pragma Import (C, C_Accept, "accept");
 
       Res   : C.int;
-      Value : aliased Sockaddr_Un_Type;
+      Value : Sockaddr_Un_Type;
       Len   : aliased C.int;
    begin
       Res := C_Accept (S       => C.int (Socket),
@@ -228,8 +228,7 @@ package body Anet.Sockets.Thin is
       use type C.int;
 
       Res   : C.int;
-      Value : aliased constant Sockaddr_In_Type
-        := To_Sock_Addr (Address => Address);
+      Value : constant Sockaddr_In_Type := To_Sock_Addr (Address => Address);
    begin
       Res := C_Bind (S       => C.int (Socket),
                      Name    => Value'Address,
@@ -250,7 +249,7 @@ package body Anet.Sockets.Thin is
       use type C.int;
 
       Res   : C.int;
-      Value : aliased Sockaddr_LL_Type;
+      Value : Sockaddr_LL_Type;
    begin
       Value.Sa_Protocol := C.unsigned_short
         (Byte_Swapping.Host_To_Network
@@ -277,7 +276,7 @@ package body Anet.Sockets.Thin is
 
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
-      Value  : aliased Sockaddr_Un_Type;
+      Value  : Sockaddr_Un_Type;
    begin
       OS.Delete_File (Filename => String (Path));
 
@@ -320,7 +319,7 @@ package body Anet.Sockets.Thin is
       use type C.int;
 
       Res : C.int;
-      Sin : aliased constant Sockaddr_In_Type := To_Sock_Addr (Address => Dst);
+      Sin : constant Sockaddr_In_Type := To_Sock_Addr (Address => Dst);
    begin
       Res := C_Connect (S       => C.int (Socket),
                         Name    => Sin'Address,
@@ -342,7 +341,7 @@ package body Anet.Sockets.Thin is
 
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
-      Value  : aliased Sockaddr_Un_Type;
+      Value  : Sockaddr_Un_Type;
    begin
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
@@ -630,7 +629,7 @@ package body Anet.Sockets.Thin is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.int;
-      Sin : aliased Sockaddr_In_Type;
+      Sin : Sockaddr_In_Type;
       Len : aliased C.int := Sin'Size / 8;
    begin
       Res := C_Recvfrom (S       => C.int (Socket),
@@ -666,7 +665,7 @@ package body Anet.Sockets.Thin is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res   : C.int;
-      Saddr : aliased Sockaddr_LL_Type;
+      Saddr : Sockaddr_LL_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
       Res := C_Recvfrom (S       => C.int (Socket),
@@ -730,7 +729,7 @@ package body Anet.Sockets.Thin is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.int;
-      Sin : aliased constant Sockaddr_In_Type := To_Sock_Addr (Address => Dst);
+      Sin : constant Sockaddr_In_Type := To_Sock_Addr (Address => Dst);
    begin
       Res := C_Sendto (S     => C.int (Socket),
                        Buf   => Data'Address,
@@ -760,7 +759,7 @@ package body Anet.Sockets.Thin is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res     : C.int;
-      LL_Dest : aliased Sockaddr_LL_Type;
+      LL_Dest : Sockaddr_LL_Type;
    begin
       LL_Dest.Sa_Ifindex  := C.int (Get_Iface_Index (Name => Iface));
       LL_Dest.Sa_Halen    := To'Length;
@@ -855,7 +854,7 @@ package body Anet.Sockets.Thin is
    is
       use type Interfaces.C.int;
 
-      Val : aliased C.int := C.int (Boolean'Pos (Value));
+      Val : C.int := C.int (Boolean'Pos (Value));
       Res : C.int;
    begin
       Res := C_Setsockopt
