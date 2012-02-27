@@ -689,7 +689,7 @@ package body Anet_Socket_Tests is
       Data : constant Ada.Streams.Stream_Element_Array
         := OS.Read_File (Filename => "data/chunk1.dat");
 
-      Path : constant Unix_Path_Type := "/tmp/mysock";
+      Path : constant String         := "/tmp/mysock";
       Cmd  : aliased constant String := "socat UNIX-RECV:" & String (Path)
         & " " & Test_Utils.Dump_File;
       Sock : Socket_Type;
@@ -703,7 +703,9 @@ package body Anet_Socket_Tests is
 
       delay 0.1;
 
-      Sock.Connect (Path => Path);
+      Sock.Connect
+        (Dst => (Family => Family_Unix,
+                 Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
       Sock.Send (Item => Data);
 
       select
@@ -749,7 +751,9 @@ package body Anet_Socket_Tests is
 
       delay 0.1;
 
-      Sock.Connect (Path => Unix_Path_Type (Path));
+      Sock.Connect
+        (Dst => (Family => Family_Unix,
+                 Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
       Sock.Send (Item => Data);
 
       select

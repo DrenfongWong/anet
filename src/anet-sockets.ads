@@ -120,8 +120,8 @@ package Anet.Sockets is
 
    procedure Connect
      (Socket : in out Socket_Type;
-      Path   :        Unix_Path_Type);
-   --  Connect given unix socket (Family_Unix) to specified path.
+      Dst    :        Socket_Addr_Type);
+   --  Connect given socket to the address specified by Dst.
 
    procedure Accept_Connection
      (Socket     :     Socket_Type;

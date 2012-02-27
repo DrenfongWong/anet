@@ -133,11 +133,17 @@ package body Anet.Sockets is
 
    procedure Connect
      (Socket : in out Socket_Type;
-      Path   :        Unix_Path_Type)
+      Dst    :        Socket_Addr_Type)
    is
    begin
-      Thin.Connect_Socket (Socket => Socket.Sock_FD,
-                           Path   => Path);
+      if Dst.Family = Family_Unix then
+         Thin.Connect_Socket (Socket => Socket.Sock_FD,
+                              Path   => Unix_Path_Type
+                                (Ada.Strings.Unbounded.To_String (Dst.Path)));
+      else
+         Thin.Connect_Socket (Socket => Socket.Sock_FD,
+                              Dst    => Dst);
+      end if;
    end Connect;
 
    -------------------------------------------------------------------------
