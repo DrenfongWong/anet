@@ -156,6 +156,13 @@ package body Anet.Sockets.Thin is
       return C.int;
    pragma Import (C, C_Recvfrom, "recvfrom");
 
+   function C_Connect
+     (S       : C.int;
+      Name    : System.Address;
+      Namelen : C.int)
+      return C.int;
+   pragma Import (C, C_Connect, "connect");
+
    function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type;
    --  Return inet sock address for given socket address.
 
@@ -308,16 +315,30 @@ package body Anet.Sockets.Thin is
 
    procedure Connect_Socket
      (Socket : Integer;
-      Path   : Unix_Path_Type)
+      Dst    : Socket_Addr_Type)
    is
       use type C.int;
 
-      function C_Connect
-        (S       : C.int;
-         Name    : System.Address;
-         Namelen : C.int)
-         return C.int;
-      pragma Import (C, C_Connect, "connect");
+      Res : C.int;
+      Sin : aliased constant Sockaddr_In_Type := To_Sock_Addr (Address => Dst);
+   begin
+      Res := C_Connect (S       => C.int (Socket),
+                        Name    => Sin'Address,
+                        Namelen => Sin'Size / 8);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to connect socket to address "
+           & To_String (Dst) & " - " & Get_Errno_String;
+      end if;
+   end Connect_Socket;
+
+   -------------------------------------------------------------------------
+
+   procedure Connect_Socket
+     (Socket : Integer;
+      Path   : Unix_Path_Type)
+   is
+      use type C.int;
 
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));

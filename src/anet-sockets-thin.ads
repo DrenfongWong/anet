@@ -89,6 +89,11 @@ package Anet.Sockets.Thin is
 
    procedure Connect_Socket
      (Socket : Integer;
+      Dst    : Socket_Addr_Type);
+   --  Connect given socket to specified destination address.
+
+   procedure Connect_Socket
+     (Socket : Integer;
       Path   : Unix_Path_Type);
    --  Connect given unix socket (Family_Unix) to specified path.
 
