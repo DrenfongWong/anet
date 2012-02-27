@@ -1,8 +1,22 @@
 Anet - Ada Networking Library
 =============================
 
-The Anet library provides BSD-style sockets (packet, IP, UDP and local UNIX) and
-can be used to implement networking applications.
+Anet is a networking library for the Ada programming language. The library
+provides a BSD socket implementation and support for IPv4/UDP packet creation
+and validation. It can be used to implement custom protocols on top of IPv4.
+The library also provides a binding to the Linux Packet Filter (LPF) system.
+
+The Anet BSD socket implementation has the following features:
+
+* Supported socket families
+  - IPv4 (AF_INET)
+  - IPv6 (AF_INET6)
+  - Packet (AF_PACKET)
+  - UNIX domain (AF_UNIX)
+* Supported socket modes
+  - Stream (TCP)
+  - Datagram (UDP)
+* Support for IPv4/IPv6 multicast
 
 
 Licence
