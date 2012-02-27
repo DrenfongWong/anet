@@ -584,6 +584,8 @@ package body Anet_Socket_Tests is
       begin
          Sock.Create (Family => Family_Inet,
                       Mode   => Stream_Socket);
+         Sock.Set_Socket_Option (Option => Reuse_Address,
+                                 Value  => True);
          Sock.Bind (Address => Test_Utils.Test_Addr_V4);
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
