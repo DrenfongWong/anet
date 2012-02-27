@@ -45,8 +45,8 @@ package Anet_Socket_Tests is
    procedure Send_Unix_Datagram;
    --  Test sending over a datagram Unix socket.
 
-   procedure Receive_V4;
-   --  Test data reception with IPv4 socket.
+   procedure Receive_V4_Datagram;
+   --  Test data reception with IPv4 datagram socket.
 
    procedure Receive_V6;
    --  Test data reception with IPv6 socket.

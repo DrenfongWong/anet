@@ -197,8 +197,8 @@ package body Anet_Socket_Tests is
         (Routine => Send_Unix_Datagram'Access,
          Name    => "Send data (Unix, datagram)");
       T.Add_Test_Routine
-        (Routine => Receive_V4'Access,
-         Name    => "Receive data (IPv4)");
+        (Routine => Receive_V4_Datagram'Access,
+         Name    => "Receive data (IPv4, datagram)");
       T.Add_Test_Routine
         (Routine => Receive_V6'Access,
          Name    => "Receive data (IPv6)");
@@ -463,56 +463,6 @@ package body Anet_Socket_Tests is
 
    -------------------------------------------------------------------------
 
-   procedure Receive_V4
-   is
-      Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
-      Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
-
-      task Receiver is
-         entry Wait;
-      end Receiver;
-
-      task body Receiver is
-         Sender : Socket_Addr_Type;
-      begin
-         Sock.Create (Family => Family_Inet,
-                      Mode   => Datagram_Socket);
-         Sock.Bind (Address => Test_Utils.Test_Addr_V4);
-         Sock.Receive (Src  => Sender,
-                       Item => Buffer,
-                       Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
-         accept Wait;
-      end Receiver;
-   begin
-      Test_Utils.Send_Data (Filename => "data/chunk1.dat");
-
-      select
-         delay 3.0;
-      then abort
-         Receiver.Wait;
-      end select;
-
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
-              Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
-
-   exception
-      when others =>
-         if not Receiver'Terminated then
-            abort Receiver;
-         end if;
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
-         raise;
-   end Receive_V4;
-
-   -------------------------------------------------------------------------
-
    procedure Receive_V6
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
@@ -562,6 +512,56 @@ package body Anet_Socket_Tests is
          OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_V6;
+
+   -------------------------------------------------------------------------
+
+   procedure Receive_V4_Datagram
+   is
+      Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
+      Last   : Ada.Streams.Stream_Element_Offset;
+      Sock   : Socket_Type;
+
+      task Receiver is
+         entry Wait;
+      end Receiver;
+
+      task body Receiver is
+         Sender : Socket_Addr_Type;
+      begin
+         Sock.Create (Family => Family_Inet,
+                      Mode   => Datagram_Socket);
+         Sock.Bind (Address => Test_Utils.Test_Addr_V4);
+         Sock.Receive (Src  => Sender,
+                       Item => Buffer,
+                       Last => Last);
+         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
+                          Src  => Sender);
+         accept Wait;
+      end Receiver;
+   begin
+      Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+
+      select
+         delay 3.0;
+      then abort
+         Receiver.Wait;
+      end select;
+
+      Assert (Condition => Test_Utils.Equal_Files
+              (Filename1 => "data/chunk1.dat",
+               Filename2 => Test_Utils.Dump_File),
+              Message   => "Result mismatch");
+
+      OS.Delete_File (Filename => Test_Utils.Dump_File);
+
+   exception
+      when others =>
+         if not Receiver'Terminated then
+            abort Receiver;
+         end if;
+         OS.Delete_File (Filename => Test_Utils. Dump_File);
+         raise;
+   end Receive_V4_Datagram;
 
    -------------------------------------------------------------------------
 
