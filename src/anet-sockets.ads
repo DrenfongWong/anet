@@ -160,7 +160,7 @@ package Anet.Sockets is
    --  character assigned. An exception is raised if a socket error occurs. The
    --  Src argument specifies the sender from which the data was received.
 
-   procedure Listen_Unix
+   procedure Listen
      (Socket  : Socket_Type;
       Backlog : Positive := 1);
    --  Listen for specified amount of requests on given socket.

@@ -202,14 +202,14 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Listen_Unix
+   procedure Listen
      (Socket  : Socket_Type;
       Backlog : Positive := 1)
    is
    begin
       Thin.Listen_Socket (Socket  => Socket.Sock_FD,
                           Backlog => Backlog);
-   end Listen_Unix;
+   end Listen;
 
    -------------------------------------------------------------------------
 

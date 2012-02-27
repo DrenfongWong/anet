@@ -426,7 +426,7 @@ package body Anet_Socket_Tests is
          Sock.Create (Family => Family_Unix,
                       Mode   => Stream_Socket);
          Sock.Bind_Unix (Path => Path);
-         Sock.Listen_Unix;
+         Sock.Listen;
          Sock.Accept_Socket (New_Socket => S2);
          S2.Receive (Src  => Sender,
                      Item => Buffer,
