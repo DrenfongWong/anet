@@ -430,7 +430,7 @@ package body Anet_Socket_Tests is
                       Mode   => Stream_Socket);
          Sock.Bind_Unix (Path => Path);
          Sock.Listen;
-         Sock.Accept_Socket (New_Socket => S2);
+         Sock.Accept_Connection (New_Socket => S2);
          S2.Receive (Src  => Sender,
                      Item => Buffer,
                      Last => Last);
@@ -586,7 +586,7 @@ package body Anet_Socket_Tests is
                       Mode   => Stream_Socket);
          Sock.Bind (Address => Test_Utils.Test_Addr_V4);
          Sock.Listen;
-         Sock.Accept_Socket (New_Socket => S2);
+         Sock.Accept_Connection (New_Socket => S2);
          S2.Receive (Src  => Sender,
                      Item => Buffer,
                      Last => Last);

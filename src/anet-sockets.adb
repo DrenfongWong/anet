@@ -53,7 +53,7 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Accept_Socket
+   procedure Accept_Connection
      (Socket     :     Socket_Type;
       New_Socket : out Socket_Type)
    is
@@ -61,7 +61,7 @@ package body Anet.Sockets is
       New_Socket.Address := Socket.Address;
       Thin.Accept_Socket (Socket     => Socket.Sock_FD,
                           New_Socket => New_Socket.Sock_FD);
-   end Accept_Socket;
+   end Accept_Connection;
 
    -------------------------------------------------------------------------
 
