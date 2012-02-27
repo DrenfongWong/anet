@@ -189,6 +189,9 @@ package body Anet_Socket_Tests is
         (Routine => Send_V4_Datagram'Access,
          Name    => "Send data (IPv4, datagram)");
       T.Add_Test_Routine
+        (Routine => Send_V6_Stream'Access,
+         Name    => "Send data (IPv6, stream)");
+      T.Add_Test_Routine
         (Routine => Send_V6_Datagram'Access,
          Name    => "Send data (IPv6, datagram)");
       T.Add_Test_Routine
@@ -991,6 +994,52 @@ package body Anet_Socket_Tests is
          OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_V6_Datagram;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_V6_Stream
+   is
+      Data : constant Ada.Streams.Stream_Element_Array
+        := OS.Read_File (Filename => "data/chunk1.dat");
+      Cmd  : aliased constant String := "socat TCP6-LISTEN:"
+        & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
+                                  Side   => Ada.Strings.Left)
+        & ",reuseaddr " & Test_Utils.Dump_File;
+      Sock : Socket_Type;
+
+      Receiver : Command_Task (Command => Cmd'Access);
+   begin
+      Sock.Create (Family => Family_Inet6,
+                   Mode   => Stream_Socket);
+
+      --  Give receiver/socat enough time to create socket
+
+      delay 0.1;
+
+      Sock.Connect (Dst => Test_Utils.Test_Addr_V6);
+      Sock.Send (Item => Data);
+
+      select
+         delay 3.0;
+      then abort
+         Receiver.Wait;
+      end select;
+
+      Assert (Condition => Test_Utils.Equal_Files
+              (Filename1 => "data/chunk1.dat",
+               Filename2 => Test_Utils.Dump_File),
+              Message   => "Result mismatch");
+
+      OS.Delete_File (Filename => Test_Utils.Dump_File);
+
+   exception
+      when others =>
+         if not Receiver'Terminated then
+            abort Receiver;
+         end if;
+         OS.Delete_File (Filename => Test_Utils.Dump_File);
+         raise;
+   end Send_V6_Stream;
 
    -------------------------------------------------------------------------
 

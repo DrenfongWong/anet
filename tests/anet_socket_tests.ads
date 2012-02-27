@@ -36,6 +36,9 @@ package Anet_Socket_Tests is
    procedure Send_V4_Datagram;
    --  Test sending over IPv4 datagram socket.
 
+   procedure Send_V6_Stream;
+   --  Test sending over IPv6 stream socket.
+
    procedure Send_V6_Datagram;
    --  Test sending over IPv6 datagram socket.
 
