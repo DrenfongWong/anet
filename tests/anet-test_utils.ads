@@ -89,8 +89,11 @@ package Anet.Test_Utils is
 
    procedure Send_Data
      (Dst      : Sockets.Socket_Addr_Type := Test_Addr_V4;
+      Mode     : String := "UDP-DATAGRAM";
       Filename : String);
-   --  Send data from file given by filename to socket.
+   --  Send data from file given by filename to socket. The Mode argument is
+   --  directly passed to the socat command, use either 'TCP' or
+   --  'UDP-DATAGRAM'.
 
    function Equal_Files
      (Filename1 : String;

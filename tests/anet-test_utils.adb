@@ -150,6 +150,7 @@ package body Anet.Test_Utils is
 
    procedure Send_Data
      (Dst      : Sockets.Socket_Addr_Type := Test_Addr_V4;
+      Mode     : String := "UDP-DATAGRAM";
       Filename : String)
    is
       use Ada.Strings.Unbounded;
@@ -173,7 +174,7 @@ package body Anet.Test_Utils is
          raise Constraint_Error with "Invalid family type " & Dst.Family'Img;
       end if;
 
-      OS.Execute (Command => "socat " & Filename & " UDP-DATAGRAM:"
+      OS.Execute (Command => "socat " & Filename & " " & Mode & ":"
                   & To_String (IP_Str) & ":" & To_String (Port_Str));
    end Send_Data;
 
