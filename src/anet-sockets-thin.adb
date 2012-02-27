@@ -625,8 +625,12 @@ package body Anet.Sockets.Thin is
 
       Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
 
-      Get_Socket_Info (Sock_Addr => Sin,
-                       Source    => Source);
+      if Len /= 0 then
+         Get_Socket_Info (Sock_Addr => Sin,
+                          Source    => Source);
+      else
+         Source := No_Addr;
+      end if;
    end Receive_Socket;
 
    -------------------------------------------------------------------------
