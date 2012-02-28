@@ -98,7 +98,7 @@ package body Anet.Test_Utils is
       exception
          when others =>
             raise Open_File_Error with
-              "Unable to open file '" & Filename1 & "'";
+              "Unable to open file '" & Filename & "'";
       end Open_File;
 
       File1, File2 : D_IO.File_Type;
