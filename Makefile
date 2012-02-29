@@ -53,11 +53,11 @@ install_lib: build_lib
 	install -m 644 $(GPR_FILES) $(PREFIX)/lib/gnat
 
 install_static:
-	install -m 444 $(LIBDIR)/libanet.a $(PREFIX)/lib/anet
+	install -m 444 $(LIBDIR)/libanet.a $(PREFIX)/lib
 
 install_dynamic:
-	install -m 444 $(LIBDIR)/$(SO_LIBRARY) $(PREFIX)/lib/anet
-	cd $(PREFIX)/lib/anet && ln -sf $(SO_LIBRARY) libanet.so
+	install -m 444 $(LIBDIR)/$(SO_LIBRARY) $(PREFIX)/lib
+	cd $(PREFIX)/lib && ln -sf $(SO_LIBRARY) libanet.so
 
 doc:
 	@$(MAKE) -C doc
