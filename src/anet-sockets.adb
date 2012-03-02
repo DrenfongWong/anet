@@ -57,12 +57,32 @@ package body Anet.Sockets is
      (Socket     :     Socket_Type;
       New_Socket : out Socket_Type)
    is
-      Sock_Addr : Thin.Sockaddr_Un_Type;
+      Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet);
+      Sock_In6  : Thin.Sockaddr_In_Type (Family => Family_Inet6);
+      Sock_Un   : Thin.Sockaddr_Un_Type;
+      Sock_Addr : System.Address;
+      Sock_Len  : Integer := 0;
    begin
       New_Socket.Address := Socket.Address;
+
+      case Socket.Address.Family is
+         when Family_Inet  =>
+            Sock_Addr := Sock_In'Address;
+            Sock_Len  := Sock_In'Size / 8;
+         when Family_Inet6 =>
+            Sock_Addr := Sock_In6'Address;
+            Sock_Len  := Sock_In6'Size / 8;
+         when Family_Unix  =>
+            Sock_Addr := Sock_Un'Address;
+            Sock_Len  := Sock_Un'Size / 8;
+         when others       =>
+            raise Socket_Error with "Accept operation not supported for "
+              & Socket.Address.Family'Img & " sockets";
+      end case;
+
       Thin.Accept_Socket (Socket       => Socket.Sock_FD,
                           Sockaddr     => Sock_Addr'Address,
-                          Sockaddr_Len => Sock_Addr'Size / 8,
+                          Sockaddr_Len => Sock_Len,
                           New_Socket   => New_Socket.Sock_FD);
    end Accept_Connection;
 
