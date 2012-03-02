@@ -25,6 +25,8 @@ with Ada.Streams;
 
 with Interfaces.C;
 
+with Anet.Constants;
+
 package Anet.Sockets.Thin is
 
    type Sockaddr_In_Type (Family : Family_Inet_Type := Family_Inet) is record
@@ -52,6 +54,16 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_In_Type);
    --  Low-level internet socket address type (struct sockaddr_in, struct
    --  sockaddr_in6).
+
+   type Sockaddr_Un_Type is record
+      Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
+      --  Address family
+      Pathname   : Interfaces.C.char_array (1 .. Max_Unix_Path_Len)
+        := (others => Interfaces.C.nul);
+      --  Pathname
+   end record;
+   pragma Convention (C, Sockaddr_Un_Type);
+   --  Low-level unix socket address type (struct sockaddr_un).
 
    type Level_Type is (Socket_Level);
    --  Protocol level type.

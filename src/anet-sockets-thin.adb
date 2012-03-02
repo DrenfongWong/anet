@@ -22,7 +22,6 @@
 --
 
 with Anet.Byte_Swapping;
-with Anet.Constants;
 with Anet.OS;
 
 package body Anet.Sockets.Thin is
@@ -111,15 +110,6 @@ package body Anet.Sockets.Thin is
    pragma Unchecked_Union (If_Req_Type);
    pragma Convention (C, If_Req_Type);
    --  Interface request structure (struct ifreq).
-
-   type Sockaddr_Un_Type is record
-      Sin_Family : Interfaces.C.unsigned_short         := Constants.AF_UNIX;
-      --  Address family
-      Pathname : C.char_array (1 .. Max_Unix_Path_Len) := (others => C.nul);
-      --  Pathname
-   end record;
-   pragma Convention (C, Sockaddr_Un_Type);
-   --  Low-level unix socket address type (struct sockaddr_un).
 
    function C_Send
      (S     : C.int;
