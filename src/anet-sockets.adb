@@ -60,9 +60,10 @@ package body Anet.Sockets is
       Sock_Addr : Thin.Sockaddr_Un_Type;
    begin
       New_Socket.Address := Socket.Address;
-      Thin.Accept_Socket (Socket     => Socket.Sock_FD,
-                          Sockaddr   => Sock_Addr'Address,
-                          New_Socket => New_Socket.Sock_FD);
+      Thin.Accept_Socket (Socket       => Socket.Sock_FD,
+                          Sockaddr     => Sock_Addr'Address,
+                          Sockaddr_Len => Sock_Addr'Size / 8,
+                          New_Socket   => New_Socket.Sock_FD);
    end Accept_Connection;
 
    -------------------------------------------------------------------------
