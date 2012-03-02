@@ -194,6 +194,7 @@ package body Anet.Sockets.Thin is
 
    procedure Accept_Socket
      (Socket     :     Integer;
+      Sockaddr   :     System.Address;
       New_Socket : out Integer)
    is
       use type C.int;
@@ -205,12 +206,11 @@ package body Anet.Sockets.Thin is
          return C.int;
       pragma Import (C, C_Accept, "accept");
 
-      Res   : C.int;
-      Value : Sockaddr_Un_Type;
-      Len   : aliased C.int;
+      Res : C.int;
+      Len : aliased C.int;
    begin
       Res := C_Accept (S       => C.int (Socket),
-                       Name    => Value'Address,
+                       Name    => Sockaddr,
                        Namelen => Len'Access);
 
       if Res = C_Failure then

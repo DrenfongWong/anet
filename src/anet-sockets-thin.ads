@@ -116,9 +116,11 @@ package Anet.Sockets.Thin is
 
    procedure Accept_Socket
      (Socket     :     Integer;
+      Sockaddr   :     System.Address;
       New_Socket : out Integer);
    --  Accept connection request from listening socket and return new connected
-   --  socket.
+   --  socket. The Sockaddr argument must be an address to a low-level
+   --  Sockaddr_In or Sockaddr_Un object matching the socket family.
 
    procedure Receive_Socket
      (Socket   :     Integer;

@@ -57,9 +57,11 @@ package body Anet.Sockets is
      (Socket     :     Socket_Type;
       New_Socket : out Socket_Type)
    is
+      Sock_Addr : Thin.Sockaddr_Un_Type;
    begin
       New_Socket.Address := Socket.Address;
       Thin.Accept_Socket (Socket     => Socket.Sock_FD,
+                          Sockaddr   => Sock_Addr'Address,
                           New_Socket => New_Socket.Sock_FD);
    end Accept_Connection;
 
