@@ -81,7 +81,7 @@ package body Anet.Sockets is
       end case;
 
       Thin.Accept_Socket (Socket       => Socket.Sock_FD,
-                          Sockaddr     => Sock_Addr'Address,
+                          Sockaddr     => Sock_Addr,
                           Sockaddr_Len => Sock_Len,
                           New_Socket   => New_Socket.Sock_FD);
    end Accept_Connection;
