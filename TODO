@@ -1,3 +1,7 @@
+IPv6
+----
+- Support IPv6 shortform addrs
+
 Examples
 --------
 - Add examples for common usecases
