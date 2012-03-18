@@ -32,6 +32,7 @@ with Anet_Util_Tests;
 with Anet_Socket_Tests;
 with Anet_UDP_Tests;
 with Anet_IP_Tests;
+with Anet_Stream_Tests;
 
 procedure Test_Runner is
    use Ahven.Framework;
@@ -51,6 +52,8 @@ begin
              T     => new Anet_UDP_Tests.Testcase);
    Add_Test (Suite => S.all,
              T     => new Anet_IP_Tests.Testcase);
+   Add_Test (Suite => S.all,
+             T     => new Anet_Stream_Tests.Testcase);
 
    Ada.Text_IO.Put_Line ("Running " & Name & " ... please wait");
 
