@@ -37,7 +37,7 @@ package body Anet_Stream_Tests is
       A : Natural;
       B : String (1 .. 4);
       C : Float;
-      D : Ada.Strings.Unbounded.Unbounded_String;
+      D : Unbounded_String;
    end record;
    --  Test record.
 
