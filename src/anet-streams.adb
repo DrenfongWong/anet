@@ -65,6 +65,12 @@ package body Anet.Streams is
       Buffer : Ada.Streams.Stream_Element_Array)
    is
    begin
+      if Buffer'Length > Stream.Buffer'Last then
+         raise Stream_Error with "Setting raw buffer failed (overflow), "
+           & "increase size (offset" & Buffer'Length'Img & " requested, max is"
+           & Stream.Buffer'Last'Img & ")";
+      end if;
+
       Stream.Clear;
       Stream.Buffer (Stream.Buffer'First .. Buffer'Length) := Buffer;
    end Set_Buffer;
@@ -78,6 +84,12 @@ package body Anet.Streams is
       End_Idx : constant Stream_Element_Offset
         := Stream.Write_Idx + (Item'Length - 1);
    begin
+      if End_Idx > Stream.Buffer'Last then
+         raise Stream_Error with "Stream buffer too small for object, "
+           & "increase size (offset" & End_Idx'Img & " requested, max is"
+           & Stream.Buffer'Last'Img & ")";
+      end if;
+
       Stream.Buffer (Stream.Write_Idx .. End_Idx) := Item;
       Stream.Write_Idx                            := End_Idx + 1;
    end Write;

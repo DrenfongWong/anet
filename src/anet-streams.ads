@@ -57,6 +57,8 @@ package Anet.Streams is
    procedure Clear (Stream : in out Memory_Stream_Type);
    --  Clear memory stream.
 
+   Stream_Error : exception;
+
 private
 
    use Ada.Streams;

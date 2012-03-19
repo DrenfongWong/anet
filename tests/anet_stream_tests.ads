@@ -33,6 +33,9 @@ package Anet_Stream_Tests is
    procedure Write_Read_Records;
    --  Write and read record types using in-memory streams.
 
+   procedure Buffer_Too_Small;
+   --  Verify behavior if buffer is too small for object.
+
    procedure Send_Records;
    --  Send serialized record types over a socket.
 

@@ -43,6 +43,36 @@ package body Anet_Stream_Tests is
 
    -------------------------------------------------------------------------
 
+   procedure Buffer_Too_Small
+   is
+      Data   : constant Ada.Streams.Stream_Element_Array (1 .. 12)
+        := (others => 0);
+      Stream : aliased Streams.Memory_Stream_Type (Max_Elements => 10);
+      T      : constant Test_Record
+        := (A => 123,
+            B => "abcd",
+            C => 3.5,
+            D => To_Unbounded_String ("some string"));
+   begin
+      begin
+         Test_Record'Write (Stream'Access, T);
+         Fail (Message => "Exception expected (1)");
+
+      exception
+         when Streams.Stream_Error => null;
+      end;
+
+      begin
+         Stream.Set_Buffer (Buffer => Data);
+         Fail (Message => "Exception expected (2)");
+
+      exception
+         when Streams.Stream_Error => null;
+      end;
+   end Buffer_Too_Small;
+
+   -------------------------------------------------------------------------
+
    procedure Initialize (T : in out Testcase)
    is
    begin
@@ -50,6 +80,9 @@ package body Anet_Stream_Tests is
       T.Add_Test_Routine
         (Routine => Write_Read_Records'Access,
          Name    => "Write/read record types");
+      T.Add_Test_Routine
+        (Routine => Buffer_Too_Small'Access,
+         Name    => "Stream buffer too small");
       T.Add_Test_Routine
         (Routine => Send_Records'Access,
          Name    => "Send records over socket");
