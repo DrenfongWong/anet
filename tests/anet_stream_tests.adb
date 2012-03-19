@@ -81,7 +81,7 @@ package body Anet_Stream_Tests is
 
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Unix);
-         S1     : aliased Streams.Memory_Stream_Type;
+         S1     : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
       begin
          Server.Create (Family => Family_Unix,
                         Mode   => Datagram_Socket);
@@ -97,7 +97,7 @@ package body Anet_Stream_Tests is
          accept Done;
       end Receiver;
 
-      S2 : aliased Streams.Memory_Stream_Type;
+      S2 : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
    begin
       Receiver.Ready;
 
@@ -131,8 +131,8 @@ package body Anet_Stream_Tests is
 
    procedure Write_Read_Records
    is
-      S1 : aliased Streams.Memory_Stream_Type;
-      S2 : aliased Streams.Memory_Stream_Type;
+      S1 : aliased Streams.Memory_Stream_Type (Max_Elements => 32);
+      S2 : aliased Streams.Memory_Stream_Type (Max_Elements => 32);
       R1 : Test_Record;
       R2 : Test_Record;
       T  : constant Test_Record := (A => 123,

@@ -25,9 +25,11 @@ with Ada.Streams;
 
 package Anet.Streams is
 
-   type Memory_Stream_Type is new Ada.Streams.Root_Stream_Type with private;
+   type Memory_Stream_Type (Max_Elements : Ada.Streams.Stream_Element_Offset)
+     is new Ada.Streams.Root_Stream_Type with private;
    --  In-memory stream type. Can be used to serialize/deserialize record types
-   --  over a socket.
+   --  over a socket. The Max_Elements discriminant defines the maximal number
+   --  of elements the stream is able to store.
 
    overriding
    procedure Read
@@ -59,9 +61,8 @@ private
 
    use Ada.Streams;
 
-   Max_Elements : constant := 4096;
-
-   type Memory_Stream_Type is new Root_Stream_Type with record
+   type Memory_Stream_Type (Max_Elements : Stream_Element_Offset) is new
+     Root_Stream_Type with record
       Buffer    : Stream_Element_Array (1 .. Max_Elements) := (others => 0);
       Write_Idx : Stream_Element_Offset                    := 1;
       Read_Idx  : Stream_Element_Offset                    := 1;
