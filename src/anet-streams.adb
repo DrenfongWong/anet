@@ -62,7 +62,7 @@ package body Anet.Streams is
 
    procedure Set_Buffer
      (Stream : in out Memory_Stream_Type;
-      Buffer : Ada.Streams.Stream_Element_Array)
+      Buffer :        Ada.Streams.Stream_Element_Array)
    is
    begin
       if Buffer'Length > Stream.Buffer'Last then
