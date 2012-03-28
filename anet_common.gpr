@@ -27,6 +27,9 @@ project Anet_Common is
 
    Version := external ("VERSION", "unknown");
 
+   type Lib_Type is ("static", "dynamic");
+   Libtype : Lib_Type := external ("LIBRARY_KIND", "static");
+
    Compiler_Switches := ("-gnatygAdISuxo",
                          "-gnatVa",
                          "-gnat05",

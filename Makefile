@@ -49,14 +49,14 @@ install_lib: build_lib
 	install -d $(PREFIX)/lib/anet
 	install -d $(PREFIX)/include/anet
 	install -m 644 $(SRCDIR)/*.ad[bs] $(PREFIX)/include/anet
-	install -m 444 $(LIBDIR)/*.ali $(PREFIX)/lib/anet
+	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/*.ali $(PREFIX)/lib/anet
 	install -m 644 $(GPR_FILES) $(PREFIX)/lib/gnat
 
 install_static:
-	install -m 444 $(LIBDIR)/libanet.a $(PREFIX)/lib
+	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/libanet.a $(PREFIX)/lib
 
 install_dynamic:
-	install -m 444 $(LIBDIR)/$(SO_LIBRARY) $(PREFIX)/lib
+	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(PREFIX)/lib
 	cd $(PREFIX)/lib && ln -sf $(SO_LIBRARY) libanet.so
 
 doc:
