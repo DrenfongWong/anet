@@ -23,6 +23,7 @@
 
 with "ahven";
 with "anet_common";
+with "anet_lib";
 
 project Anet_Tests is
 
@@ -33,7 +34,7 @@ project Anet_Tests is
    Linker_Switches   := ();
 
    for Main use ("test_runner.adb");
-   for Source_Dirs use ("src", "tests");
+   for Source_Dirs use ("tests");
 
    case Build is
       when "tests" =>
