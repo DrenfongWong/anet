@@ -36,7 +36,20 @@ Download
 
 Release version
 ~~~~~~~~~~~~~~~
-No releases yet, stay tuned.
+The current release version of Anet is available at
+http://www.codelabs.ch/download.
+
+Verify a Release
+~~~~~~~~~~~~~~~~
+To verify the integrity and authenticity of the distribution tarball, import
+the key http://www.codelabs.ch/keys/0x3DC359DEpub.asc and type the following
+command:
+
+  $ gpg --verify libanet-{version}.tar.bz2.sig
+
+The key fingerprint of the public key ('0x3DC359DE') is:
+
+  Key fingerprint = 752C 4EBC 115D 5EAD 75F7  0F34 A0AE 8AD7 3DC3 59DE
 
 Development version
 ~~~~~~~~~~~~~~~~~~~
