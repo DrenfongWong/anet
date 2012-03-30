@@ -37,9 +37,5 @@ project Anet_Lib is
         & "-gnatwale";
    end Compiler;
 
-   package Binder is
-      for Default_Switches ("ada") use Anet_Common.Binder_Switches;
-   end Binder;
-
 end Anet_Lib;
 
