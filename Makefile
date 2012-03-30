@@ -30,7 +30,7 @@ build_tests:
 	@gnatmake $(GMAKE_OPTS) -Panet_tests
 
 tests: build_tests
-	@obj/tests/test_runner
+	@$(OBJDIR)/$(TESTDIR)/test_runner
 
 build_all: build_tests build_lib
 
@@ -59,6 +59,11 @@ install_dynamic:
 	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(PREFIX)/lib
 	cd $(PREFIX)/lib && ln -sf $(SO_LIBRARY) libanet.so
 
+install_tests: build_tests
+	install -v -d $(PREFIX)/$(TESTDIR)
+	install -m 755 $(OBJDIR)/$(TESTDIR)/test_runner $(PREFIX)/$(TESTDIR)
+	@cp -vr data $(PREFIX)/$(TESTDIR)
+
 doc:
 	@$(MAKE) -C doc
 
@@ -72,4 +77,4 @@ dist:
 	@git archive --format=tar HEAD --prefix $(ANET)/ | bzip2 > $(TARBALL)
 
 .PHONY: build_all build_lib build_tests clean dist doc install \
-        install_dynamic install_lib install_static tests
+        install_dynamic install_lib install_static install_tests tests
