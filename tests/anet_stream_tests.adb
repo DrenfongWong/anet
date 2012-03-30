@@ -94,7 +94,7 @@ package body Anet_Stream_Tests is
    is
       use Anet.Sockets;
 
-      Path   : constant String := "obj/mysock";
+      Path   : constant String := "./mysock";
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
 

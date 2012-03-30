@@ -430,7 +430,7 @@ package body Anet_Socket_Tests is
 
    procedure Receive_Unix_Datagram
    is
-      Path   : constant String := "obj/mysock2";
+      Path   : constant String := "./mysock2";
       Cmd    : constant String := "socat -u EXEC:'cat data/chunk1.dat"
         & "' UNIX-SENDTO:" & Path;
 
@@ -485,7 +485,7 @@ package body Anet_Socket_Tests is
 
    procedure Receive_Unix_Stream
    is
-      Path   : constant Unix_Path_Type := "obj/mysock2";
+      Path   : constant Unix_Path_Type := "./mysock2";
       Cmd    : constant String         := "socat -u EXEC:'cat data/chunk1.dat"
         & "' UNIX-CLIENT:" & String (Path);
 
@@ -1204,7 +1204,7 @@ package body Anet_Socket_Tests is
 
    procedure Unix_Delete_Socket
    is
-      Path : constant String := "obj/my_socket";
+      Path : constant String := "./my_socket";
    begin
       declare
          Sock : Socket_Type;
