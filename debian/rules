@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+
+%:
+	dh ${@}
+
+override_dh_auto_build:
+	$(MAKE) LIBRARY_KIND=dynamic
+	$(MAKE) LIBRARY_KIND=static
+	$(MAKE) doc
+
+override_dh_auto_install:
+	$(MAKE) PREFIX=$(CURDIR)/debian/tmp install
+	$(MAKE) LIBRARY_KIND=static PREFIX=$(CURDIR)/debian/tmp install
+	rm -rf debian/tmp/lib/gnat
+	mkdir -p debian/tmp/usr/share/ada/adainclude
+	cp debian/addon/*.gpr debian/tmp/usr/share/ada/adainclude
+
+override_dh_auto_test:
+	$(MAKE) tests
+
+override_dh_install:
+	dh_install --fail-missing
+
+override_dh_compress:
+	dh_compress -X.ads -X.adb -XMakefile
+
+override_dh_strip:
+	dh_strip --dbg-package=libanet0.1-dbg

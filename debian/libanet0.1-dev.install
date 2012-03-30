@@ -1,0 +1,5 @@
+/usr/share/ada/adainclude
+lib/*.so /usr/lib/
+lib/*.a /usr/lib/
+lib/anet/*.ali /usr/lib/ada/adalib/anet/
+include/anet/*.ad* /usr/share/ada/adainclude/anet/

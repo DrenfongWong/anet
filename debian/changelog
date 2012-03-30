@@ -1,0 +1,5 @@
+anet (0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #669251)
+
+ -- Reto Buerki <reet@codelabs.ch>  Wed, 18 Apr 2012 15:34:07 +0200
