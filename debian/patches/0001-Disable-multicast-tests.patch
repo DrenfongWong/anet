@@ -1,0 +1,51 @@
+From: Reto Buerki <reet@codelabs.ch>
+Date: Mon, 21 May 2012 20:40:46 +0200
+Subject: Disable multicast tests
+
+These tests do not work on the buildd's.
+---
+ tests/anet_socket_tests.adb |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/tests/anet_socket_tests.adb b/tests/anet_socket_tests.adb
+index 779e9ab..30c410a 100644
+--- a/tests/anet_socket_tests.adb
++++ b/tests/anet_socket_tests.adb
+@@ -194,12 +194,12 @@ package body Anet_Socket_Tests is
+       T.Add_Test_Routine
+         (Routine => Send_V6_Datagram'Access,
+          Name    => "Send data (IPv6, datagram)");
+-      T.Add_Test_Routine
+-        (Routine => Send_Multicast_V4'Access,
+-         Name    => "Send data (IPv4 multicast)");
+-      T.Add_Test_Routine
+-        (Routine => Send_Multicast_V6'Access,
+-         Name    => "Send data (IPv6 multicast)");
++--        T.Add_Test_Routine
++--          (Routine => Send_Multicast_V4'Access,
++--           Name    => "Send data (IPv4 multicast)");
++--        T.Add_Test_Routine
++--          (Routine => Send_Multicast_V6'Access,
++--           Name    => "Send data (IPv6 multicast)");
+       T.Add_Test_Routine
+         (Routine => Send_Unix_Stream'Access,
+          Name    => "Send data (Unix, stream)");
+@@ -218,12 +218,12 @@ package body Anet_Socket_Tests is
+       T.Add_Test_Routine
+         (Routine => Receive_V6_Datagram'Access,
+          Name    => "Receive data (IPv6, datagram)");
+-      T.Add_Test_Routine
+-        (Routine => Receive_Multicast_V4'Access,
+-         Name    => "Receive data (IPv4 multicast)");
+-      T.Add_Test_Routine
+-        (Routine => Receive_Multicast_V6'Access,
+-         Name    => "Receive data (IPv6 multicast)");
++--        T.Add_Test_Routine
++--          (Routine => Receive_Multicast_V4'Access,
++--           Name    => "Receive data (IPv4 multicast)");
++--        T.Add_Test_Routine
++--          (Routine => Receive_Multicast_V6'Access,
++--           Name    => "Receive data (IPv6 multicast)");
+       T.Add_Test_Routine
+         (Routine => Receive_Unix_Stream'Access,
+          Name    => "Receive data (Unix, stream)");
