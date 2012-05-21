@@ -1,3 +1,10 @@
+anet (0.1-2) unstable; urgency=low
+
+  * Disable multicast tests.
+    These tests do not work on the buildd's.
+
+ -- Reto Buerki <reet@codelabs.ch>  Mon, 21 May 2012 20:50:02 +0200
+
 anet (0.1-1) unstable; urgency=low
 
   * Initial release (Closes: #669251)
