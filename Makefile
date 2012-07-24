@@ -4,7 +4,6 @@ OBJDIR    = obj
 COVDIR    = $(OBJDIR)/cov
 LIBDIR    = lib
 SRCDIR    = src
-DOCDIR    = doc/html
 GPR_FILES = gnat/*.gpr
 
 MAJOR   = 0
