@@ -196,10 +196,10 @@ package body Anet_Socket_Tests is
          Name    => "Send data (IPv6, datagram)");
       T.Add_Test_Routine
         (Routine => Send_Multicast_V4'Access,
-         Name    => "Send data (IPv4 multicast)");
+         Name    => "Send data (IPv4, multicast)");
       T.Add_Test_Routine
         (Routine => Send_Multicast_V6'Access,
-         Name    => "Send data (IPv6 multicast)");
+         Name    => "Send data (IPv6, multicast)");
       T.Add_Test_Routine
         (Routine => Send_Unix_Stream'Access,
          Name    => "Send data (Unix, stream)");
@@ -220,10 +220,10 @@ package body Anet_Socket_Tests is
          Name    => "Receive data (IPv6, datagram)");
       T.Add_Test_Routine
         (Routine => Receive_Multicast_V4'Access,
-         Name    => "Receive data (IPv4 multicast)");
+         Name    => "Receive data (IPv4, multicast)");
       T.Add_Test_Routine
         (Routine => Receive_Multicast_V6'Access,
-         Name    => "Receive data (IPv6 multicast)");
+         Name    => "Receive data (IPv6, multicast)");
       T.Add_Test_Routine
         (Routine => Receive_Unix_Stream'Access,
          Name    => "Receive data (Unix, stream)");
