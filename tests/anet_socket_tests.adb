@@ -719,8 +719,6 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
       C    : Tasking.Count_Type := 0;
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
@@ -743,7 +741,7 @@ package body Anet_Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Data,
+      Sock.Send (Item => Ref_Chunk,
                  Dst  => Addr);
 
       for I in 1 .. 30 loop
@@ -777,8 +775,6 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
       C    : Tasking.Count_Type := 0;
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
@@ -801,7 +797,7 @@ package body Anet_Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Data,
+      Sock.Send (Item => Ref_Chunk,
                  Dst  => Addr);
 
       for I in 1 .. 30 loop
@@ -833,9 +829,6 @@ package body Anet_Socket_Tests is
 
    procedure Send_Unix_Datagram
    is
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
-
       Path : constant String         := "/tmp/mysock";
       Cmd  : aliased constant String := "socat UNIX-RECV:" & String (Path)
         & " " & Test_Utils.Dump_File;
@@ -853,7 +846,7 @@ package body Anet_Socket_Tests is
       Sock.Connect
         (Dst => (Family => Family_Unix,
                  Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
-      Sock.Send (Item => Data);
+      Sock.Send (Item => Ref_Chunk);
 
       select
          delay 3.0;
@@ -881,9 +874,6 @@ package body Anet_Socket_Tests is
 
    procedure Send_Unix_Stream
    is
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
-
       Path : constant String         := "/tmp/mysock";
       Cmd  : aliased constant String := "socat UNIX-LISTEN:" & Path & " "
         & Test_Utils.Dump_File;
@@ -901,7 +891,7 @@ package body Anet_Socket_Tests is
       Sock.Connect
         (Dst => (Family => Family_Unix,
                  Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
-      Sock.Send (Item => Data);
+      Sock.Send (Item => Ref_Chunk);
 
       select
          delay 3.0;
@@ -931,8 +921,6 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
       C    : Tasking.Count_Type := 0;
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
@@ -948,7 +936,7 @@ package body Anet_Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Data,
+      Sock.Send (Item => Ref_Chunk,
                  Dst  => Test_Utils.Test_Addr_V4);
 
       for I in 1 .. 30 loop
@@ -980,8 +968,6 @@ package body Anet_Socket_Tests is
 
    procedure Send_V4_Stream
    is
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
       Cmd  : aliased constant String := "socat TCP-LISTEN:"
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
@@ -998,7 +984,7 @@ package body Anet_Socket_Tests is
       delay 0.1;
 
       Sock.Connect (Dst => Test_Utils.Test_Addr_V4);
-      Sock.Send (Item => Data);
+      Sock.Send (Item => Ref_Chunk);
 
       select
          delay 3.0;
@@ -1028,8 +1014,6 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
       C    : Tasking.Count_Type := 0;
       Sock : aliased Socket_Type;
       R    : Tasking.Receiver_Type (S => Sock'Access);
@@ -1045,7 +1029,7 @@ package body Anet_Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Data,
+      Sock.Send (Item => Ref_Chunk,
                  Dst  => Test_Utils.Test_Addr_V6);
 
       for I in 1 .. 30 loop
@@ -1077,8 +1061,6 @@ package body Anet_Socket_Tests is
 
    procedure Send_V6_Stream
    is
-      Data : constant Ada.Streams.Stream_Element_Array
-        := OS.Read_File (Filename => "data/chunk1.dat");
       Cmd  : aliased constant String := "socat TCP6-LISTEN:"
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
@@ -1095,7 +1077,7 @@ package body Anet_Socket_Tests is
       delay 0.1;
 
       Sock.Connect (Dst => Test_Utils.Test_Addr_V6);
-      Sock.Send (Item => Data);
+      Sock.Send (Item => Ref_Chunk);
 
       select
          delay 3.0;
