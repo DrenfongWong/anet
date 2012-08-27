@@ -26,6 +26,7 @@ with Ada.Directories;
 with Ada.Streams;
 
 with Anet.OS;
+with Anet.Util;
 
 package body Anet_OS_Tests is
 
@@ -36,8 +37,9 @@ package body Anet_OS_Tests is
 
    procedure Delete_Files
    is
-      Testfile : constant String := "/tmp/delete-test";
       File     : Ada.Text_IO.File_Type;
+      Testfile : constant String := "/tmp/delete-test-"
+        & Util.Random_String (Len => 8);
    begin
       begin
          OS.Delete_File (Filename       => Testfile,
