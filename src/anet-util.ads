@@ -30,4 +30,7 @@ package Anet.Util is
       return Double_Byte;
    --  Calculate one's complement sum of the 16 bit aligned data bytes.
 
+   function Random_String (Len : Positive) return String;
+   --  Return a random string of given length.
+
 end Anet.Util;

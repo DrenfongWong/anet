@@ -36,4 +36,7 @@ package Anet_Util_Tests is
    procedure Calculate_One_Complement_Uneven;
    --  Verify one's complement calculation for uneven data elements.
 
+   procedure Get_Random_Strings;
+   --  Test Random_String function.
+
 end Anet_Util_Tests;

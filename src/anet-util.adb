@@ -21,11 +21,24 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces;
+with Ada.Numerics.Discrete_Random;
+
+with Interfaces.C;
 
 package body Anet.Util is
 
    use Ada.Streams;
+
+   Chars : constant String := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+     & "abcdefghijklmnopqrstuvwxyz" & "0123456789";
+   subtype Chars_Range is Positive range Chars'First .. Chars'Last;
+
+   package Random_Chars is new Ada.Numerics.Discrete_Random
+     (Result_Subtype => Chars_Range);
+   Generator : Random_Chars.Generator;
+
+   function C_Getpid return Interfaces.C.int;
+   pragma Import (C, C_Getpid, "getpid");
 
    -------------------------------------------------------------------------
 
@@ -87,4 +100,22 @@ package body Anet.Util is
       return Double_Byte (Sum);
    end Calculate_One_Complement;
 
+   -------------------------------------------------------------------------
+
+   function Random_String (Len : Positive) return String
+   is
+      Result : String (1 .. Len);
+   begin
+      for I in Result'Range loop
+         Result (I) := Chars (Random_Chars.Random (Gen => Generator));
+      end loop;
+
+      return Result;
+   end Random_String;
+
+   -------------------------------------------------------------------------
+
+begin
+   Random_Chars.Reset (Gen       => Generator,
+                       Initiator => Integer (C_Getpid));
 end Anet.Util;
