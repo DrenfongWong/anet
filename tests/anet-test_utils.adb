@@ -39,16 +39,18 @@ package body Anet.Test_Utils is
    -------------------------------------------------------------------------
 
    procedure Dump
-     (Data     : Ada.Streams.Stream_Element_Array;
-      Filename : String)
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Sockets.Socket_Addr_Type)
    is
+      pragma Unreferenced (Src);
+
       use Ada.Streams.Stream_IO;
 
       File : File_Type;
    begin
       Create (File => File,
               Mode => Out_File,
-              Name => Filename);
+              Name => Test_Utils.Dump_File);
       Write (File => File,
              Item => Data);
       Close (File => File);
@@ -57,18 +59,6 @@ package body Anet.Test_Utils is
       when E : others =>
          Ada.Text_IO.Put_Line ("Error dumping data:");
          Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Information (X => E));
-   end Dump;
-
-   -------------------------------------------------------------------------
-
-   procedure Dump
-     (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Socket_Addr_Type)
-   is
-      pragma Unreferenced (Src);
-   begin
-      Dump (Data     => Data,
-            Filename => Dump_File);
    end Dump;
 
    -------------------------------------------------------------------------

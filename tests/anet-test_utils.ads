@@ -104,11 +104,6 @@ package Anet.Test_Utils is
    --  Open_File_Error exception if one of the given files cannot be opened.
 
    procedure Dump
-     (Data     : Ada.Streams.Stream_Element_Array;
-      Filename : String);
-   --  Dump given data to file specified by filename.
-
-   procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Socket_Addr_Type);
    --  This procedure dumps the given data to the testfile.

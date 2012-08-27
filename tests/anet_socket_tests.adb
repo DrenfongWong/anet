@@ -31,11 +31,17 @@ with Anet.OS;
 with Anet.Sockets.Tasking;
 with Anet.Test_Utils;
 
+pragma Elaborate_All (Anet.OS);
+
 package body Anet_Socket_Tests is
 
    use Ahven;
    use Anet;
    use Anet.Sockets;
+   use type Ada.Streams.Stream_Element_Array;
+
+   Ref_Chunk : constant Ada.Streams.Stream_Element_Array
+     := OS.Read_File (Filename => "data/chunk1.dat");
 
    procedure Error_Handler
      (E         :        Ada.Exceptions.Exception_Occurrence;
@@ -331,12 +337,10 @@ package body Anet_Socket_Tests is
                       Mode   => Datagram_Socket);
          Sock.Bind (Address => Addr);
          Sock.Join_Multicast_Group (Group => Addr);
-
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
+
          accept Wait;
       end Receiver;
    begin
@@ -350,19 +354,14 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_Multicast_V4;
 
@@ -391,12 +390,10 @@ package body Anet_Socket_Tests is
                       Mode   => Datagram_Socket);
          Sock.Bind (Address => Addr);
          Sock.Join_Multicast_Group (Group => Addr);
-
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
+
          accept Wait;
       end Receiver;
    begin
@@ -410,19 +407,14 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_Multicast_V6;
 
@@ -430,7 +422,8 @@ package body Anet_Socket_Tests is
 
    procedure Receive_Unix_Datagram
    is
-      Path   : constant String := "./mysock2";
+      Path   : constant String := "/tmp/mysock-"
+        & Util.Random_String (Len => 8);
       Cmd    : constant String := "socat -u EXEC:'cat data/chunk1.dat"
         & "' UNIX-SENDTO:" & Path;
 
@@ -451,8 +444,6 @@ package body Anet_Socket_Tests is
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
 
          accept Wait;
       end Receiver;
@@ -465,19 +456,14 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Receive_Unix_Datagram;
 
@@ -485,9 +471,10 @@ package body Anet_Socket_Tests is
 
    procedure Receive_Unix_Stream
    is
-      Path   : constant Unix_Path_Type := "./mysock2";
-      Cmd    : constant String         := "socat -u EXEC:'cat data/chunk1.dat"
-        & "' UNIX-CLIENT:" & String (Path);
+      Path   : constant String := "/tmp/mysock-"
+        & Util.Random_String (Len => 8);
+      Cmd    : constant String := "socat -u EXEC:'cat data/chunk1.dat"
+        & "' UNIX-CLIENT:" & Path;
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
@@ -503,14 +490,12 @@ package body Anet_Socket_Tests is
       begin
          Sock.Create (Family => Family_Unix,
                       Mode   => Stream_Socket);
-         Sock.Bind_Unix (Path => Path);
+         Sock.Bind_Unix (Path => Unix_Path_Type (Path));
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
          S2.Receive (Src  => Sender,
                      Item => Buffer,
                      Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
 
          accept Wait;
       end Receiver;
@@ -523,19 +508,14 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Receive_Unix_Stream;
 
@@ -560,8 +540,7 @@ package body Anet_Socket_Tests is
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
+
          accept Wait;
       end Receiver;
    begin
@@ -573,19 +552,14 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_V4_Datagram;
 
@@ -615,8 +589,7 @@ package body Anet_Socket_Tests is
          S2.Receive (Src  => Sender,
                      Item => Buffer,
                      Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
+
          accept Wait;
       end Receiver;
    begin
@@ -629,21 +602,16 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
       Assert (Condition => Sender = No_Addr,
               Message   => "Unexpected sender");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_V4_Stream;
 
@@ -665,12 +633,10 @@ package body Anet_Socket_Tests is
          Sock.Create (Family => Family_Inet6,
                       Mode   => Datagram_Socket);
          Sock.Bind (Address => Test_Utils.Test_Addr_V6);
-
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
+
          accept Wait;
       end Receiver;
    begin
@@ -683,19 +649,14 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_V6_Datagram;
 
@@ -725,8 +686,7 @@ package body Anet_Socket_Tests is
          S2.Receive (Src  => Sender,
                      Item => Buffer,
                      Last => Last);
-         Test_Utils.Dump (Data => Buffer (Buffer'First .. Last),
-                          Src  => Sender);
+
          accept Wait;
       end Receiver;
    begin
@@ -740,21 +700,16 @@ package body Anet_Socket_Tests is
          Receiver.Wait;
       end select;
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
       Assert (Condition => Sender = No_Addr,
               Message   => "Unexpected sender");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Receive_V6_Stream;
 
