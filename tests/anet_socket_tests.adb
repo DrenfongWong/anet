@@ -809,19 +809,16 @@ package body Anet_Socket_Tests is
       Path : constant String         := "/tmp/mysock-"
         & Util.Random_String (Len => 8);
       Dump : constant String         := Path & ".dump";
-      Cmd  : aliased constant String := "socat UNIX-RECV:" & String (Path)
-        & " " & Dump;
+      Cmd  : aliased constant String := "socat UNIX-RECV:" & Path & " " & Dump;
       Sock : Socket_Type;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
+      Util.Wait_For_File (Path     => Path,
+                          Timespan => 2.0);
+
       Sock.Create (Family => Family_Unix,
                    Mode   => Datagram_Socket);
-
-      --  Give receiver/socat enough time to create socket
-
-      delay 0.1;
-
       Sock.Connect
         (Dst => (Family => Family_Unix,
                  Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
@@ -862,13 +859,11 @@ package body Anet_Socket_Tests is
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
+      Util.Wait_For_File (Path     => Path,
+                          Timespan => 2.0);
+
       Sock.Create (Family => Family_Unix,
                    Mode   => Stream_Socket);
-
-      --  Give receiver/socat enough time to create socket
-
-      delay 0.1;
-
       Sock.Connect
         (Dst => (Family => Family_Unix,
                  Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
