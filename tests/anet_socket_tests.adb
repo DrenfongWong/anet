@@ -29,6 +29,7 @@ with Ada.Directories;
 
 with Anet.OS;
 with Anet.Sockets.Tasking;
+with Anet.Util;
 with Anet.Test_Utils;
 
 pragma Elaborate_All (Anet.OS);
@@ -112,13 +113,6 @@ package body Anet_Socket_Tests is
             Tasking.Stop (Receiver => R);
             raise;
       end;
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
-
-   exception
-      when others =>
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
-         raise;
    end Error_Callbacks;
 
    -------------------------------------------------------------------------
@@ -299,17 +293,12 @@ package body Anet_Socket_Tests is
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          Tasking.Stop (Receiver => R);
-         OS.Delete_File (Filename => Test_Utils. Dump_File);
          raise;
    end Listen_Callbacks;
 
@@ -754,18 +743,12 @@ package body Anet_Socket_Tests is
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
-
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          Tasking.Stop (Receiver => R);
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_Multicast_V4;
 
@@ -810,18 +793,12 @@ package body Anet_Socket_Tests is
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
-
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          Tasking.Stop (Receiver => R);
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_Multicast_V6;
 
@@ -953,18 +930,12 @@ package body Anet_Socket_Tests is
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
-
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          Tasking.Stop (Receiver => R);
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_V4_Datagram;
 
@@ -1048,18 +1019,12 @@ package body Anet_Socket_Tests is
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
-
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
 
    exception
       when others =>
          Tasking.Stop (Receiver => R);
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
          raise;
    end Send_V6_Datagram;
 

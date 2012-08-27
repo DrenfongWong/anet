@@ -41,11 +41,6 @@ package Anet.Test_Utils is
          Port_V6 => Test_Utils.Listen_Port);
    --  IPv6 test address constant.
 
-   Tmp_Dir     : constant String := "/tmp";
-   --  Directory to store temporary test files.
-
-   Dump_File   : constant String := Tmp_Dir & "/msg.dat";
-
    DHCP_Ack : constant Ada.Streams.Stream_Element_Array
      := (16#02#, 16#13#, 16#06#, 16#0c#, 16#9e#, 16#eb#, 16#b7#, 16#66#,
          16#ca#, 16#fe#, 16#80#, 16#00#, 16#0a#, 16#38#, 16#15#, 16#f2#,
@@ -106,7 +101,11 @@ package Anet.Test_Utils is
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Socket_Addr_Type);
-   --  This procedure dumps the given data to the testfile.
+   --  This procedure dumps the given data to an internal buffer. Use the
+   --  Get_Dump function to retrieve the content of the buffer.
+
+   function Get_Dump return Ada.Streams.Stream_Element_Array;
+   --  Return last dumped buffer.
 
    procedure Raise_Error
      (Data : Ada.Streams.Stream_Element_Array;

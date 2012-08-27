@@ -22,9 +22,6 @@
 --
 
 with Ada.Direct_IO;
-with Ada.Streams.Stream_IO;
-with Ada.Text_IO;
-with Ada.Exceptions;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 
@@ -36,6 +33,9 @@ package body Anet.Test_Utils is
 
    package D_IO is new Ada.Direct_IO (Element_Type => Character);
 
+   Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
+   Last   : Ada.Streams.Stream_Element_Offset;
+
    -------------------------------------------------------------------------
 
    procedure Dump
@@ -43,22 +43,9 @@ package body Anet.Test_Utils is
       Src  : Anet.Sockets.Socket_Addr_Type)
    is
       pragma Unreferenced (Src);
-
-      use Ada.Streams.Stream_IO;
-
-      File : File_Type;
    begin
-      Create (File => File,
-              Mode => Out_File,
-              Name => Test_Utils.Dump_File);
-      Write (File => File,
-             Item => Data);
-      Close (File => File);
-
-   exception
-      when E : others =>
-         Ada.Text_IO.Put_Line ("Error dumping data:");
-         Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Information (X => E));
+      Buffer (Buffer'First .. Data'Length) := Data;
+      Last                                 := Data'Length;
    end Dump;
 
    -------------------------------------------------------------------------
@@ -125,6 +112,14 @@ package body Anet.Test_Utils is
 
       return Result;
    end Equal_Files;
+
+   -------------------------------------------------------------------------
+
+   function Get_Dump return Ada.Streams.Stream_Element_Array
+   is
+   begin
+      return Buffer (Buffer'First .. Last);
+   end Get_Dump;
 
    -------------------------------------------------------------------------
 
