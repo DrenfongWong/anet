@@ -972,10 +972,12 @@ package body Anet_Socket_Tests is
 
    procedure Send_V4_Stream
    is
+      Dump : constant String         := "/tmp/dump-"
+        & Util.Random_String (Len => 8);
       Cmd  : aliased constant String := "socat TCP-LISTEN:"
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
-        & ",reuseaddr " & Test_Utils.Dump_File;
+        & ",reuseaddr " & Dump;
       Sock : Socket_Type;
 
       Receiver : Command_Task (Command => Cmd'Access);
@@ -998,17 +1000,17 @@ package body Anet_Socket_Tests is
 
       Assert (Condition => Test_Utils.Equal_Files
               (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+               Filename2 => Dump),
               Message   => "Result mismatch");
 
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
+      OS.Delete_File (Filename => Dump);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
+         OS.Delete_File (Filename => Dump);
          raise;
    end Send_V4_Stream;
 
@@ -1065,10 +1067,12 @@ package body Anet_Socket_Tests is
 
    procedure Send_V6_Stream
    is
+      Dump : constant String         := "/tmp/dump-"
+        & Util.Random_String (Len => 8);
       Cmd  : aliased constant String := "socat TCP6-LISTEN:"
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
-        & ",reuseaddr " & Test_Utils.Dump_File;
+        & ",reuseaddr " & Dump;
       Sock : Socket_Type;
 
       Receiver : Command_Task (Command => Cmd'Access);
@@ -1091,17 +1095,17 @@ package body Anet_Socket_Tests is
 
       Assert (Condition => Test_Utils.Equal_Files
               (Filename1 => "data/chunk1.dat",
-               Filename2 => Test_Utils.Dump_File),
+               Filename2 => Dump),
               Message   => "Result mismatch");
 
-      OS.Delete_File (Filename => Test_Utils.Dump_File);
+      OS.Delete_File (Filename => Dump);
 
    exception
       when others =>
          if not Receiver'Terminated then
             abort Receiver;
          end if;
-         OS.Delete_File (Filename => Test_Utils.Dump_File);
+         OS.Delete_File (Filename => Dump);
          raise;
    end Send_V6_Stream;
 
