@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Directories;
 with Ada.Numerics.Discrete_Random;
 
 with Interfaces.C;
@@ -112,6 +113,24 @@ package body Anet.Util is
 
       return Result;
    end Random_String;
+
+   -------------------------------------------------------------------------
+
+   procedure Wait_For_File
+     (Path     : String;
+      Timespan : Duration)
+   is
+   begin
+      for L in 1 .. Positive (100 * Timespan) loop
+         if Ada.Directories.Exists (Name => Path) then
+            return;
+         end if;
+         delay Timespan / 100;
+      end loop;
+
+      raise Wait_Timeout with "File '" & Path & "' not available after"
+        & Timespan'Img & " second(s)";
+   end Wait_For_File;
 
    -------------------------------------------------------------------------
 

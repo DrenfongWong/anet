@@ -39,4 +39,7 @@ package Anet_Util_Tests is
    procedure Get_Random_Strings;
    --  Test Random_String function.
 
+   procedure Verify_Wait_For_File;
+   --  Test Wait_For_File procedure.
+
 end Anet_Util_Tests;

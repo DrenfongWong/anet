@@ -33,4 +33,13 @@ package Anet.Util is
    function Random_String (Len : Positive) return String;
    --  Return a random string of given length.
 
+   procedure Wait_For_File
+     (Path     : String;
+      Timespan : Duration);
+   --  This procedure waits max. the given timespan in seconds until the file
+   --  specified by path is available. An exception is raised if the file is
+   --  not present after the timespan has passed.
+
+   Wait_Timeout : exception;
+
 end Anet.Util;

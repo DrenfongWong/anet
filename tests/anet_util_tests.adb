@@ -96,6 +96,24 @@ package body Anet_Util_Tests is
       T.Add_Test_Routine
         (Routine => Get_Random_Strings'Access,
          Name    => "Get random strings");
+      T.Add_Test_Routine
+        (Routine => Verify_Wait_For_File'Access,
+         Name    => "Wait for file to appear");
    end Initialize;
+
+   -------------------------------------------------------------------------
+
+   procedure Verify_Wait_For_File
+   is
+   begin
+      begin
+         Wait_For_File (Path     => "/nonexistent/nonexistent",
+                        Timespan => 0.1);
+         Fail (Message => "Exception expected");
+
+      exception
+         when Wait_Timeout => null;
+      end;
+   end Verify_Wait_For_File;
 
 end Anet_Util_Tests;
