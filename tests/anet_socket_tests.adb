@@ -29,6 +29,7 @@ with Ada.Directories;
 
 with Anet.OS;
 with Anet.Sockets.Unix;
+with Anet.Sockets.Inet;
 with Anet.Sockets.Tasking;
 with Anet.Util;
 with Anet.Test_Utils;
@@ -69,14 +70,12 @@ package body Anet_Socket_Tests is
 
    procedure Error_Callbacks
    is
-      Sock : aliased Socket_Type;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
    begin
-      Sock.Create (Family => Family_Inet,
-                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
       declare
-         R : Tasking.Receiver_Type (S => Sock'Access);
+         R : Tasking.Receiver_Type (S => Socket_Type (Sock)'Access);
       begin
          Tasking.Listen (Receiver => R,
                          Callback => Test_Utils.Raise_Error'Access);
@@ -97,7 +96,7 @@ package body Anet_Socket_Tests is
       end;
 
       declare
-         R : Tasking.Receiver_Type (S => Sock'Access);
+         R : Tasking.Receiver_Type (S => Socket_Type (Sock)'Access);
       begin
          Tasking.Register_Error_Handler (Receiver => R,
                                          Callback => Error_Handler'Access);
@@ -266,12 +265,10 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      C    : Tasking.Count_Type := 0;
-      Sock : aliased Socket_Type;
-      R    : Tasking.Receiver_Type (S => Sock'Access);
+      C    : Tasking.Count_Type             := 0;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
+      R    : Tasking.Receiver_Type (S => Socket_Type (Sock)'Access);
    begin
-      Sock.Create (Family => Family_Inet,
-                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
       Tasking.Listen (Receiver => R,
                       Callback => Test_Utils.Dump'Access);
@@ -309,7 +306,7 @@ package body Anet_Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Inet.UDPv4_Socket_Type  := Inet.Create;
       Grp    : constant IPv4_Addr_Type := To_IPv4_Addr (Str => "224.0.0.117");
       Addr   : constant Socket_Addr_Type
         := (Family  => Family_Inet,
@@ -323,8 +320,6 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type;
       begin
-         Sock.Create (Family => Family_Inet,
-                      Mode   => Datagram_Socket);
          Sock.Bind (Address => Addr);
          Sock.Join_Multicast_Group (Group => Addr);
          Sock.Receive (Src  => Sender,
@@ -361,7 +356,7 @@ package body Anet_Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Inet.UDPv6_Socket_Type  := Inet.Create;
       Grp    : constant IPv6_Addr_Type := To_IPv6_Addr
         (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
       Addr   : constant Socket_Addr_Type
@@ -376,8 +371,6 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Inet6);
       begin
-         Sock.Create (Family => Family_Inet6,
-                      Mode   => Datagram_Socket);
          Sock.Bind (Address => Addr);
          Sock.Join_Multicast_Group (Group => Addr);
          Sock.Receive (Src  => Sender,
@@ -511,7 +504,7 @@ package body Anet_Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Inet.UDPv4_Socket_Type := Inet.Create;
 
       task Receiver is
          entry Wait;
@@ -520,8 +513,6 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type;
       begin
-         Sock.Create (Family => Family_Inet,
-                      Mode   => Datagram_Socket);
          Sock.Bind (Address => Test_Utils.Test_Addr_V4);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -555,7 +546,7 @@ package body Anet_Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Inet.TCPv4_Socket_Type := Inet.Create;
       Sender : Socket_Addr_Type;
 
       task Receiver is
@@ -563,10 +554,8 @@ package body Anet_Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         S2 : Socket_Type;
+         S2 : Inet.TCPv4_Socket_Type;
       begin
-         Sock.Create (Family => Family_Inet,
-                      Mode   => Stream_Socket);
          Sock.Set_Socket_Option (Option => Reuse_Address,
                                  Value  => True);
          Sock.Bind (Address => Test_Utils.Test_Addr_V4);
@@ -607,7 +596,7 @@ package body Anet_Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Inet.UDPv6_Socket_Type := Inet.Create;
 
       task Receiver is
          entry Wait;
@@ -616,8 +605,6 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Inet6);
       begin
-         Sock.Create (Family => Family_Inet6,
-                      Mode   => Datagram_Socket);
          Sock.Bind (Address => Test_Utils.Test_Addr_V6);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -652,7 +639,7 @@ package body Anet_Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Inet.TCPv6_Socket_Type := Inet.Create;
       Sender : Socket_Addr_Type;
 
       task Receiver is
@@ -660,10 +647,8 @@ package body Anet_Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         S2 : Socket_Type;
+         S2 : Inet.TCPv6_Socket_Type;
       begin
-         Sock.Create (Family => Family_Inet6,
-                      Mode   => Stream_Socket);
          Sock.Set_Socket_Option (Option => Reuse_Address,
                                  Value  => True);
          Sock.Bind (Address => Test_Utils.Test_Addr_V6);
@@ -705,9 +690,9 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      C    : Tasking.Count_Type := 0;
-      Sock : aliased Socket_Type;
-      R    : Tasking.Receiver_Type (S => Sock'Access);
+      C    : Tasking.Count_Type             := 0;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
+      R    : Tasking.Receiver_Type (S => Socket_Type (Sock)'Access);
       Grp  : constant IPv4_Addr_Type
         := To_IPv4_Addr (Str => "224.0.0.117");
       Addr : constant Socket_Addr_Type
@@ -715,8 +700,6 @@ package body Anet_Socket_Tests is
             Addr_V4 => Grp,
             Port_V4 => Test_Utils.Listen_Port);
    begin
-      Sock.Create (Family => Family_Inet,
-                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Addr);
       Sock.Join_Multicast_Group (Group => Addr);
 
@@ -755,9 +738,9 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      C    : Tasking.Count_Type := 0;
-      Sock : aliased Socket_Type;
-      R    : Tasking.Receiver_Type (S => Sock'Access);
+      C    : Tasking.Count_Type             := 0;
+      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
+      R    : Tasking.Receiver_Type (S => Socket_Type (Sock)'Access);
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
       Addr : constant Socket_Addr_Type
@@ -765,8 +748,6 @@ package body Anet_Socket_Tests is
             Addr_V6 => Grp,
             Port_V6 => Test_Utils.Listen_Port);
    begin
-      Sock.Create (Family => Family_Inet6,
-                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Addr);
       Sock.Join_Multicast_Group (Group => Addr);
 
@@ -894,12 +875,10 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      C    : Tasking.Count_Type := 0;
-      Sock : aliased Socket_Type;
-      R    : Tasking.Receiver_Type (S => Sock'Access);
+      C    : Tasking.Count_Type             := 0;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
+      R    : Tasking.Receiver_Type (S => Socket_Type (Sock)'Access);
    begin
-      Sock.Create (Family => Family_Inet,
-                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
       Tasking.Listen (Receiver => R,
@@ -983,12 +962,10 @@ package body Anet_Socket_Tests is
    is
       use type Anet.Sockets.Tasking.Count_Type;
 
-      C    : Tasking.Count_Type := 0;
-      Sock : aliased Socket_Type;
-      R    : Tasking.Receiver_Type (S => Sock'Access);
+      C    : Tasking.Count_Type             := 0;
+      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
+      R    : Tasking.Receiver_Type (S => Socket_Type (Sock)'Access);
    begin
-      Sock.Create (Family => Family_Inet6,
-                   Mode   => Datagram_Socket);
       Sock.Bind (Address => Test_Utils.Test_Addr_V6);
 
       Tasking.Listen (Receiver => R,

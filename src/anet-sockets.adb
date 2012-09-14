@@ -89,32 +89,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Bind
-     (Socket  : in out Socket_Type;
-      Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        Iface_Name_Type  := "")
-   is
-   begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Reuse_Address,
-         Value  => True);
-
-      Thin.Bind_Socket (Socket  => Socket.Sock_FD,
-                        Address => Address);
-      Socket.Address := Address;
-
-      if Iface'Length /= 0 then
-         Thin.Set_Socket_Option
-           (Socket => Socket.Sock_FD,
-            Level  => Thin.Socket_Level,
-            Option => Bind_To_Device,
-            Value  => String (Iface));
-      end if;
-   end Bind;
-
-   -------------------------------------------------------------------------
-
    procedure Close (Socket : in out Socket_Type)
    is
    begin
@@ -226,29 +200,6 @@ package body Anet.Sockets is
                               Source => Src);
       end if;
    end Receive;
-
-   -------------------------------------------------------------------------
-
-   procedure Send
-     (Socket : Socket_Type;
-      Item   : Ada.Streams.Stream_Element_Array;
-      Dst    : Socket_Addr_Type)
-   is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Len : Ada.Streams.Stream_Element_Offset;
-   begin
-      Thin.Send_Socket (Socket => Socket.Sock_FD,
-                        Data   => Item,
-                        Last   => Len,
-                        Dst    => Dst);
-
-      if Len /= Item'Length then
-         raise Socket_Error with "Incomplete send operation to "
-           & To_String (Address => Dst) & ", only" & Len'Img & " of"
-           & Item'Length'Img & " bytes sent";
-      end if;
-   end Send;
 
    -------------------------------------------------------------------------
 

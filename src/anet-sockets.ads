@@ -95,13 +95,6 @@ package Anet.Sockets is
    --  Create a new socket with given family (IPv4, IPv6, packet, Unix) and
    --  mode (UDP, TCP).
 
-   procedure Bind
-     (Socket  : in out Socket_Type;
-      Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        Iface_Name_Type  := "");
-   --  Open given socket and bind it to specified IP address and port. If an
-   --  interface name is given the socket is bound to it.
-
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
 
@@ -115,12 +108,6 @@ package Anet.Sockets is
       New_Socket : out Socket_Type);
    --  Accept first connection request from listening socket and return new
    --  connected socket.
-
-   procedure Send
-     (Socket : Socket_Type;
-      Item   : Ada.Streams.Stream_Element_Array;
-      Dst    : Socket_Addr_Type);
-   --  Send given data to the specified destination via the given socket.
 
    procedure Send
      (Socket : Socket_Type;
