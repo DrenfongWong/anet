@@ -31,7 +31,8 @@ package Anet.Sockets.Unix is
       Path   :        Unix_Path_Type);
    --  Bind given UNIX domain socket to path.
 
-   type UDP_Socket_Type is new Unix_Socket_Type with private;
+   type UDP_Socket_Type is new Unix_Socket_Type
+     and Dgram_Socket_Type with private;
    --  UNIX domain socket in datagram mode.
 
    function Create return UDP_Socket_Type;
@@ -48,7 +49,8 @@ private
 
    type Unix_Socket_Type is abstract new Socket_Type with null record;
 
-   type UDP_Socket_Type is new Unix_Socket_Type with null record;
+   type UDP_Socket_Type is new Unix_Socket_Type
+     and Dgram_Socket_Type with null record;
 
    type TCP_Socket_Type is new Unix_Socket_Type
      and Stream_Socket_Type with null record;

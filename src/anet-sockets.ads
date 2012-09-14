@@ -160,6 +160,9 @@ package Anet.Sockets is
       Backlog : Positive := 1);
    --  Listen for specified amount of requests on given socket.
 
+   type Dgram_Socket_Type is limited interface;
+   --  Datagram socket.
+
    type Stream_Socket_Type is limited interface;
    --  Stream socket.
 
