@@ -28,6 +28,7 @@ with Ada.Strings.Unbounded;
 with Ada.Directories;
 
 with Anet.OS;
+with Anet.Sockets.Unix;
 with Anet.Sockets.Tasking;
 with Anet.Util;
 with Anet.Test_Utils;
@@ -418,7 +419,7 @@ package body Anet_Socket_Tests is
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Unix.UDP_Socket_Type := Unix.Create;
 
       task Receiver is
          entry Wait;
@@ -427,9 +428,7 @@ package body Anet_Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Unix);
       begin
-         Sock.Create (Family => Family_Unix,
-                      Mode   => Datagram_Socket);
-         Sock.Bind_Unix (Path => Unix_Path_Type (Path));
+         Sock.Bind (Path => Unix_Path_Type (Path));
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -467,7 +466,7 @@ package body Anet_Socket_Tests is
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Socket_Type;
+      Sock   : Unix.TCP_Socket_Type := Unix.Create;
 
       task Receiver is
          entry Wait;
@@ -475,11 +474,9 @@ package body Anet_Socket_Tests is
 
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Unix);
-         S2     : Socket_Type;
+         S2     : Unix.TCP_Socket_Type;
       begin
-         Sock.Create (Family => Family_Unix,
-                      Mode   => Stream_Socket);
-         Sock.Bind_Unix (Path => Unix_Path_Type (Path));
+         Sock.Bind (Path => Unix_Path_Type (Path));
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
          S2.Receive (Src  => Sender,
@@ -1112,11 +1109,9 @@ package body Anet_Socket_Tests is
       Path : constant String := "./my_socket";
    begin
       declare
-         Sock : Socket_Type;
+         Sock : Unix.UDP_Socket_Type := Unix.Create;
       begin
-         Sock.Create (Family => Family_Unix,
-                      Mode   => Datagram_Socket);
-         Sock.Bind_Unix (Path => Unix_Path_Type (Path));
+         Sock.Bind (Path => Unix_Path_Type (Path));
          Assert (Condition => Ada.Directories.Exists (Name => Path),
                  Message   => "Path not found");
       end;

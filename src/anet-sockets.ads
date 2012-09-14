@@ -110,11 +110,6 @@ package Anet.Sockets is
       Iface  :        Iface_Name_Type);
    --  Bind given packet socket (Family_Packet) to specified interface.
 
-   procedure Bind_Unix
-     (Socket : in out Socket_Type;
-      Path   :        Unix_Path_Type);
-   --  Bind given unix socket (Family_Unix) to specified path.
-
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
 

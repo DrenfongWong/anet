@@ -126,19 +126,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Bind_Unix
-     (Socket : in out Socket_Type;
-      Path   :        Unix_Path_Type)
-   is
-   begin
-      Thin.Bind_Unix_Socket (Socket => Socket.Sock_FD,
-                             Path  => Path);
-      Socket.Address.Path := Ada.Strings.Unbounded.To_Unbounded_String
-        (String (Path));
-   end Bind_Unix;
-
-   -------------------------------------------------------------------------
-
    procedure Close (Socket : in out Socket_Type)
    is
    begin

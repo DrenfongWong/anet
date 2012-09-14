@@ -25,7 +25,7 @@ with Ada.Streams;
 with Ada.Strings.Unbounded;
 
 with Anet.Streams;
-with Anet.Sockets;
+with Anet.Sockets.Unix;
 
 package body Anet_Stream_Tests is
 
@@ -98,7 +98,7 @@ package body Anet_Stream_Tests is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
 
-      Server, Client : Sockets.Socket_Type;
+      Server, Client : Unix.UDP_Socket_Type := Unix.Create;
 
       There : Test_Record;
       Here  : constant Test_Record
@@ -116,9 +116,7 @@ package body Anet_Stream_Tests is
          Sender : Socket_Addr_Type (Family => Family_Unix);
          S1     : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
       begin
-         Server.Create (Family => Family_Unix,
-                        Mode   => Datagram_Socket);
-         Server.Bind_Unix (Path => Unix_Path_Type (Path));
+         Server.Bind (Path => Unix_Path_Type (Path));
          accept Ready;
 
          Server.Receive (Src  => Sender,
@@ -134,8 +132,6 @@ package body Anet_Stream_Tests is
    begin
       Receiver.Ready;
 
-      Client.Create (Family => Family_Unix,
-                     Mode   => Datagram_Socket);
       Client.Connect
         (Dst => (Family => Family_Unix,
                  Path   => To_Unbounded_String (Path)));
