@@ -24,6 +24,7 @@
 with Anet.OS;
 with Anet.Sockets.Thin;
 with Anet.Sockets.Thin.Unix;
+with Anet.Sockets.Thin.Packet;
 
 package body Anet.Sockets is
 
@@ -227,7 +228,7 @@ package body Anet.Sockets is
    is
    begin
       if Socket.Address.Family = Family_Packet then
-         Thin.Receive_Socket (Socket      => Socket.Sock_FD,
+         Thin.Packet.Receive (Socket      => Socket.Sock_FD,
                               Data        => Item,
                               Last        => Last,
                               Src_HW_Addr => Src.HW_Addr);

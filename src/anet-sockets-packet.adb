@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Packet;
 
 package body Anet.Sockets.Packet is
 
@@ -32,7 +32,7 @@ package body Anet.Sockets.Packet is
       Iface  :        Iface_Name_Type)
    is
    begin
-      Thin.Bind_Socket (Socket => Socket.Sock_FD,
+      Thin.Packet.Bind (Socket => Socket.Sock_FD,
                         Iface  => Iface);
       Socket.Address.HW_Addr := Get_Iface_Mac (Name => Iface);
    end Bind;
@@ -73,7 +73,7 @@ package body Anet.Sockets.Packet is
 
       Len : Ada.Streams.Stream_Element_Offset;
    begin
-      Thin.Send_Socket
+      Thin.Packet.Send
         (Socket => Socket.Sock_FD,
          Data   => Item,
          Last   => Len,

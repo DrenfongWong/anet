@@ -77,11 +77,6 @@ package Anet.Sockets.Thin is
       Address : Socket_Addr_Type);
    --  Bind given socket to specified IP address and port.
 
-   procedure Bind_Socket
-     (Socket : Integer;
-      Iface  : Iface_Name_Type);
-   --  Bind given packet socket (Family_Packet) to specified interface.
-
    procedure Connect_Socket
      (Socket : Integer;
       Dst    : Socket_Addr_Type);
@@ -111,15 +106,6 @@ package Anet.Sockets.Thin is
    --  the last stream element in data. The source IP and port specify the
    --  sender socket from which the data was received.
 
-   procedure Receive_Socket
-     (Socket      :     Integer;
-      Data        : out Ada.Streams.Stream_Element_Array;
-      Last        : out Ada.Streams.Stream_Element_Offset;
-      Src_HW_Addr : out Hardware_Addr_Type);
-   --  Receive data from given packet socket (Family_Packet). Last is the index
-   --  value which designates the last stream element in data. The source
-   --  hardware address specifies the MAC of the packet sender.
-
    procedure Send_Socket
      (Socket :     Integer;
       Data   :     Ada.Streams.Stream_Element_Array;
@@ -127,16 +113,6 @@ package Anet.Sockets.Thin is
       Dst    :     Socket_Addr_Type);
    --  Send data to another socket specified by destination. Last is the index
    --  value which designates the last sent stream element.
-
-   procedure Send_Socket
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset;
-      To     :     Hardware_Addr_Type;
-      Iface  :     Iface_Name_Type);
-   --  Send data on packet socket to given hardware address over interface
-   --  specified by name. The socket must be of type Family_Packet for this to
-   --  work.
 
    procedure Send_Socket
      (Socket :     Integer;
@@ -206,5 +182,25 @@ private
       Namelen : Interfaces.C.int)
       return Interfaces.C.int;
    pragma Import (C, C_Connect, "connect");
+
+   function C_Sendto
+     (S     : Interfaces.C.int;
+      Buf   : System.Address;
+      Len   : Interfaces.C.int;
+      Flags : Interfaces.C.int;
+      To    : System.Address;
+      Tolen : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Sendto, "sendto");
+
+   function C_Recvfrom
+     (S       : Interfaces.C.int;
+      Msg     : System.Address;
+      Len     : Interfaces.C.int;
+      Flags   : Interfaces.C.int;
+      From    : System.Address;
+      Fromlen : not null access Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Recvfrom, "recvfrom");
 
 end Anet.Sockets.Thin;

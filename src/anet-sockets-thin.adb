@@ -74,25 +74,6 @@ package body Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_Type);
    --  Generic socket address.
 
-   type Sockaddr_LL_Type is record
-      Sa_Family   : C.unsigned_short            := Constants.AF_PACKET;
-      --  Address family (always AF_PACKET)
-      Sa_Protocol : C.unsigned_short            := 0;
-      --  Physical layer protocol
-      Sa_Ifindex  : C.int                       := 0;
-      --  Interface number
-      Sa_Hatype   : C.unsigned_short            := 0;
-      --  Header type
-      Sa_Pkttype  : C.unsigned_char             := 0;
-      --  Packet type
-      Sa_Halen    : C.unsigned_char             := 0;
-      --  Length of address
-      Sa_Addr     : Hardware_Addr_Type (1 .. 8) := (others => 0);
-      --  Physical layer address
-   end record;
-   pragma Convention (C, Sockaddr_LL_Type);
-   --  Device independent physical layer address
-
    type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
       Ifr_Name : C.char_array (1 .. Max_Iface_Name_Len) := (others => C.nul);
 
@@ -118,26 +99,6 @@ package body Anet.Sockets.Thin is
       Flags : C.int)
       return C.int;
    pragma Import (C, C_Send, "send");
-
-   function C_Sendto
-     (S     : C.int;
-      Buf   : System.Address;
-      Len   : C.int;
-      Flags : C.int;
-      To    : System.Address;
-      Tolen : C.int)
-      return C.int;
-   pragma Import (C, C_Sendto, "sendto");
-
-   function C_Recvfrom
-     (S       : C.int;
-      Msg     : System.Address;
-      Len     : C.int;
-      Flags   : C.int;
-      From    : System.Address;
-      Fromlen : not null access C.int)
-      return C.int;
-   pragma Import (C, C_Recvfrom, "recvfrom");
 
    function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type;
    --  Return inet sock address for given socket address.
@@ -226,32 +187,6 @@ package body Anet.Sockets.Thin is
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind socket to "
            & To_String (Address => Address) & " - " & Get_Errno_String;
-      end if;
-   end Bind_Socket;
-
-   -------------------------------------------------------------------------
-
-   procedure Bind_Socket
-     (Socket : Integer;
-      Iface  : Iface_Name_Type)
-   is
-      use type C.int;
-
-      Res   : C.int;
-      Value : Sockaddr_LL_Type;
-   begin
-      Value.Sa_Protocol := C.unsigned_short
-        (Byte_Swapping.Host_To_Network
-           (Input => Double_Byte (Constants.ETH_P_IP)));
-      Value.Sa_Ifindex  := C.int (Get_Iface_Index (Name => Iface));
-
-      Res := C_Bind (S       => C.int (Socket),
-                     Name    => Value'Address,
-                     Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind packet socket to interface "
-           & String (Iface) & " - " & Get_Errno_String;
       end if;
    end Bind_Socket;
 
@@ -651,37 +586,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Receive_Socket
-     (Socket      :     Integer;
-      Data        : out Ada.Streams.Stream_Element_Array;
-      Last        : out Ada.Streams.Stream_Element_Offset;
-      Src_HW_Addr : out Hardware_Addr_Type)
-   is
-      use type Interfaces.C.int;
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res   : C.int;
-      Saddr : Sockaddr_LL_Type;
-      Len   : aliased C.int := Saddr'Size / 8;
-   begin
-      Res := C_Recvfrom (S       => C.int (Socket),
-                         Msg     => Data'Address,
-                         Len     => Data'Length,
-                         Flags   => 0,
-                         From    => Saddr'Address,
-                         Fromlen => Len'Access);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Error receiving packet data: "
-           & Get_Errno_String;
-      end if;
-
-      Src_HW_Addr := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src_HW_Addr'Length);
-      Last        := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-   end Receive_Socket;
-
-   -------------------------------------------------------------------------
-
    procedure Send_Socket
      (Socket :     Integer;
       Data   :     Ada.Streams.Stream_Element_Array;
@@ -704,45 +608,6 @@ package body Anet.Sockets.Thin is
       if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
            & To_String (Address => Dst) & " - " & Get_Errno_String;
-      end if;
-
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-   end Send_Socket;
-
-   -------------------------------------------------------------------------
-
-   procedure Send_Socket
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset;
-      To     :     Hardware_Addr_Type;
-      Iface  :     Iface_Name_Type)
-   is
-      use type C.int;
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res     : C.int;
-      LL_Dest : Sockaddr_LL_Type;
-   begin
-      LL_Dest.Sa_Ifindex  := C.int (Get_Iface_Index (Name => Iface));
-      LL_Dest.Sa_Halen    := To'Length;
-      LL_Dest.Sa_Protocol := C.unsigned_short
-        (Byte_Swapping.Host_To_Network
-           (Input => Double_Byte (Constants.ETH_P_IP)));
-
-      LL_Dest.Sa_Addr (1 .. To'Length) := To;
-
-      Res := C_Sendto (S     => C.int (Socket),
-                       Buf   => Data'Address,
-                       Len   => Data'Length,
-                       Flags => 0,
-                       To    => LL_Dest'Address,
-                       Tolen => LL_Dest'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to send packet data on interface "
-           & String (Iface) & " to " & To_String (Address => To)
-           & " - " & Get_Errno_String;
       end if;
 
       Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
