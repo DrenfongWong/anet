@@ -21,45 +21,35 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Sockets.Thin.Unix;
+with Anet.Constants;
 
-package body Anet.Sockets.Unix is
+package Anet.Sockets.Thin.Unix is
 
-   -------------------------------------------------------------------------
+   type Sockaddr_Un_Type is record
+      Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
+      --  Address family
+      Pathname   : Interfaces.C.char_array (1 .. Max_Unix_Path_Len)
+        := (others => Interfaces.C.nul);
+      --  Pathname
+   end record;
+   pragma Convention (C, Sockaddr_Un_Type);
+   --  Low-level UNIX socket address type (struct sockaddr_un).
 
    procedure Bind
-     (Socket : in out Unix_Socket_Type;
-      Path   :        Unix_Path_Type)
-   is
-   begin
-      Thin.Unix.Bind (Socket => Socket.Sock_FD,
-                      Path   => Path);
-      Socket.Address.Path := Ada.Strings.Unbounded.To_Unbounded_String
-        (String (Path));
-   end Bind;
+     (Socket : Integer;
+      Path   : Unix_Path_Type);
+   --  Bind given UNIX socket to specified path.
 
-   -------------------------------------------------------------------------
+   procedure Connect
+     (Socket : Integer;
+      Path   : Unix_Path_Type);
+   --  Connect given UNIX socket to specified path.
 
-   function Create return UDP_Socket_Type
-   is
-   begin
-      return Socket : UDP_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Unix,
-                 Mode   => Datagram_Socket);
-      end return;
-   end Create;
+   procedure Receive
+     (Socket :     Integer;
+      Data   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset);
+   --  Receive data from given UNIX domain socket (Family_Unix). Last is the
+   --  index value which designates the last stream element in data.
 
-   -------------------------------------------------------------------------
-
-   function Create return TCP_Socket_Type
-   is
-   begin
-      return Socket : TCP_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Unix,
-                 Mode   => Stream_Socket);
-      end return;
-   end Create;
-
-end Anet.Sockets.Unix;
+end Anet.Sockets.Thin.Unix;

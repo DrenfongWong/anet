@@ -25,8 +25,6 @@ with Ada.Streams;
 
 with Interfaces.C;
 
-with Anet.Constants;
-
 package Anet.Sockets.Thin is
 
    type Sockaddr_In_Type (Family : Family_Inet_Type := Family_Inet) is record
@@ -54,16 +52,6 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_In_Type);
    --  Low-level internet socket address type (struct sockaddr_in, struct
    --  sockaddr_in6).
-
-   type Sockaddr_Un_Type is record
-      Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
-      --  Address family
-      Pathname   : Interfaces.C.char_array (1 .. Max_Unix_Path_Len)
-        := (others => Interfaces.C.nul);
-      --  Pathname
-   end record;
-   pragma Convention (C, Sockaddr_Un_Type);
-   --  Low-level unix socket address type (struct sockaddr_un).
 
    type Level_Type is (Socket_Level);
    --  Protocol level type.
@@ -94,20 +82,10 @@ package Anet.Sockets.Thin is
       Iface  : Iface_Name_Type);
    --  Bind given packet socket (Family_Packet) to specified interface.
 
-   procedure Bind_Unix_Socket
-     (Socket : Integer;
-      Path   : Unix_Path_Type);
-   --  Bind given unix socket (Family_Unix) to specified path.
-
    procedure Connect_Socket
      (Socket : Integer;
       Dst    : Socket_Addr_Type);
    --  Connect given socket to specified destination address.
-
-   procedure Connect_Socket
-     (Socket : Integer;
-      Path   : Unix_Path_Type);
-   --  Connect given unix socket (Family_Unix) to specified path.
 
    procedure Listen_Socket
      (Socket  : Integer;
@@ -141,13 +119,6 @@ package Anet.Sockets.Thin is
    --  Receive data from given packet socket (Family_Packet). Last is the index
    --  value which designates the last stream element in data. The source
    --  hardware address specifies the MAC of the packet sender.
-
-   procedure Receive_Socket
-     (Socket :     Integer;
-      Data   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset);
-   --  Receive data from given unix domain socket (Family_Unix). Last is the
-   --  index value which designates the last stream element in data.
 
    procedure Send_Socket
      (Socket :     Integer;
@@ -219,5 +190,21 @@ package Anet.Sockets.Thin is
       State : Boolean);
    --  Set state of interface given by name. If state is True the interface is
    --  brought up.
+
+private
+
+   function C_Bind
+     (S       : Interfaces.C.int;
+      Name    : System.Address;
+      Namelen : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Bind, "bind");
+
+   function C_Connect
+     (S       : Interfaces.C.int;
+      Name    : System.Address;
+      Namelen : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Connect, "connect");
 
 end Anet.Sockets.Thin;

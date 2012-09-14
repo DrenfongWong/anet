@@ -21,8 +21,8 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Constants;
 with Anet.Byte_Swapping;
-with Anet.OS;
 
 package body Anet.Sockets.Thin is
 
@@ -129,13 +129,6 @@ package body Anet.Sockets.Thin is
       return C.int;
    pragma Import (C, C_Sendto, "sendto");
 
-   function C_Bind
-     (S       : C.int;
-      Name    : System.Address;
-      Namelen : C.int)
-      return C.int;
-   pragma Import (C, C_Bind, "bind");
-
    function C_Recvfrom
      (S       : C.int;
       Msg     : System.Address;
@@ -145,13 +138,6 @@ package body Anet.Sockets.Thin is
       Fromlen : not null access C.int)
       return C.int;
    pragma Import (C, C_Recvfrom, "recvfrom");
-
-   function C_Connect
-     (S       : C.int;
-      Name    : System.Address;
-      Namelen : C.int)
-      return C.int;
-   pragma Import (C, C_Connect, "connect");
 
    function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type;
    --  Return inet sock address for given socket address.
@@ -271,32 +257,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Bind_Unix_Socket
-     (Socket : Integer;
-      Path   : Unix_Path_Type)
-   is
-      use type C.int;
-
-      Res    : C.int;
-      C_Path : constant C.char_array := C.To_C (String (Path));
-      Value  : Sockaddr_Un_Type;
-   begin
-      OS.Delete_File (Filename => String (Path));
-
-      Value.Pathname (1 .. C_Path'Length) := C_Path;
-
-      Res := C_Bind (S       => C.int (Socket),
-                     Name    => Value'Address,
-                     Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
-      end if;
-   end Bind_Unix_Socket;
-
-   -------------------------------------------------------------------------
-
    procedure Close_Socket (Socket : Integer)
    is
       use type C.int;
@@ -331,30 +291,6 @@ package body Anet.Sockets.Thin is
       if Res = C_Failure then
          raise Socket_Error with "Unable to connect socket to address "
            & To_String (Dst) & " - " & Get_Errno_String;
-      end if;
-   end Connect_Socket;
-
-   -------------------------------------------------------------------------
-
-   procedure Connect_Socket
-     (Socket : Integer;
-      Path   : Unix_Path_Type)
-   is
-      use type C.int;
-
-      Res    : C.int;
-      C_Path : constant C.char_array := C.To_C (String (Path));
-      Value  : Sockaddr_Un_Type;
-   begin
-      Value.Pathname (1 .. C_Path'Length) := C_Path;
-
-      Res := C_Connect (S       => C.int (Socket),
-                        Name    => Value'Address,
-                        Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to connect unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
       end if;
    end Connect_Socket;
 
@@ -742,39 +678,6 @@ package body Anet.Sockets.Thin is
 
       Src_HW_Addr := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src_HW_Addr'Length);
       Last        := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-   end Receive_Socket;
-
-   -------------------------------------------------------------------------
-
-   procedure Receive_Socket
-     (Socket :     Integer;
-      Data   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset)
-   is
-      use type Interfaces.C.int;
-      use type Ada.Streams.Stream_Element_Offset;
-
-      function C_Recv
-        (S       : C.int;
-         Msg     : System.Address;
-         Len     : C.int;
-         Flags   : C.int)
-         return C.int;
-      pragma Import (C, C_Recv, "recv");
-
-      Res : C.int;
-   begin
-      Res := C_Recv (S     => C.int (Socket),
-                     Msg   => Data'Address,
-                     Len   => Data'Length,
-                     Flags => 0);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Error receiving packet data: "
-           & Get_Errno_String;
-      end if;
-
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive_Socket;
 
    -------------------------------------------------------------------------

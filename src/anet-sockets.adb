@@ -23,6 +23,7 @@
 
 with Anet.OS;
 with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Unix;
 
 package body Anet.Sockets is
 
@@ -59,7 +60,7 @@ package body Anet.Sockets is
    is
       Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet);
       Sock_In6  : Thin.Sockaddr_In_Type (Family => Family_Inet6);
-      Sock_Un   : Thin.Sockaddr_Un_Type;
+      Sock_Un   : Thin.Unix.Sockaddr_Un_Type;
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin
@@ -147,9 +148,10 @@ package body Anet.Sockets is
    is
    begin
       if Dst.Family = Family_Unix then
-         Thin.Connect_Socket (Socket => Socket.Sock_FD,
-                              Path   => Unix_Path_Type
-                                (Ada.Strings.Unbounded.To_String (Dst.Path)));
+         Thin.Unix.Connect
+           (Socket => Socket.Sock_FD,
+            Path   => Unix_Path_Type
+              (Ada.Strings.Unbounded.To_String (Dst.Path)));
       else
          Thin.Connect_Socket (Socket => Socket.Sock_FD,
                               Dst    => Dst);
@@ -242,9 +244,9 @@ package body Anet.Sockets is
                               Last        => Last,
                               Src_HW_Addr => Src.HW_Addr);
       elsif Socket.Address.Family = Family_Unix then
-         Thin.Receive_Socket (Socket => Socket.Sock_FD,
-                              Data   => Item,
-                              Last   => Last);
+         Thin.Unix.Receive (Socket => Socket.Sock_FD,
+                            Data   => Item,
+                            Last   => Last);
       else
          Thin.Receive_Socket (Socket => Socket.Sock_FD,
                               Data   => Item,
