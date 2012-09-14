@@ -115,18 +115,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Bind_Packet
-     (Socket : in out Socket_Type;
-      Iface  :        Iface_Name_Type)
-   is
-   begin
-      Thin.Bind_Socket (Socket => Socket.Sock_FD,
-                        Iface  => Iface);
-      Socket.Address.HW_Addr := Get_Iface_Mac (Name => Iface);
-   end Bind_Packet;
-
-   -------------------------------------------------------------------------
-
    procedure Close (Socket : in out Socket_Type)
    is
    begin
@@ -274,32 +262,6 @@ package body Anet.Sockets is
       if Len /= Item'Length then
          raise Socket_Error with "Incomplete send operation to "
            & To_String (Address => Dst) & ", only" & Len'Img & " of"
-           & Item'Length'Img & " bytes sent";
-      end if;
-   end Send;
-
-   -------------------------------------------------------------------------
-
-   procedure Send
-     (Socket :     Socket_Type;
-      Item   :     Ada.Streams.Stream_Element_Array;
-      To     :     Hardware_Addr_Type;
-      Iface  :     Iface_Name_Type)
-   is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Len : Ada.Streams.Stream_Element_Offset;
-   begin
-      Thin.Send_Socket
-        (Socket => Socket.Sock_FD,
-         Data   => Item,
-         Last   => Len,
-         To     => To,
-         Iface  => Iface);
-
-      if Len /= Item'Length then
-         raise Socket_Error with "Incomplete packet send operation to "
-           & To_String (Address => To) & ", only" & Len'Img & " of"
            & Item'Length'Img & " bytes sent";
       end if;
    end Send;

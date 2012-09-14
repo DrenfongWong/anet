@@ -105,11 +105,6 @@ package Anet.Sockets is
    --  Open given socket and bind it to specified IP address and port. If an
    --  interface name is given the socket is bound to it.
 
-   procedure Bind_Packet
-     (Socket : in out Socket_Type;
-      Iface  :        Iface_Name_Type);
-   --  Bind given packet socket (Family_Packet) to specified interface.
-
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
 
@@ -129,15 +124,6 @@ package Anet.Sockets is
       Item   : Ada.Streams.Stream_Element_Array;
       Dst    : Socket_Addr_Type);
    --  Send given data to the specified destination via the given socket.
-
-   procedure Send
-     (Socket : Socket_Type;
-      Item   : Ada.Streams.Stream_Element_Array;
-      To     : Hardware_Addr_Type;
-      Iface  : Iface_Name_Type);
-   --  Send data on packet socket to given hardware address over interface
-   --  specified by name. The socket must be of type Family_Packet for this to
-   --  work.
 
    procedure Send
      (Socket : Socket_Type;
