@@ -160,6 +160,20 @@ package Anet.Sockets is
       Backlog : Positive := 1);
    --  Listen for specified amount of requests on given socket.
 
+   type Stream_Socket_Type is limited interface;
+   --  Stream socket.
+
+   procedure Listen
+     (Socket  : Stream_Socket_Type;
+      Backlog : Positive := 1) is abstract;
+   --  Listen for specified amount of requests on given socket.
+
+   procedure Accept_Connection
+     (Socket     :     Stream_Socket_Type;
+      New_Socket : out Stream_Socket_Type) is abstract;
+   --  Accept first connection request from listening socket and return new
+   --  connected socket.
+
    type Option_Name_Bool is
      (Broadcast,
       Reuse_Address);

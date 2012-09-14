@@ -37,7 +37,8 @@ package Anet.Sockets.Unix is
    function Create return UDP_Socket_Type;
    --  Create new UNIX/UDP socket.
 
-   type TCP_Socket_Type is new Unix_Socket_Type with private;
+   type TCP_Socket_Type is new Unix_Socket_Type
+     and Stream_Socket_Type with private;
    --  UNIX domain socket in stream mode.
 
    function Create return TCP_Socket_Type;
@@ -49,6 +50,7 @@ private
 
    type UDP_Socket_Type is new Unix_Socket_Type with null record;
 
-   type TCP_Socket_Type is new Unix_Socket_Type with null record;
+   type TCP_Socket_Type is new Unix_Socket_Type
+     and Stream_Socket_Type with null record;
 
 end Anet.Sockets.Unix;
