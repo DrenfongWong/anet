@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Inet;
 with Anet.Sockets.Thin.Unix;
 with Anet.Sockets.Thin.Packet;
 
@@ -58,8 +58,8 @@ package body Anet.Sockets is
      (Socket     :     Socket_Type;
       New_Socket : out Socket_Type)
    is
-      Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet);
-      Sock_In6  : Thin.Sockaddr_In_Type (Family => Family_Inet6);
+      Sock_In   : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
+      Sock_In6  : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
       Sock_Un   : Thin.Unix.Sockaddr_Un_Type;
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
@@ -194,10 +194,10 @@ package body Anet.Sockets is
                             Data   => Item,
                             Last   => Last);
       else
-         Thin.Receive_Socket (Socket => Socket.Sock_FD,
-                              Data   => Item,
-                              Last   => Last,
-                              Source => Src);
+         Thin.Inet.Receive (Socket => Socket.Sock_FD,
+                            Data   => Item,
+                            Last   => Last,
+                            Source => Src);
       end if;
    end Receive;
 

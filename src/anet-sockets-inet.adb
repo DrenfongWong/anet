@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Inet;
 
 package body Anet.Sockets.Inet is
 
@@ -38,8 +38,8 @@ package body Anet.Sockets.Inet is
          Option => Reuse_Address,
          Value  => True);
 
-      Thin.Bind_Socket (Socket  => Socket.Sock_FD,
-                        Address => Address);
+      Thin.Inet.Bind (Socket  => Socket.Sock_FD,
+                      Address => Address);
       Socket.Address := Address;
 
       if Iface'Length /= 0 then
@@ -110,10 +110,10 @@ package body Anet.Sockets.Inet is
 
       Len : Ada.Streams.Stream_Element_Offset;
    begin
-      Thin.Send_Socket (Socket => Socket.Sock_FD,
-                        Data   => Item,
-                        Last   => Len,
-                        Dst    => Dst);
+      Thin.Inet.Send (Socket => Socket.Sock_FD,
+                      Data   => Item,
+                      Last   => Len,
+                      Dst    => Dst);
 
       if Len /= Item'Length then
          raise Socket_Error with "Incomplete send operation to "

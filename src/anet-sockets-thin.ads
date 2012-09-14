@@ -27,32 +27,6 @@ with Interfaces.C;
 
 package Anet.Sockets.Thin is
 
-   type Sockaddr_In_Type (Family : Family_Inet_Type := Family_Inet) is record
-      Sin_Family : Interfaces.C.unsigned_short;
-      --  Address family
-      Sin_Port   : Interfaces.C.unsigned_short;
-      --  Port in network byte order
-
-      case Family is
-         when Family_Inet =>
-            Sin_Addr : IPv4_Addr_Type      := (others => 0);
-            --  IPv4 address
-            Sin_Zero : Byte_Array (1 .. 8) := (others => 0);
-            --  Padding
-         when Family_Inet6 =>
-            Sin_Flowinfo : Interfaces.C.unsigned;
-            --  IPv6 flow information
-            Sin6_Addr    : IPv6_Addr_Type := (others => 0);
-            --  IPv6 address
-            Sin_Scope_ID : Interfaces.C.unsigned;
-            --  Scope ID
-      end case;
-   end record;
-   pragma Unchecked_Union (Sockaddr_In_Type);
-   pragma Convention (C, Sockaddr_In_Type);
-   --  Low-level internet socket address type (struct sockaddr_in, struct
-   --  sockaddr_in6).
-
    type Level_Type is (Socket_Level);
    --  Protocol level type.
 
@@ -71,11 +45,6 @@ package Anet.Sockets.Thin is
 
    procedure Close_Socket (Socket : Integer);
    --  Close given socket.
-
-   procedure Bind_Socket
-     (Socket  : Integer;
-      Address : Socket_Addr_Type);
-   --  Bind given socket to specified IP address and port.
 
    procedure Connect_Socket
      (Socket : Integer;
@@ -96,23 +65,6 @@ package Anet.Sockets.Thin is
    --  socket. The Sockaddr argument must be an address to a low-level
    --  Sockaddr_In or Sockaddr_Un object matching the socket family.
    --  Sockaddr_Len is the size of the low-level sockaddr object (in bytes).
-
-   procedure Receive_Socket
-     (Socket   :     Integer;
-      Data     : out Ada.Streams.Stream_Element_Array;
-      Last     : out Ada.Streams.Stream_Element_Offset;
-      Source   : out Socket_Addr_Type);
-   --  Receive data from given socket. Last is the index value which designates
-   --  the last stream element in data. The source IP and port specify the
-   --  sender socket from which the data was received.
-
-   procedure Send_Socket
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset;
-      Dst    :     Socket_Addr_Type);
-   --  Send data to another socket specified by destination. Last is the index
-   --  value which designates the last sent stream element.
 
    procedure Send_Socket
      (Socket :     Integer;
@@ -141,11 +93,6 @@ package Anet.Sockets.Thin is
       Iface  : Iface_Name_Type := "");
    --  Join the given multicast group on the interface specified by name. If no
    --  interface name is provided, the kernel selects the interface.
-
-   procedure Get_Socket_Info
-     (Sock_Addr :     Sockaddr_In_Type;
-      Source    : out Socket_Addr_Type);
-   --  Get IP address and port from given low-level inet sock address.
 
    function Get_Iface_Index (Name : Iface_Name_Type) return Positive;
    --  Get interface index of interface given by name.
