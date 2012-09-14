@@ -184,18 +184,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   function Is_Valid_Unix (Path : String) return Boolean
-   is
-   begin
-      if Path'Length in Unix_Path_Range then
-         return True;
-      else
-         return False;
-      end if;
-   end Is_Valid_Unix;
-
-   -------------------------------------------------------------------------
-
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
       Group  : Socket_Addr_Type;

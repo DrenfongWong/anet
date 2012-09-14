@@ -62,4 +62,16 @@ package body Anet.Sockets.Unix is
       end return;
    end Create;
 
+   -------------------------------------------------------------------------
+
+   function Is_Valid (Path : String) return Boolean
+   is
+   begin
+      if Path'Length in Unix_Path_Range then
+         return True;
+      else
+         return False;
+      end if;
+   end Is_Valid;
+
 end Anet.Sockets.Unix;

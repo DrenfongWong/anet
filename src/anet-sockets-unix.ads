@@ -45,6 +45,9 @@ package Anet.Sockets.Unix is
    function Create return TCP_Socket_Type;
    --  Create new UNIX/TCP socket.
 
+   function Is_Valid (Path : String) return Boolean;
+   --  Returns true if the given path is a valid unix path.
+
 private
 
    type Unix_Socket_Type is abstract new Socket_Type with null record;

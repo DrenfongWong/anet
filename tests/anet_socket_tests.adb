@@ -1141,11 +1141,11 @@ package body Anet_Socket_Tests is
       Too_Long : constant String :=
         (1 .. Sockets.Max_Unix_Path_Len + 1 => 'a');
    begin
-      Assert (Condition => Is_Valid_Unix (Path => "/tmp/foopath"),
+      Assert (Condition => Unix.Is_Valid (Path => "/tmp/foopath"),
               Message   => "Invalid path '/tmp/foopath'");
-      Assert (Condition => not Is_Valid_Unix (Path => ""),
+      Assert (Condition => not Unix.Is_Valid (Path => ""),
               Message   => "Valid empty path");
-      Assert (Condition => not Is_Valid_Unix (Path => Too_Long),
+      Assert (Condition => not Unix.Is_Valid (Path => Too_Long),
               Message   => "Valid Path '" & Too_Long & "'");
    end Valid_Unix_Paths;
 
