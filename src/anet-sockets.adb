@@ -21,7 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.OS;
 with Anet.Sockets.Thin;
 with Anet.Sockets.Thin.Unix;
 with Anet.Sockets.Thin.Packet;
@@ -122,10 +121,6 @@ package body Anet.Sockets is
       if Socket.Sock_FD /= -1 then
          Thin.Close_Socket (Socket => Socket.Sock_FD);
          Socket.Sock_FD := -1;
-         if Socket.Address.Family = Family_Unix then
-            OS.Delete_File (Filename => Ada.Strings.Unbounded.To_String
-                            (Socket.Address.Path));
-         end if;
       end if;
    end Close;
 
@@ -167,7 +162,7 @@ package body Anet.Sockets is
    procedure Finalize (Socket : in out Socket_Type)
    is
    begin
-      Socket.Close;
+      Socket_Type'Class (Socket).Close;
    end Finalize;
 
    -------------------------------------------------------------------------

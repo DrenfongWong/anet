@@ -26,6 +26,10 @@ package Anet.Sockets.Unix is
    type Unix_Socket_Type is abstract new Socket_Type with private;
    --  UNIX domain socket.
 
+   overriding
+   procedure Close (Socket : in out Unix_Socket_Type);
+   --  Close given UNIX domain socket.
+
    procedure Bind
      (Socket : in out Unix_Socket_Type;
       Path   :        Unix_Path_Type);

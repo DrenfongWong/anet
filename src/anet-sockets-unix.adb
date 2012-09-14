@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.OS;
 with Anet.Sockets.Thin.Unix;
 
 package body Anet.Sockets.Unix is
@@ -37,6 +38,18 @@ package body Anet.Sockets.Unix is
       Socket.Address.Path := Ada.Strings.Unbounded.To_Unbounded_String
         (String (Path));
    end Bind;
+
+   -------------------------------------------------------------------------
+
+   procedure Close (Socket : in out Unix_Socket_Type)
+   is
+   begin
+      if Socket.Sock_FD /= -1 then
+         OS.Delete_File (Filename => Ada.Strings.Unbounded.To_String
+                         (Socket.Address.Path));
+         Socket_Type (Socket).Close;
+      end if;
+   end Close;
 
    -------------------------------------------------------------------------
 
