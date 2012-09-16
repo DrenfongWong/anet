@@ -800,9 +800,7 @@ package body Socket_Tests is
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Connect
-        (Dst => (Family => Family_Unix,
-                 Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
+      Sock.Connect (Path => Unix_Path_Type (Path));
       Sock.Send (Item => Ref_Chunk);
 
       select
@@ -843,9 +841,7 @@ package body Socket_Tests is
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Connect
-        (Dst => (Family => Family_Unix,
-                 Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
+      Sock.Connect (Path => Unix_Path_Type (Path));
       Sock.Send (Item => Ref_Chunk);
 
       select

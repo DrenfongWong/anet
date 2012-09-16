@@ -35,6 +35,11 @@ package Anet.Sockets.Unix is
       Path   :        Unix_Path_Type);
    --  Bind given UNIX domain socket to path.
 
+   procedure Connect
+     (Socket : in out Unix_Socket_Type;
+      Path   :        Unix_Path_Type);
+   --  Connect given UNIX domain socket to path.
+
    type UDP_Socket_Type is new Unix_Socket_Type
      and Dgram_Socket_Type with private;
    --  UNIX domain socket in datagram mode.

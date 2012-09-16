@@ -132,9 +132,7 @@ package body Stream_Tests is
    begin
       Receiver.Ready;
 
-      Client.Connect
-        (Dst => (Family => Family_Unix,
-                 Path   => To_Unbounded_String (Path)));
+      Client.Connect (Path => Unix_Path_Type (Path));
 
       Test_Record'Write (S2'Access, Here);
       Client.Send (Item => S2.Get_Buffer);

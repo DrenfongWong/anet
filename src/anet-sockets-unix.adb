@@ -53,6 +53,18 @@ package body Anet.Sockets.Unix is
 
    -------------------------------------------------------------------------
 
+   procedure Connect
+     (Socket : in out Unix_Socket_Type;
+      Path   :        Unix_Path_Type)
+   is
+   begin
+      Thin.Unix.Connect
+        (Socket => Socket.Sock_FD,
+         Path   => Path);
+   end Connect;
+
+   -------------------------------------------------------------------------
+
    function Create return UDP_Socket_Type
    is
    begin

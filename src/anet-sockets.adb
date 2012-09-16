@@ -105,15 +105,8 @@ package body Anet.Sockets is
       Dst    :        Socket_Addr_Type)
    is
    begin
-      if Dst.Family = Family_Unix then
-         Thin.Unix.Connect
-           (Socket => Socket.Sock_FD,
-            Path   => Unix_Path_Type
-              (Ada.Strings.Unbounded.To_String (Dst.Path)));
-      else
-         Thin.Connect_Socket (Socket => Socket.Sock_FD,
-                              Dst    => Dst);
-      end if;
+      Thin.Connect_Socket (Socket => Socket.Sock_FD,
+                           Dst    => Dst);
    end Connect;
 
    -------------------------------------------------------------------------
