@@ -36,7 +36,7 @@ with Anet.Test_Utils;
 
 pragma Elaborate_All (Anet.OS);
 
-package body Anet_Socket_Tests is
+package body Socket_Tests is
 
    use Ahven;
    use Anet;
@@ -1125,4 +1125,4 @@ package body Anet_Socket_Tests is
               Message   => "Valid Path '" & Too_Long & "'");
    end Valid_Unix_Paths;
 
-end Anet_Socket_Tests;
+end Socket_Tests;

@@ -29,7 +29,7 @@ with Anet.IPv4;
 with Anet.Test_Utils;
 with Anet.OS;
 
-package body Anet_IP_Tests is
+package body IP_Tests is
 
    use Ahven;
    use Anet;
@@ -238,4 +238,4 @@ package body Anet_IP_Tests is
       end Invalid_UDP_Checksum;
    end Validate_IP_Packet;
 
-end Anet_IP_Tests;
+end IP_Tests;

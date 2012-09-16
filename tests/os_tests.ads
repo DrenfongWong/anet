@@ -23,17 +23,20 @@
 
 with Ahven.Framework;
 
-package Anet_UDP_Tests is
+package OS_Tests is
 
    type Testcase is new Ahven.Framework.Test_Case with null record;
 
    procedure Initialize (T : in out Testcase);
    --  Initialize testcase.
 
-   procedure Create_UDP_Header;
-   --  Verify UDP header creation.
+   procedure Delete_Files;
+   --  Test file deletion procedure.
 
-   procedure Validate_UDP_Checksum;
-   --  Test UDP checksum validation.
+   procedure Read_File_Content;
+   --  Verify file content reader function.
 
-end Anet_UDP_Tests;
+   procedure Execute_Error;
+   --  Test execution error handling.
+
+end OS_Tests;

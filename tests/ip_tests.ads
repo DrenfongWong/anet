@@ -23,7 +23,7 @@
 
 with Ahven.Framework;
 
-package Anet_IP_Tests is
+package IP_Tests is
 
    type Testcase is new Ahven.Framework.Test_Case with null record;
 
@@ -39,4 +39,4 @@ package Anet_IP_Tests is
    procedure Validate_IP_Packet;
    --  Test IP packet validation.
 
-end Anet_IP_Tests;
+end IP_Tests;

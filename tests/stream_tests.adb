@@ -27,7 +27,7 @@ with Ada.Strings.Unbounded;
 with Anet.Streams;
 with Anet.Sockets.Unix;
 
-package body Anet_Stream_Tests is
+package body Stream_Tests is
 
    use Ada.Strings.Unbounded;
    use Ahven;
@@ -181,4 +181,4 @@ package body Anet_Stream_Tests is
               Message   => "T /= R2");
    end Write_Read_Records;
 
-end Anet_Stream_Tests;
+end Stream_Tests;

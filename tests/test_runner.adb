@@ -26,13 +26,13 @@ with Ada.Text_IO;
 with Ahven.Text_Runner;
 with Ahven.Framework;
 
-with Anet_Tests;
-with Anet_OS_Tests;
-with Anet_Util_Tests;
-with Anet_Socket_Tests;
-with Anet_UDP_Tests;
-with Anet_IP_Tests;
-with Anet_Stream_Tests;
+with Type_Tests;
+with OS_Tests;
+with Util_Tests;
+with Socket_Tests;
+with UDP_Tests;
+with IP_Tests;
+with Stream_Tests;
 
 procedure Test_Runner is
    use Ahven.Framework;
@@ -41,19 +41,19 @@ procedure Test_Runner is
    S    : constant Test_Suite_Access := Create_Suite (Suite_Name => Name);
 begin
    Add_Test (Suite => S.all,
-             T     => new Anet_Tests.Testcase);
+             T     => new Type_Tests.Testcase);
    Add_Test (Suite => S.all,
-             T     => new Anet_OS_Tests.Testcase);
+             T     => new OS_Tests.Testcase);
    Add_Test (Suite => S.all,
-             T     => new Anet_Util_Tests.Testcase);
+             T     => new Util_Tests.Testcase);
    Add_Test (Suite => S.all,
-             T     => new Anet_Socket_Tests.Testcase);
+             T     => new Socket_Tests.Testcase);
    Add_Test (Suite => S.all,
-             T     => new Anet_UDP_Tests.Testcase);
+             T     => new UDP_Tests.Testcase);
    Add_Test (Suite => S.all,
-             T     => new Anet_IP_Tests.Testcase);
+             T     => new IP_Tests.Testcase);
    Add_Test (Suite => S.all,
-             T     => new Anet_Stream_Tests.Testcase);
+             T     => new Stream_Tests.Testcase);
 
    Ada.Text_IO.Put_Line ("Running " & Name & " ... please wait");
 

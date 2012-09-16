@@ -23,7 +23,7 @@
 
 with Ahven.Framework;
 
-package Anet_Util_Tests is
+package Util_Tests is
 
    type Testcase is new Ahven.Framework.Test_Case with null record;
 
@@ -42,4 +42,4 @@ package Anet_Util_Tests is
    procedure Verify_Wait_For_File;
    --  Test Wait_For_File procedure.
 
-end Anet_Util_Tests;
+end Util_Tests;

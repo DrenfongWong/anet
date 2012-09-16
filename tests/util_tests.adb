@@ -25,7 +25,7 @@ with Ada.Streams;
 
 with Anet.Util;
 
-package body Anet_Util_Tests is
+package body Util_Tests is
 
    use Ada.Streams;
    use Ahven;
@@ -116,4 +116,4 @@ package body Anet_Util_Tests is
       end;
    end Verify_Wait_For_File;
 
-end Anet_Util_Tests;
+end Util_Tests;

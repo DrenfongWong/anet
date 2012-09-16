@@ -23,7 +23,7 @@
 
 with Ahven.Framework;
 
-package Anet_Tests is
+package Type_Tests is
 
    type Testcase is new Ahven.Framework.Test_Case with null record;
 
@@ -57,4 +57,4 @@ package Anet_Tests is
    procedure Stream_To_Hex;
    --  Verify stream element array to hex string conversion function.
 
-end Anet_Tests;
+end Type_Tests;

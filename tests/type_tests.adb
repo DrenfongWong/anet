@@ -25,7 +25,7 @@ with Ada.Streams;
 
 with Anet;
 
-package body Anet_Tests is
+package body Type_Tests is
 
    use Ahven;
    use Anet;
@@ -300,4 +300,4 @@ package body Anet_Tests is
       end;
    end String_To_IPv6_Addr;
 
-end Anet_Tests;
+end Type_Tests;

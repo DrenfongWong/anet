@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012 secunet Security Networks AG
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011, 2012 secunet Security Networks AG
+--  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -23,20 +23,17 @@
 
 with Ahven.Framework;
 
-package Anet_Stream_Tests is
+package UDP_Tests is
 
    type Testcase is new Ahven.Framework.Test_Case with null record;
 
    procedure Initialize (T : in out Testcase);
    --  Initialize testcase.
 
-   procedure Write_Read_Records;
-   --  Write and read record types using in-memory streams.
+   procedure Create_UDP_Header;
+   --  Verify UDP header creation.
 
-   procedure Buffer_Too_Small;
-   --  Verify behavior if buffer is too small for object.
+   procedure Validate_UDP_Checksum;
+   --  Test UDP checksum validation.
 
-   procedure Send_Records;
-   --  Send serialized record types over a socket.
-
-end Anet_Stream_Tests;
+end UDP_Tests;

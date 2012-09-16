@@ -27,7 +27,7 @@ with Ada.Exceptions;
 with Anet.UDP;
 with Anet.Test_Utils;
 
-package body Anet_UDP_Tests is
+package body UDP_Tests is
 
    use Ahven;
    use Anet;
@@ -118,4 +118,4 @@ package body Anet_UDP_Tests is
       end;
    end Validate_UDP_Checksum;
 
-end Anet_UDP_Tests;
+end UDP_Tests;

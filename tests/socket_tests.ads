@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011 secunet Security Networks AG
---  Copyright (C) 2011 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011, 2012 secunet Security Networks AG
+--  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -23,7 +23,7 @@
 
 with Ahven.Framework;
 
-package Anet_Socket_Tests is
+package Socket_Tests is
 
    type Testcase is new Ahven.Framework.Test_Case with null record;
 
@@ -105,4 +105,4 @@ package Anet_Socket_Tests is
    procedure Valid_Unix_Paths;
    --  Test unix path validation.
 
-end Anet_Socket_Tests;
+end Socket_Tests;

@@ -28,7 +28,7 @@ with Ada.Streams;
 with Anet.OS;
 with Anet.Util;
 
-package body Anet_OS_Tests is
+package body OS_Tests is
 
    use Ahven;
    use Anet;
@@ -119,4 +119,4 @@ package body Anet_OS_Tests is
               Message   => "Content mismatch");
    end Read_File_Content;
 
-end Anet_OS_Tests;
+end OS_Tests;
