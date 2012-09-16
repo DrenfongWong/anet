@@ -788,15 +788,13 @@ package body Anet_Socket_Tests is
         & Util.Random_String (Len => 8);
       Dump : constant String         := Path & ".dump";
       Cmd  : aliased constant String := "socat UNIX-RECV:" & Path & " " & Dump;
-      Sock : Socket_Type;
+      Sock : Unix.UDP_Socket_Type    := Unix.Create;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Create (Family => Family_Unix,
-                   Mode   => Datagram_Socket);
       Sock.Connect
         (Dst => (Family => Family_Unix,
                  Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
@@ -833,15 +831,13 @@ package body Anet_Socket_Tests is
       Dump : constant String         := Path & ".dump";
       Cmd  : aliased constant String := "socat UNIX-LISTEN:" & Path & " "
         & Dump;
-      Sock : Socket_Type;
+      Sock : Unix.TCP_Socket_Type    := Unix.Create;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Create (Family => Family_Unix,
-                   Mode   => Stream_Socket);
       Sock.Connect
         (Dst => (Family => Family_Unix,
                  Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path)));
@@ -920,12 +916,10 @@ package body Anet_Socket_Tests is
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
         & ",reuseaddr " & Dump;
-      Sock : Socket_Type;
+      Sock : Inet.TCPv4_Socket_Type  := Inet.Create;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
-      Sock.Create (Family => Family_Inet,
-                   Mode   => Stream_Socket);
 
       --  Give receiver/socat enough time to create socket
 
@@ -1007,12 +1001,10 @@ package body Anet_Socket_Tests is
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
         & ",reuseaddr " & Dump;
-      Sock : Socket_Type;
+      Sock : Inet.TCPv6_Socket_Type  := Inet.Create;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
-      Sock.Create (Family => Family_Inet6,
-                   Mode   => Stream_Socket);
 
       --  Give receiver/socat enough time to create socket
 

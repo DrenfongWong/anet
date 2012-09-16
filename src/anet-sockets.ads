@@ -85,7 +85,7 @@ package Anet.Sockets is
    function To_String (Address : Socket_Addr_Type) return String;
    --  Return string representation for given socket address type.
 
-   type Socket_Type is tagged limited private;
+   type Socket_Type is abstract tagged limited private;
    --  Communication socket.
 
    procedure Create
