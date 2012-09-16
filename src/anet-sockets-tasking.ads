@@ -39,32 +39,35 @@ package Anet.Sockets.Tasking is
    --  Error handling callback procedure. E is the exception to handle. The
    --  stop flag signals the receiver to stop listening for data and terminate.
 
-   type Receiver_Type (S : not null access Socket_Type) is limited private;
+   type Dgram_Receiver_Type
+     (S : not null access Socket_Type) is limited private;
    --  Listens for incoming data on the given socket and processes it by
    --  calling the registered listen callback.
 
-   function Get_Rcv_Msg_Count (Receiver : Receiver_Type) return Count_Type;
+   function Get_Rcv_Msg_Count
+     (Receiver : Dgram_Receiver_Type)
+      return Count_Type;
    --  Returns the number of received and processed messages.
 
    procedure Listen
-     (Receiver : in out Receiver_Type;
+     (Receiver : in out Dgram_Receiver_Type;
       Callback :        Rcv_Item_Callback);
    --  Start listening for data on given socket. The given callback is
    --  asynchronously executed upon data reception. Call stop procedure to
    --  properly shutdown the receiver.
 
    procedure Register_Error_Handler
-     (Receiver : in out Receiver_Type;
+     (Receiver : in out Dgram_Receiver_Type;
       Callback :        Error_Handler_Callback);
    --  Register given callback for error handling. The error handler will be
    --  invoked if an exception occurs processing incoming data.
    --  The error handler must be registered before telling the receiver to
    --  listen for data.
 
-   procedure Stop (Receiver : in out Receiver_Type);
+   procedure Stop (Receiver : in out Dgram_Receiver_Type);
    --  Stop listening for data.
 
-   function Is_Listening (Receiver : Receiver_Type) return Boolean;
+   function Is_Listening (Receiver : Dgram_Receiver_Type) return Boolean;
    --  Returns True if the receiver is currently listening for data.
 
 private
@@ -96,7 +99,7 @@ private
    end Trigger_Type;
    --  This trigger is used to terminate the receiver task by means of ATC.
 
-   task type Receiver_Task (Parent : not null access Receiver_Type) is
+   task type Receiver_Task (Parent : not null access Dgram_Receiver_Type) is
 
       entry Listen (Cb : Rcv_Item_Callback);
       --  Start listening for data on parent's socket. The callback procedure
@@ -110,12 +113,12 @@ private
 
    end Receiver_Task;
 
-   type Receiver_Type (S : not null access Socket_Type) is limited record
+   type Dgram_Receiver_Type (S : not null access Socket_Type) is limited record
       Item_Count : Count_Type := 0;
       pragma Atomic (Item_Count);
 
       Trigger : Trigger_Type;
-      R_Task  : Receiver_Task (Parent => Receiver_Type'Access);
+      R_Task  : Receiver_Task (Parent => Dgram_Receiver_Type'Access);
    end record;
 
 end Anet.Sockets.Tasking;

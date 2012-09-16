@@ -37,7 +37,9 @@ package body Anet.Sockets.Tasking is
 
    -------------------------------------------------------------------------
 
-   function Get_Rcv_Msg_Count (Receiver : Receiver_Type) return Count_Type
+   function Get_Rcv_Msg_Count
+     (Receiver : Dgram_Receiver_Type)
+      return Count_Type
    is
    begin
       return Receiver.Item_Count;
@@ -45,7 +47,7 @@ package body Anet.Sockets.Tasking is
 
    -------------------------------------------------------------------------
 
-   function Is_Listening (Receiver : Receiver_Type) return Boolean
+   function Is_Listening (Receiver : Dgram_Receiver_Type) return Boolean
    is
    begin
       return Receiver.Trigger.Is_Listening;
@@ -54,7 +56,7 @@ package body Anet.Sockets.Tasking is
    -------------------------------------------------------------------------
 
    procedure Listen
-     (Receiver : in out Receiver_Type;
+     (Receiver : in out Dgram_Receiver_Type;
       Callback :        Rcv_Item_Callback)
    is
    begin
@@ -65,7 +67,7 @@ package body Anet.Sockets.Tasking is
    -------------------------------------------------------------------------
 
    procedure Register_Error_Handler
-     (Receiver : in out Receiver_Type;
+     (Receiver : in out Dgram_Receiver_Type;
       Callback :        Error_Handler_Callback)
    is
    begin
@@ -74,7 +76,7 @@ package body Anet.Sockets.Tasking is
 
    -------------------------------------------------------------------------
 
-   procedure Stop (Receiver : in out Receiver_Type)
+   procedure Stop (Receiver : in out Dgram_Receiver_Type)
    is
    begin
       Receiver.Trigger.Shutdown;
