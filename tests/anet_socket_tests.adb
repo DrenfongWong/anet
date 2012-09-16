@@ -75,7 +75,8 @@ package body Anet_Socket_Tests is
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
       declare
-         R : Tasking.Dgram_Receiver_Type (S => Socket_Type (Sock)'Access);
+         R : Tasking.Dgram_Receiver_Type
+           (S => Dgram_Socket_Type (Sock)'Access);
       begin
          Tasking.Listen (Receiver => R,
                          Callback => Test_Utils.Raise_Error'Access);
@@ -96,7 +97,8 @@ package body Anet_Socket_Tests is
       end;
 
       declare
-         R : Tasking.Dgram_Receiver_Type (S => Socket_Type (Sock)'Access);
+         R : Tasking.Dgram_Receiver_Type
+           (S => Dgram_Socket_Type (Sock)'Access);
       begin
          Tasking.Register_Error_Handler (Receiver => R,
                                          Callback => Error_Handler'Access);
@@ -267,7 +269,8 @@ package body Anet_Socket_Tests is
 
       C    : Tasking.Count_Type             := 0;
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type (S => Socket_Type (Sock)'Access);
+      R    : Tasking.Dgram_Receiver_Type
+        (S => Dgram_Socket_Type (Sock)'Access);
    begin
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
       Tasking.Listen (Receiver => R,
@@ -692,7 +695,8 @@ package body Anet_Socket_Tests is
 
       C    : Tasking.Count_Type             := 0;
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type (S => Socket_Type (Sock)'Access);
+      R    : Tasking.Dgram_Receiver_Type
+        (S => Dgram_Socket_Type (Sock)'Access);
       Grp  : constant IPv4_Addr_Type
         := To_IPv4_Addr (Str => "224.0.0.117");
       Addr : constant Socket_Addr_Type
@@ -740,7 +744,8 @@ package body Anet_Socket_Tests is
 
       C    : Tasking.Count_Type             := 0;
       Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type (S => Socket_Type (Sock)'Access);
+      R    : Tasking.Dgram_Receiver_Type
+        (S => Dgram_Socket_Type (Sock)'Access);
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
       Addr : constant Socket_Addr_Type
@@ -873,7 +878,8 @@ package body Anet_Socket_Tests is
 
       C    : Tasking.Count_Type             := 0;
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type (S => Socket_Type (Sock)'Access);
+      R    : Tasking.Dgram_Receiver_Type
+        (S => Dgram_Socket_Type (Sock)'Access);
    begin
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
@@ -958,7 +964,8 @@ package body Anet_Socket_Tests is
 
       C    : Tasking.Count_Type             := 0;
       Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type (S => Socket_Type (Sock)'Access);
+      R    : Tasking.Dgram_Receiver_Type
+        (S => Dgram_Socket_Type (Sock)'Access);
    begin
       Sock.Bind (Address => Test_Utils.Test_Addr_V6);
 

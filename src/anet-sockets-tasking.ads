@@ -40,9 +40,9 @@ package Anet.Sockets.Tasking is
    --  stop flag signals the receiver to stop listening for data and terminate.
 
    type Dgram_Receiver_Type
-     (S : not null access Socket_Type) is limited private;
-   --  Listens for incoming data on the given socket and processes it by
-   --  calling the registered listen callback.
+     (S : not null access Dgram_Socket_Type) is limited private;
+   --  Listens for incoming data on the given datagram socket and processes it
+   --  by calling the registered listen callback.
 
    function Get_Rcv_Msg_Count
      (Receiver : Dgram_Receiver_Type)
@@ -113,7 +113,8 @@ private
 
    end Receiver_Task;
 
-   type Dgram_Receiver_Type (S : not null access Socket_Type) is limited record
+   type Dgram_Receiver_Type
+     (S : not null access Dgram_Socket_Type) is limited record
       Item_Count : Count_Type := 0;
       pragma Atomic (Item_Count);
 

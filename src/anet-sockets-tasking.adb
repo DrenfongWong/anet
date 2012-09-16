@@ -119,13 +119,15 @@ package body Anet.Sockets.Tasking is
          Reception_Loop :
          loop
             declare
-               Sender : Socket_Addr_Type (Family => Parent.S.Address.Family);
+               Sender : Socket_Addr_Type
+                 (Family => Socket_Type (Parent.S.all).Address.Family);
                Buffer : Ada.Streams.Stream_Element_Array (1 .. 2048);
                Last   : Ada.Streams.Stream_Element_Offset;
             begin
-               Parent.S.all.Receive (Src  => Sender,
-                                     Item => Buffer,
-                                     Last => Last);
+               Socket_Type (Parent.S.all).Receive
+                 (Src  => Sender,
+                  Item => Buffer,
+                  Last => Last);
                Data_Callback (Item => Buffer (Buffer'First .. Last),
                               Src  => Sender);
                Parent.Item_Count := Parent.Item_Count + 1;
