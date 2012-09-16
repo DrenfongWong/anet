@@ -88,13 +88,6 @@ package Anet.Sockets is
    type Socket_Type is abstract tagged limited private;
    --  Communication socket.
 
-   procedure Create
-     (Socket : out Socket_Type;
-      Family :     Family_Type;
-      Mode   :     Mode_Type);
-   --  Create a new socket with given family (IPv4, IPv6, packet, Unix) and
-   --  mode (UDP, TCP).
-
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
 
@@ -209,6 +202,12 @@ private
    overriding
    procedure Finalize (Socket : in out Socket_Type);
    --  Close socket.
+
+   procedure Create
+     (Socket : in out Socket_Type;
+      Family :        Family_Type;
+      Mode   :        Mode_Type);
+   --  Create a new socket with given family and mode.
 
    function C_Setsockopt
      (S       : Interfaces.C.int;

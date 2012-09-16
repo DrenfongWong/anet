@@ -119,9 +119,9 @@ package body Anet.Sockets is
    -------------------------------------------------------------------------
 
    procedure Create
-     (Socket : out Socket_Type;
-      Family :     Family_Type;
-      Mode   :     Mode_Type)
+     (Socket : in out Socket_Type;
+      Family :        Family_Type;
+      Mode   :        Mode_Type)
    is
       Addr : Socket_Addr_Type (Family => Family);
    begin
