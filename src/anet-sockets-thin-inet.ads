@@ -71,6 +71,13 @@ package Anet.Sockets.Thin.Inet is
    --  the last stream element in data. The source IP and port specify the
    --  sender socket from which the data was received.
 
+   procedure Connect
+     (Socket  :     Integer;
+      Dst     :     Sockaddr_In_Type;
+      Success : out Boolean);
+   --  Connect given socket to specified destination address. Success is set to
+   --  True if the connect operation succeeded, False otherwise.
+
    procedure Get_Socket_Info
      (Sock_Addr :     Sockaddr_In_Type;
       Source    : out Socket_Addr_Type);
