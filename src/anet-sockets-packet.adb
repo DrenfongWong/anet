@@ -29,7 +29,7 @@ package body Anet.Sockets.Packet is
 
    procedure Bind
      (Socket : in out Packet_Socket_Type;
-      Iface  :        Iface_Name_Type)
+      Iface  :        Types.Iface_Name_Type)
    is
    begin
       Thin.Packet.Bind (Socket => Socket.Sock_FD,
@@ -67,7 +67,7 @@ package body Anet.Sockets.Packet is
      (Socket : Packet_Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;
       To     : Hardware_Addr_Type;
-      Iface  : Iface_Name_Type)
+      Iface  : Types.Iface_Name_Type)
    is
       use type Ada.Streams.Stream_Element_Offset;
 

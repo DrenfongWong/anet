@@ -109,6 +109,9 @@ package body Type_Tests is
       T.Add_Test_Routine
         (Routine => Valid_Unix_Paths'Access,
          Name    => "Unix path validation");
+      T.Add_Test_Routine
+        (Routine => Valid_Iface_Names'Access,
+         Name    => "Interface name validation");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -303,6 +306,21 @@ package body Type_Tests is
          when Constraint_Error => null;
       end;
    end String_To_IPv6_Addr;
+
+   -------------------------------------------------------------------------
+
+   procedure Valid_Iface_Names
+   is
+      Too_Long : constant String :=
+        (1 .. Constants.IFNAMSIZ + 1 => 'a');
+   begin
+      Assert (Condition => Types.Is_Valid_Iface (Name => "lo"),
+              Message   => "Invalid interface name 'lo'");
+      Assert (Condition => not Types.Is_Valid_Iface (Name => ""),
+              Message   => "Valid empty interface name");
+      Assert (Condition => not Types.Is_Valid_Iface (Name => Too_Long),
+              Message   => "Valid interface name '" & Too_Long & "'");
+   end Valid_Iface_Names;
 
    -------------------------------------------------------------------------
 

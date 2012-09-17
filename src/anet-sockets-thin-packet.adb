@@ -53,7 +53,7 @@ package body Anet.Sockets.Thin.Packet is
 
    procedure Bind
      (Socket : Integer;
-      Iface  : Iface_Name_Type)
+      Iface  : Types.Iface_Name_Type)
    is
       use type C.int;
 
@@ -113,7 +113,7 @@ package body Anet.Sockets.Thin.Packet is
       Data   :     Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset;
       To     :     Hardware_Addr_Type;
-      Iface  :     Iface_Name_Type)
+      Iface  :     Types.Iface_Name_Type)
    is
       use type C.int;
       use type Ada.Streams.Stream_Element_Offset;

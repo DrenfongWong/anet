@@ -90,26 +90,28 @@ package Anet.Sockets.Thin is
    procedure Join_Multicast_Group
      (Socket : Integer;
       Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "");
+      Iface  : Types.Iface_Name_Type := "");
    --  Join the given multicast group on the interface specified by name. If no
    --  interface name is provided, the kernel selects the interface.
 
-   function Get_Iface_Index (Name : Iface_Name_Type) return Positive;
+   function Get_Iface_Index (Name : Types.Iface_Name_Type) return Positive;
    --  Get interface index of interface given by name.
 
-   function Get_Iface_Mac (Name : Iface_Name_Type) return Hardware_Addr_Type;
+   function Get_Iface_Mac
+     (Name : Types.Iface_Name_Type)
+      return Hardware_Addr_Type;
    --  Get hardware address of interface given by name.
 
-   function Get_Iface_IP (Name : Iface_Name_Type) return IPv4_Addr_Type;
+   function Get_Iface_IP (Name : Types.Iface_Name_Type) return IPv4_Addr_Type;
    --  Get IP address of interface given by name. If given interface has no
    --  assigned IP an exception is raised.
 
-   function Is_Iface_Up (Name : Iface_Name_Type) return Boolean;
+   function Is_Iface_Up (Name : Types.Iface_Name_Type) return Boolean;
    --  Check if interface given by name is up. True is returned if the
    --  interface is up.
 
    procedure Set_Iface_State
-     (Name  : Iface_Name_Type;
+     (Name  : Types.Iface_Name_Type;
       State : Boolean);
    --  Set state of interface given by name. If state is True the interface is
    --  brought up.

@@ -28,8 +28,9 @@ package Anet.Sockets.Inet is
 
    procedure Bind
      (Socket  : in out Inet_Socket_Type;
-      Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        Iface_Name_Type  := "");
+      Address :        Socket_Addr_Type      :=
+        (Addr_V4 => Any_Addr, others => <>);
+      Iface   :        Types.Iface_Name_Type := "");
    --  Bind given Internet socket to the specified IP address and port. If an
    --  interface name is given, the socket is bound to it.
 

@@ -60,4 +60,7 @@ package Type_Tests is
    procedure Valid_Unix_Paths;
    --  Test unix path validation.
 
+   procedure Valid_Iface_Names;
+   --  Test interface name validation.
+
 end Type_Tests;

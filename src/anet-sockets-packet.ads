@@ -28,14 +28,14 @@ package Anet.Sockets.Packet is
 
    procedure Bind
      (Socket : in out Packet_Socket_Type;
-      Iface  :        Iface_Name_Type);
+      Iface  :        Types.Iface_Name_Type);
    --  Bind given packet socket to specified interface.
 
    procedure Send
      (Socket : Packet_Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;
       To     : Hardware_Addr_Type;
-      Iface  : Iface_Name_Type);
+      Iface  : Types.Iface_Name_Type);
    --  Send data on packet socket to given hardware address over interface
    --  specified by name.
 

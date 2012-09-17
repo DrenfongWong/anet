@@ -29,8 +29,9 @@ package body Anet.Sockets.Inet is
 
    procedure Bind
      (Socket  : in out Inet_Socket_Type;
-      Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        Iface_Name_Type  := "")
+      Address :        Socket_Addr_Type      :=
+        (Addr_V4 => Any_Addr, others => <>);
+      Iface   :        Types.Iface_Name_Type := "")
    is
    begin
       Thin.Set_Socket_Option

@@ -28,27 +28,27 @@ with Anet.Sockets.Thin.Packet;
 package body Anet.Sockets is
 
    function Get_Iface_Index
-     (Name : Iface_Name_Type)
+     (Name : Types.Iface_Name_Type)
       return Positive
       renames Thin.Get_Iface_Index;
 
    function Get_Iface_Mac
-     (Name : Iface_Name_Type)
+     (Name : Types.Iface_Name_Type)
       return Hardware_Addr_Type
       renames Thin.Get_Iface_Mac;
 
    function Get_Iface_IP
-     (Name : Iface_Name_Type)
+     (Name : Types.Iface_Name_Type)
       return IPv4_Addr_Type
       renames Thin.Get_Iface_IP;
 
    function Is_Iface_Up
-     (Name : Iface_Name_Type)
+     (Name : Types.Iface_Name_Type)
       return Boolean
       renames Thin.Is_Iface_Up;
 
    procedure Set_Iface_State
-     (Name  : Iface_Name_Type;
+     (Name  : Types.Iface_Name_Type;
       State : Boolean)
       renames Thin.Set_Iface_State;
 
@@ -134,22 +134,10 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   function Is_Valid_Iface (Name : String) return Boolean
-   is
-   begin
-      if Name'Length in Iface_Name_Range then
-         return True;
-      else
-         return False;
-      end if;
-   end Is_Valid_Iface;
-
-   -------------------------------------------------------------------------
-
    procedure Join_Multicast_Group
      (Socket : Socket_Type;
       Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "")
+      Iface  : Types.Iface_Name_Type := "")
    is
    begin
       Thin.Join_Multicast_Group (Socket => Socket.Sock_FD,

@@ -34,4 +34,13 @@ package Anet.Types is
    function Is_Valid_Unix (Path : String) return Boolean;
    --  Returns true if the given path is a valid unix path.
 
+   subtype Iface_Name_Range is Positive range 1 .. Constants.IFNAMSIZ - 1;
+   --  Range of interface name.
+
+   type Iface_Name_Type is array (Iface_Name_Range range <>) of Character;
+   --  Interface name type.
+
+   function Is_Valid_Iface (Name : String) return Boolean;
+   --  Returns true if the given name is a valid interface name.
+
 end Anet.Types;

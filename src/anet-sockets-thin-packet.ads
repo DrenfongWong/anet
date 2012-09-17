@@ -25,7 +25,7 @@ package Anet.Sockets.Thin.Packet is
 
    procedure Bind
      (Socket : Integer;
-      Iface  : Iface_Name_Type);
+      Iface  : Types.Iface_Name_Type);
    --  Bind given packet socket to specified interface.
 
    procedure Send
@@ -33,7 +33,7 @@ package Anet.Sockets.Thin.Packet is
       Data   :     Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset;
       To     :     Hardware_Addr_Type;
-      Iface  :     Iface_Name_Type);
+      Iface  :     Types.Iface_Name_Type);
    --  Send data on packet socket to given hardware address over interface
    --  specified by name.
 

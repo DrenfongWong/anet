@@ -104,7 +104,7 @@ package body Anet.Sockets.Thin is
    function Ioctl_Get
      (Socket     : Integer;
       Request    : Netdev_Request_Name;
-      Iface_Name : Iface_Name_Type)
+      Iface_Name : Types.Iface_Name_Type)
       return If_Req_Type;
    --  Execute netdevice ioctl get request on interface with given name. The
    --  specified socket must have been created beforehand. The procedure
@@ -118,7 +118,7 @@ package body Anet.Sockets.Thin is
    --  type. The specified socket must have been created beforehand.
 
    function Query_Iface
-     (Iface_Name : Iface_Name_Type;
+     (Iface_Name : Types.Iface_Name_Type;
       Request    : Netdev_Request_Name)
       return If_Req_Type;
    --  Query interface with given request.
@@ -126,13 +126,13 @@ package body Anet.Sockets.Thin is
    procedure Join_Multicast_Group_V4
      (Socket : Integer;
       Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "");
+      Iface  : Types.Iface_Name_Type := "");
    --  Join the given IPv4 multicast group on the interface specified by name.
 
    procedure Join_Multicast_Group_V6
      (Socket : Integer;
       Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "");
+      Iface  : Types.Iface_Name_Type := "");
    --  Join the given IPv6 multicast group on the interface specified by name.
 
    -------------------------------------------------------------------------
@@ -245,7 +245,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Get_Iface_Index (Name : Iface_Name_Type) return Positive
+   function Get_Iface_Index (Name : Types.Iface_Name_Type) return Positive
    is
       Req : constant If_Req_Type := Query_Iface
         (Iface_Name => Name,
@@ -256,7 +256,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Get_Iface_IP (Name : Iface_Name_Type) return IPv4_Addr_Type
+   function Get_Iface_IP (Name : Types.Iface_Name_Type) return IPv4_Addr_Type
    is
       Req : constant If_Req_Type := Query_Iface
         (Iface_Name => Name,
@@ -279,7 +279,9 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Get_Iface_Mac (Name : Iface_Name_Type) return Hardware_Addr_Type
+   function Get_Iface_Mac
+     (Name : Types.Iface_Name_Type)
+      return Hardware_Addr_Type
    is
       Req  : constant If_Req_Type := Query_Iface
         (Iface_Name => Name,
@@ -330,7 +332,7 @@ package body Anet.Sockets.Thin is
    function Ioctl_Get
      (Socket     : Integer;
       Request    : Netdev_Request_Name;
-      Iface_Name : Iface_Name_Type)
+      Iface_Name : Types.Iface_Name_Type)
       return If_Req_Type
    is
       C_Name  : constant C.char_array := C.To_C (String (Iface_Name));
@@ -347,7 +349,7 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Is_Iface_Up (Name : Iface_Name_Type) return Boolean
+   function Is_Iface_Up (Name : Types.Iface_Name_Type) return Boolean
    is
       use type Interfaces.C.short;
 
@@ -363,7 +365,7 @@ package body Anet.Sockets.Thin is
    procedure Join_Multicast_Group
      (Socket : Integer;
       Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "")
+      Iface  : Types.Iface_Name_Type := "")
    is
    begin
       if Group.Family = Family_Inet then
@@ -382,7 +384,7 @@ package body Anet.Sockets.Thin is
    procedure Join_Multicast_Group_V4
      (Socket : Integer;
       Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "")
+      Iface  : Types.Iface_Name_Type := "")
    is
       use type Interfaces.C.int;
 
@@ -420,7 +422,7 @@ package body Anet.Sockets.Thin is
    procedure Join_Multicast_Group_V6
      (Socket : Integer;
       Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "")
+      Iface  : Types.Iface_Name_Type := "")
    is
       use type Interfaces.C.int;
 
@@ -481,7 +483,7 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    function Query_Iface
-     (Iface_Name : Iface_Name_Type;
+     (Iface_Name : Types.Iface_Name_Type;
       Request    : Netdev_Request_Name)
       return If_Req_Type
    is
@@ -533,7 +535,7 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Set_Iface_State
-     (Name  : Iface_Name_Type;
+     (Name  : Types.Iface_Name_Type;
       State : Boolean)
    is
       Sock : Integer := -1;
