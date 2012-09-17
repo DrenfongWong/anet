@@ -309,7 +309,7 @@ package body Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         Sender : Socket_Addr_Type (Family => Family_Inet6);
+         Sender : Inet.UDPv6_Sockaddr_Type;
       begin
          Sock.Bind (Address => Addr);
          Sock.Join_Multicast_Group (Group => Addr);
@@ -543,7 +543,7 @@ package body Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         Sender : Socket_Addr_Type (Family => Family_Inet6);
+         Sender : Inet.UDPv6_Sockaddr_Type;
       begin
          Sock.Bind (Address => Test_Utils.Test_Addr_V6);
          Sock.Receive (Src  => Sender,

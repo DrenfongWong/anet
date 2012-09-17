@@ -29,6 +29,12 @@ package Anet.Sockets.Inet is
    end record;
    --  UDPv4 socket address.
 
+   type UDPv6_Sockaddr_Type is record
+      Addr : IPv6_Addr_Type;
+      Port : Port_Type;
+   end record;
+   --  UDPv6 socket address.
+
    type Inet_Socket_Type is abstract new Socket_Type with private;
    --  Internet socket.
 
@@ -83,6 +89,17 @@ package Anet.Sockets.Inet is
 
    function Create return UDPv6_Socket_Type;
    --  Create new IPv6/UDP socket.
+
+   procedure Receive
+     (Socket :     UDPv6_Socket_Type;
+      Src    : out UDPv6_Sockaddr_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset);
+   --  Receive data from given UDPv6 socket. This procedure blocks until data
+   --  has been received. Last is the index value such that Item (Last) is the
+   --  last character assigned. An exception is raised if a socket error
+   --  occurs. The source argument is set to the sender's address and port from
+   --  which the data was received.
 
    type TCPv6_Socket_Type is new Inet_Socket_Type
      and Stream_Socket_Type with private;

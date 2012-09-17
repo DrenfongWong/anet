@@ -188,6 +188,24 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
+   procedure Receive
+     (Socket :     UDPv6_Socket_Type;
+      Src    : out UDPv6_Sockaddr_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset)
+   is
+      Source : Socket_Addr_Type (Family => Family_Inet6);
+   begin
+      Thin.Inet.Receive (Socket => Socket.Sock_FD,
+                         Data   => Item,
+                         Last   => Last,
+                         Source => Source);
+      Src.Addr := Source.Addr_V6;
+      Src.Port := Source.Port_V6;
+   end Receive;
+
+   -------------------------------------------------------------------------
+
    procedure Send
      (Socket : Inet_Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;
