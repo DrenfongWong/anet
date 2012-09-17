@@ -23,6 +23,12 @@
 
 package Anet.Sockets.Inet is
 
+   type UDPv4_Sockaddr_Type is record
+      Addr : IPv4_Addr_Type;
+      Port : Port_Type;
+   end record;
+   --  UDPv4 socket address.
+
    type Inet_Socket_Type is abstract new Socket_Type with private;
    --  Internet socket.
 
@@ -46,6 +52,17 @@ package Anet.Sockets.Inet is
 
    function Create return UDPv4_Socket_Type;
    --  Create new IPv4/UDP socket.
+
+   procedure Receive
+     (Socket :     UDPv4_Socket_Type;
+      Src    : out UDPv4_Sockaddr_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset);
+   --  Receive data from given UDPv4 socket. This procedure blocks until data
+   --  has been received. Last is the index value such that Item (Last) is the
+   --  last character assigned. An exception is raised if a socket error
+   --  occurs. The source argument is set to the sender's address and port from
+   --  which the data was received.
 
    type TCPv4_Socket_Type is new Inet_Socket_Type
      and Stream_Socket_Type with private;
