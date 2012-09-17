@@ -129,6 +129,19 @@ package body Anet.Sockets is
 
    procedure Receive
      (Socket :     Socket_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset)
+   is
+   begin
+      Thin.Receive_Socket (Socket => Socket.Sock_FD,
+                           Data   => Item,
+                           Last   => Last);
+   end Receive;
+
+   -------------------------------------------------------------------------
+
+   procedure Receive
+     (Socket :     Socket_Type;
       Src    : out Socket_Addr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)

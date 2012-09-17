@@ -487,7 +487,6 @@ package body Socket_Tests is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
       Sock   : Inet.TCPv4_Socket_Type := Inet.Create;
-      Sender : Socket_Addr_Type;
 
       task Receiver is
          entry Wait;
@@ -501,8 +500,7 @@ package body Socket_Tests is
          Sock.Bind (Address => Test_Utils.Test_Addr_V4);
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
-         S2.Receive (Src  => Sender,
-                     Item => Buffer,
+         S2.Receive (Item => Buffer,
                      Last => Last);
 
          accept Wait;
@@ -519,8 +517,6 @@ package body Socket_Tests is
 
       Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-      Assert (Condition => Sender = No_Addr,
-              Message   => "Unexpected sender");
 
    exception
       when others =>
@@ -580,7 +576,6 @@ package body Socket_Tests is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
       Sock   : Inet.TCPv6_Socket_Type := Inet.Create;
-      Sender : Socket_Addr_Type;
 
       task Receiver is
          entry Wait;
@@ -594,8 +589,7 @@ package body Socket_Tests is
          Sock.Bind (Address => Test_Utils.Test_Addr_V6);
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
-         S2.Receive (Src  => Sender,
-                     Item => Buffer,
+         S2.Receive (Item => Buffer,
                      Last => Last);
 
          accept Wait;
@@ -613,8 +607,6 @@ package body Socket_Tests is
 
       Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
-      Assert (Condition => Sender = No_Addr,
-              Message   => "Unexpected sender");
 
    exception
       when others =>
