@@ -83,11 +83,6 @@ package Anet.Sockets.Thin is
    procedure Close_Socket (Socket : Integer);
    --  Close given socket.
 
-   procedure Connect_Socket
-     (Socket : Integer;
-      Dst    : Socket_Addr_Type);
-   --  Connect given socket to specified destination address.
-
    procedure Listen_Socket
      (Socket  : Integer;
       Backlog : Positive := 1);

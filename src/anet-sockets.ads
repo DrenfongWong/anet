@@ -72,11 +72,6 @@ package Anet.Sockets is
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
 
-   procedure Connect
-     (Socket : in out Socket_Type;
-      Dst    :        Socket_Addr_Type);
-   --  Connect given socket to the address specified by Dst.
-
    procedure Accept_Connection
      (Socket     :     Socket_Type;
       New_Socket : out Socket_Type);

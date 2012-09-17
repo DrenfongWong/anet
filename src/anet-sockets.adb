@@ -76,17 +76,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Connect
-     (Socket : in out Socket_Type;
-      Dst    :        Socket_Addr_Type)
-   is
-   begin
-      Thin.Connect_Socket (Socket => Socket.Sock_FD,
-                           Dst    => Dst);
-   end Connect;
-
-   -------------------------------------------------------------------------
-
    procedure Create
      (Socket : in out Socket_Type;
       Family :        Family_Type;

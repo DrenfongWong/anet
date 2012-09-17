@@ -22,7 +22,6 @@
 --
 
 with Anet.Byte_Swapping;
-with Anet.Sockets.Thin.Inet;
 
 package body Anet.Sockets.Thin is
 
@@ -136,28 +135,6 @@ package body Anet.Sockets.Thin is
          raise Socket_Error with "Unable to close socket: " & Get_Errno_String;
       end if;
    end Close_Socket;
-
-   -------------------------------------------------------------------------
-
-   procedure Connect_Socket
-     (Socket : Integer;
-      Dst    : Socket_Addr_Type)
-   is
-      use type C.int;
-
-      Res : C.int;
-      Sin : constant Inet.Sockaddr_In_Type
-        := Inet.To_Sock_Addr (Address => Dst);
-   begin
-      Res := C_Connect (S       => C.int (Socket),
-                        Name    => Sin'Address,
-                        Namelen => Sin'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to connect socket to address "
-           & To_String (Dst) & " - " & Get_Errno_String;
-      end if;
-   end Connect_Socket;
 
    -------------------------------------------------------------------------
 

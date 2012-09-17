@@ -863,7 +863,8 @@ package body Socket_Tests is
 
       delay 0.1;
 
-      Sock.Connect (Dst => Test_Utils.Test_Addr_V4);
+      Sock.Connect (Address => Loopback_Addr_V4,
+                    Port    => Test_Utils.Listen_Port);
       Sock.Send (Item => Ref_Chunk);
 
       select
@@ -949,7 +950,8 @@ package body Socket_Tests is
 
       delay 0.1;
 
-      Sock.Connect (Dst => Test_Utils.Test_Addr_V6);
+      Sock.Connect (Address => Loopback_Addr_V6,
+                    Port    => Test_Utils.Listen_Port);
       Sock.Send (Item => Ref_Chunk);
 
       select
