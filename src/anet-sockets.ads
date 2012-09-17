@@ -30,6 +30,8 @@ with Interfaces.C;
 
 with System;
 
+with Anet.Constants;
+
 package Anet.Sockets is
 
    Max_Iface_Name_Len : constant := 16;
@@ -44,11 +46,8 @@ package Anet.Sockets is
    function Is_Valid_Iface (Name : String) return Boolean;
    --  Returns true if the given name is a valid interface name.
 
-   Max_Unix_Path_Len  : constant := 108;
-   --  Maximum length of an unix path (UNIX_PATH_MAX).
-
-   subtype Unix_Path_Range is Positive range 1 .. Max_Unix_Path_Len - 1;
-   --  Range of unix paths (1 .. UNIX_PATH_MAX - 1).
+   subtype Unix_Path_Range is Positive range 1 .. Constants.UNIX_PATH_MAX - 1;
+   --  Range of unix paths.
 
    type Unix_Path_Type is array (Unix_Path_Range range <>) of Character;
    --  Unix path type.
