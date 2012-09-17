@@ -76,7 +76,7 @@ package body Anet.Sockets.Thin is
    --  Generic socket address.
 
    type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
-      Ifr_Name : C.char_array (1 .. Max_Iface_Name_Len) := (others => C.nul);
+      Ifr_Name : C.char_array (1 .. Constants.IFNAMSIZ) := (others => C.nul);
 
       case Name is
          when If_Addr   =>

@@ -30,13 +30,12 @@ with Interfaces.C;
 
 with System;
 
+with Anet.Constants;
+
 package Anet.Sockets is
 
-   Max_Iface_Name_Len : constant := 16;
-   --  Maximum length of an interface name (IFNAMSIZ).
-
-   subtype Iface_Name_Range is Positive range 1 .. Max_Iface_Name_Len - 1;
-   --  Range of interface name (1 .. IFNAMSIZ - 1).
+   subtype Iface_Name_Range is Positive range 1 .. Constants.IFNAMSIZ - 1;
+   --  Range of interface name.
 
    type Iface_Name_Type is array (Iface_Name_Range range <>) of Character;
    --  Interface name type.

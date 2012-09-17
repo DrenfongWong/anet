@@ -29,6 +29,7 @@ with Ada.Directories;
 
 with Anet.OS;
 with Anet.Types;
+with Anet.Constants;
 with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Tasking;
@@ -1094,7 +1095,7 @@ package body Socket_Tests is
    procedure Valid_Iface_Names
    is
       Too_Long : constant String :=
-        (1 .. Sockets.Max_Iface_Name_Len + 1 => 'a');
+        (1 .. Constants.IFNAMSIZ + 1 => 'a');
    begin
       Assert (Condition => Is_Valid_Iface (Name => "lo"),
               Message   => "Invalid interface name 'lo'");

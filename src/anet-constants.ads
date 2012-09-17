@@ -78,4 +78,10 @@ package Anet.Constants is
 
    UNIX_PATH_MAX       : constant := 108;
 
+   ---------------------
+   -- Interface names --
+   ---------------------
+
+   IFNAMSIZ            : constant := 16;
+
 end Anet.Constants;
