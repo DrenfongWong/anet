@@ -46,11 +46,4 @@ package Anet.Sockets.Thin.Unix is
       Path   : Types.Unix_Path_Type);
    --  Connect given UNIX socket to specified path.
 
-   procedure Receive
-     (Socket :     Integer;
-      Data   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset);
-   --  Receive data from given UNIX domain socket (Family_Unix). Last is the
-   --  index value which designates the last stream element in data.
-
 end Anet.Sockets.Thin.Unix;

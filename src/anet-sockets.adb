@@ -135,9 +135,9 @@ package body Anet.Sockets is
    is
    begin
       if Socket.Address.Family = Family_Unix then
-         Thin.Unix.Receive (Socket => Socket.Sock_FD,
-                            Data   => Item,
-                            Last   => Last);
+         Thin.Receive_Socket (Socket => Socket.Sock_FD,
+                              Data   => Item,
+                              Last   => Last);
       else
          Thin.Inet.Receive (Socket => Socket.Sock_FD,
                             Data   => Item,
