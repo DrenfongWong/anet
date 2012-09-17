@@ -67,10 +67,10 @@ package Anet.Sockets.Thin.Inet is
    --  True if the send operation succeeded, False otherwise.
 
    procedure Receive
-     (Socket   :     Integer;
-      Data     : out Ada.Streams.Stream_Element_Array;
-      Last     : out Ada.Streams.Stream_Element_Offset;
-      Source   : out Socket_Addr_Type);
+     (Socket :     Integer;
+      Data   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset;
+      Source : out Socket_Addr_Type);
    --  Receive data from given socket. Last is the index value which designates
    --  the last stream element in data. The source IP and port specify the
    --  sender socket from which the data was received.
