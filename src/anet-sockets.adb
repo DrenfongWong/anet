@@ -24,7 +24,6 @@
 with Anet.Net_Ifaces;
 with Anet.Sockets.Thin.Inet;
 with Anet.Sockets.Thin.Unix;
-with Anet.Sockets.Thin.Packet;
 
 package body Anet.Sockets is
 
@@ -135,12 +134,7 @@ package body Anet.Sockets is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
    begin
-      if Socket.Address.Family = Family_Packet then
-         Thin.Packet.Receive (Socket      => Socket.Sock_FD,
-                              Data        => Item,
-                              Last        => Last,
-                              Src_HW_Addr => Src.HW_Addr);
-      elsif Socket.Address.Family = Family_Unix then
+      if Socket.Address.Family = Family_Unix then
          Thin.Unix.Receive (Socket => Socket.Sock_FD,
                             Data   => Item,
                             Last   => Last);

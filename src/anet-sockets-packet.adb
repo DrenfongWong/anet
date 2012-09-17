@@ -73,6 +73,21 @@ package body Anet.Sockets.Packet is
 
    -------------------------------------------------------------------------
 
+   procedure Receive
+     (Socket :     Packet_Socket_Type;
+      Src    : out Hardware_Addr_Type;
+      Data   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset)
+   is
+   begin
+      Thin.Packet.Receive (Socket      => Socket.Sock_FD,
+                           Data        => Data,
+                           Last        => Last,
+                           Src_HW_Addr => Src);
+   end Receive;
+
+   -------------------------------------------------------------------------
+
    procedure Send
      (Socket : Packet_Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;

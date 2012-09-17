@@ -39,6 +39,15 @@ package Anet.Sockets.Packet is
    --  Send data on packet socket to given hardware address over interface
    --  specified by name.
 
+   procedure Receive
+     (Socket :     Packet_Socket_Type;
+      Src    : out Hardware_Addr_Type;
+      Data   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset);
+   --  Receive data from given packet socket. Last is the index value which
+   --  designates the last stream element in data. The source hardware address
+   --  specifies the MAC of the packet sender.
+
    type UDP_Socket_Type is new Packet_Socket_Type
      and Dgram_Socket_Type with private;
    --  Packet socket in datagram mode.
