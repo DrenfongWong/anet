@@ -33,7 +33,8 @@ with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Tasking;
 with Anet.Util;
-with Anet.Test_Utils;
+
+with Test_Utils;
 
 pragma Elaborate_All (Anet.OS);
 
@@ -982,7 +983,7 @@ package body Socket_Tests is
    is
       use Ada.Strings.Unbounded;
 
-      package TU renames Anet.Test_Utils;
+      package TU renames Test_Utils;
 
       Port_Str       : constant String := Test_Utils.Listen_Port'Img;
       Test_V4_Str    : constant String := "127.0.0.1 (" & Port_Str & " )";

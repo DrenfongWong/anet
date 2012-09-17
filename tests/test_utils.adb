@@ -29,7 +29,7 @@ with Anet;
 
 with Anet.OS;
 
-package body Anet.Test_Utils is
+package body Test_Utils is
 
    package D_IO is new Ada.Direct_IO (Element_Type => Character);
 
@@ -134,10 +134,11 @@ package body Anet.Test_Utils is
    -------------------------------------------------------------------------
 
    procedure Send_Data
-     (Dst      : Sockets.Socket_Addr_Type := Test_Addr_V4;
+     (Dst      : Anet.Sockets.Socket_Addr_Type := Test_Addr_V4;
       Mode     : String := "UDP-DATAGRAM";
       Filename : String)
    is
+      use Anet;
       use Ada.Strings.Unbounded;
       use type Anet.Sockets.Family_Type;
 
@@ -163,4 +164,4 @@ package body Anet.Test_Utils is
                   & To_String (IP_Str) & ":" & To_String (Port_Str));
    end Send_Data;
 
-end Anet.Test_Utils;
+end Test_Utils;

@@ -25,19 +25,19 @@ with Ada.Streams;
 
 with Anet.Sockets;
 
-package Anet.Test_Utils is
+package Test_Utils is
 
    Listen_Port : constant := 32101;
 
-   Test_Addr_V4 : constant Sockets.Socket_Addr_Type
-     := (Family  => Sockets.Family_Inet,
-         Addr_V4 => Loopback_Addr_V4,
+   Test_Addr_V4 : constant Anet.Sockets.Socket_Addr_Type
+     := (Family  => Anet.Sockets.Family_Inet,
+         Addr_V4 => Anet.Loopback_Addr_V4,
          Port_V4 => Test_Utils.Listen_Port);
    --  IPv4 test address constant.
 
-   Test_Addr_V6 : constant Sockets.Socket_Addr_Type
-     := (Family  => Sockets.Family_Inet6,
-         Addr_V6 => Loopback_Addr_V6,
+   Test_Addr_V6 : constant Anet.Sockets.Socket_Addr_Type
+     := (Family  => Anet.Sockets.Family_Inet6,
+         Addr_V6 => Anet.Loopback_Addr_V6,
          Port_V6 => Test_Utils.Listen_Port);
    --  IPv6 test address constant.
 
@@ -83,7 +83,7 @@ package Anet.Test_Utils is
    --  Hex stream of reference DHCP Ack bootp message.
 
    procedure Send_Data
-     (Dst      : Sockets.Socket_Addr_Type := Test_Addr_V4;
+     (Dst      : Anet.Sockets.Socket_Addr_Type := Test_Addr_V4;
       Mode     : String := "UDP-DATAGRAM";
       Filename : String);
    --  Send data from file given by filename to socket. The Mode argument is
@@ -115,4 +115,4 @@ package Anet.Test_Utils is
 
    Open_File_Error : exception;
 
-end Anet.Test_Utils;
+end Test_Utils;

@@ -25,7 +25,8 @@ with Ada.Streams;
 with Ada.Exceptions;
 
 with Anet.UDP;
-with Anet.Test_Utils;
+
+with Test_Utils;
 
 package body UDP_Tests is
 

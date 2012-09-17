@@ -26,8 +26,9 @@ with Ada.Exceptions;
 
 with Anet.UDP;
 with Anet.IPv4;
-with Anet.Test_Utils;
 with Anet.OS;
+
+with Test_Utils;
 
 package body IP_Tests is
 
