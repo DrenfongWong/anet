@@ -87,4 +87,20 @@ package body Anet.Sockets.Unix is
       end return;
    end Create;
 
+   -------------------------------------------------------------------------
+
+   procedure Receive
+     (Socket :     UDP_Socket_Type;
+      Src    : out Types.Unix_Path_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset)
+   is
+   begin
+      Thin.Receive_Socket (Socket => Socket.Sock_FD,
+                           Data   => Item,
+                           Last   => Last);
+      Src := Types.Unix_Path_Type (Ada.Strings.Unbounded.To_String
+                                   (Socket.Address.Path));
+   end Receive;
+
 end Anet.Sockets.Unix;

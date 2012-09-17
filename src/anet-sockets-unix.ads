@@ -49,6 +49,17 @@ package Anet.Sockets.Unix is
    function Create return UDP_Socket_Type;
    --  Create new UNIX/UDP socket.
 
+   procedure Receive
+     (Socket :     UDP_Socket_Type;
+      Src    : out Types.Unix_Path_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset);
+   --  Receive data from given Unix/UDP socket. This procedure blocks until
+   --  data has been received. Last is the index value such that Item (Last) is
+   --  the last character assigned. An exception is raised if a socket error
+   --  occurs. The source argument is set to the socket path from which the
+   --  data was received.
+
    type TCP_Socket_Type is new Unix_Socket_Type
      and Stream_Socket_Type with private;
    --  UNIX domain socket in stream mode.

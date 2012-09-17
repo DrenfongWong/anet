@@ -353,13 +353,13 @@ package body Socket_Tests is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
       Sock   : Unix.UDP_Socket_Type := Unix.Create;
+      Sender : Types.Unix_Path_Type (1 .. Path'Length);
 
       task Receiver is
          entry Wait;
       end Receiver;
 
       task body Receiver is
-         Sender : Socket_Addr_Type (Family => Family_Unix);
       begin
          Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Sock.Receive (Src  => Sender,
@@ -379,6 +379,8 @@ package body Socket_Tests is
 
       Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
               Message   => "Result mismatch");
+      Assert (Condition => String (Sender) = Path,
+              Message   => "Sender mismatch");
 
    exception
       when others =>
