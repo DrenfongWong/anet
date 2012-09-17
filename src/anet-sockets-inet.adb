@@ -21,9 +21,15 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Interfaces.C;
+
+with Anet.Constants;
 with Anet.Sockets.Thin.Inet;
+with Anet.Byte_Swapping;
 
 package body Anet.Sockets.Inet is
+
+   package C renames Interfaces.C;
 
    -------------------------------------------------------------------------
 
@@ -51,6 +57,60 @@ package body Anet.Sockets.Inet is
             Value  => String (Iface));
       end if;
    end Bind;
+
+   -------------------------------------------------------------------------
+
+   procedure Connect
+     (Socket  : in out TCPv4_Socket_Type;
+      Address :        IPv4_Addr_Type;
+      Port    :        Port_Type)
+   is
+      Result : Boolean;
+      Sin    : constant Thin.Inet.Sockaddr_In_Type
+        := (Family     => Family_Inet,
+            Sin_Family => Constants.Sys.AF_INET,
+            Sin_Port   => C.unsigned_short
+              (Byte_Swapping.Host_To_Network (Input => Port)),
+            Sin_Addr   => Address,
+            Sin_Zero   => <>);
+   begin
+      Thin.Inet.Connect (Socket  => Socket.Sock_FD,
+                         Dst     => Sin,
+                         Success => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to connect socket to address "
+           & To_String (Address => Address) & " (" & Port'Img & " ) - "
+           & Get_Errno_String;
+      end if;
+   end Connect;
+
+   -------------------------------------------------------------------------
+
+   procedure Connect
+     (Socket  : in out TCPv6_Socket_Type;
+      Address :        IPv6_Addr_Type;
+      Port    :        Port_Type)
+   is
+      Result : Boolean;
+      Sin    : constant Thin.Inet.Sockaddr_In_Type
+        := (Family     => Family_Inet6,
+            Sin_Family => Constants.Sys.AF_INET6,
+            Sin_Port   => C.unsigned_short
+              (Byte_Swapping.Host_To_Network (Input => Port)),
+            Sin6_Addr  => Address,
+            others     => 0);
+   begin
+      Thin.Inet.Connect (Socket  => Socket.Sock_FD,
+                         Dst     => Sin,
+                         Success => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to connect socket to address "
+           & To_String (Address => Address) & " (" & Port'Img & " ) - "
+           & Get_Errno_String;
+      end if;
+   end Connect;
 
    -------------------------------------------------------------------------
 

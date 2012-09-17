@@ -54,6 +54,12 @@ package Anet.Sockets.Inet is
    function Create return TCPv4_Socket_Type;
    --  Create new IPv4/TCP socket.
 
+   procedure Connect
+     (Socket  : in out TCPv4_Socket_Type;
+      Address :        IPv4_Addr_Type;
+      Port    :        Port_Type);
+   --  Connect TCPv4 socket to specified IPv4 address and port.
+
    type UDPv6_Socket_Type is new Inet_Socket_Type
      and Dgram_Socket_Type with private;
    --  IPv6/UDP socket.
@@ -67,6 +73,12 @@ package Anet.Sockets.Inet is
 
    function Create return TCPv6_Socket_Type;
    --  Create new IPv6/TCP socket.
+
+   procedure Connect
+     (Socket  : in out TCPv6_Socket_Type;
+      Address :        IPv6_Addr_Type;
+      Port    :        Port_Type);
+   --  Connect TCPv6 socket to specified IPv6 address and port.
 
 private
 
