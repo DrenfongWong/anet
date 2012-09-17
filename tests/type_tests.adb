@@ -23,7 +23,8 @@
 
 with Ada.Streams;
 
-with Anet;
+with Anet.Constants;
+with Anet.Types;
 
 package body Type_Tests is
 
@@ -105,6 +106,9 @@ package body Type_Tests is
       T.Add_Test_Routine
         (Routine => Stream_To_Hex'Access,
          Name    => "Stream to hex string conversion");
+      T.Add_Test_Routine
+        (Routine => Valid_Unix_Paths'Access,
+         Name    => "Unix path validation");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -299,5 +303,20 @@ package body Type_Tests is
          when Constraint_Error => null;
       end;
    end String_To_IPv6_Addr;
+
+   -------------------------------------------------------------------------
+
+   procedure Valid_Unix_Paths
+   is
+      Too_Long : constant String :=
+        (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
+   begin
+      Assert (Condition => Types.Is_Valid_Unix (Path => "/tmp/foopath"),
+              Message   => "Invalid path '/tmp/foopath'");
+      Assert (Condition => not Types.Is_Valid_Unix (Path => ""),
+              Message   => "Valid empty path");
+      Assert (Condition => not Types.Is_Valid_Unix (Path => Too_Long),
+              Message   => "Valid Path '" & Too_Long & "'");
+   end Valid_Unix_Paths;
 
 end Type_Tests;

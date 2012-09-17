@@ -30,7 +30,7 @@ package body Anet.Sockets.Unix is
 
    procedure Bind
      (Socket : in out Unix_Socket_Type;
-      Path   :        Unix_Path_Type)
+      Path   :        Types.Unix_Path_Type)
    is
    begin
       Thin.Unix.Bind (Socket => Socket.Sock_FD,
@@ -55,7 +55,7 @@ package body Anet.Sockets.Unix is
 
    procedure Connect
      (Socket : in out Unix_Socket_Type;
-      Path   :        Unix_Path_Type)
+      Path   :        Types.Unix_Path_Type)
    is
    begin
       Thin.Unix.Connect
@@ -86,17 +86,5 @@ package body Anet.Sockets.Unix is
                  Mode   => Stream_Socket);
       end return;
    end Create;
-
-   -------------------------------------------------------------------------
-
-   function Is_Valid (Path : String) return Boolean
-   is
-   begin
-      if Path'Length in Unix_Path_Range then
-         return True;
-      else
-         return False;
-      end if;
-   end Is_Valid;
 
 end Anet.Sockets.Unix;

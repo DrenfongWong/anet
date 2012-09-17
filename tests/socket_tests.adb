@@ -28,7 +28,7 @@ with Ada.Strings.Unbounded;
 with Ada.Directories;
 
 with Anet.OS;
-with Anet.Constants;
+with Anet.Types;
 with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Tasking;
@@ -257,9 +257,6 @@ package body Socket_Tests is
       T.Add_Test_Routine
         (Routine => Valid_Iface_Names'Access,
          Name    => "Interface name validation");
-      T.Add_Test_Routine
-        (Routine => Valid_Unix_Paths'Access,
-         Name    => "Unix path validation");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -425,7 +422,7 @@ package body Socket_Tests is
       task body Receiver is
          Sender : Socket_Addr_Type (Family => Family_Unix);
       begin
-         Sock.Bind (Path => Unix_Path_Type (Path));
+         Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -473,7 +470,7 @@ package body Socket_Tests is
          Sender : Socket_Addr_Type (Family => Family_Unix);
          S2     : Unix.TCP_Socket_Type;
       begin
-         Sock.Bind (Path => Unix_Path_Type (Path));
+         Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
          S2.Receive (Src  => Sender,
@@ -801,7 +798,7 @@ package body Socket_Tests is
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Connect (Path => Unix_Path_Type (Path));
+      Sock.Connect (Path => Types.Unix_Path_Type (Path));
       Sock.Send (Item => Ref_Chunk);
 
       select
@@ -842,7 +839,7 @@ package body Socket_Tests is
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Connect (Path => Unix_Path_Type (Path));
+      Sock.Connect (Path => Types.Unix_Path_Type (Path));
       Sock.Send (Item => Ref_Chunk);
 
       select
@@ -1084,7 +1081,7 @@ package body Socket_Tests is
       declare
          Sock : Unix.UDP_Socket_Type := Unix.Create;
       begin
-         Sock.Bind (Path => Unix_Path_Type (Path));
+         Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Assert (Condition => Ada.Directories.Exists (Name => Path),
                  Message   => "Path not found");
       end;
@@ -1106,20 +1103,5 @@ package body Socket_Tests is
       Assert (Condition => not Is_Valid_Iface (Name => Too_Long),
               Message   => "Valid interface name '" & Too_Long & "'");
    end Valid_Iface_Names;
-
-   -------------------------------------------------------------------------
-
-   procedure Valid_Unix_Paths
-   is
-      Too_Long : constant String :=
-        (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
-   begin
-      Assert (Condition => Unix.Is_Valid (Path => "/tmp/foopath"),
-              Message   => "Invalid path '/tmp/foopath'");
-      Assert (Condition => not Unix.Is_Valid (Path => ""),
-              Message   => "Valid empty path");
-      Assert (Condition => not Unix.Is_Valid (Path => Too_Long),
-              Message   => "Valid Path '" & Too_Long & "'");
-   end Valid_Unix_Paths;
 
 end Socket_Tests;

@@ -22,35 +22,16 @@
 --
 
 with Anet.Constants;
-with Anet.Types;
 
-package Anet.Sockets.Thin.Unix is
+package Anet.Types is
 
-   type Sockaddr_Un_Type is record
-      Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
-      --  Address family
-      Pathname   : Interfaces.C.char_array (1 .. Constants.UNIX_PATH_MAX)
-        := (others => Interfaces.C.nul);
-      --  Pathname
-   end record;
-   pragma Convention (C, Sockaddr_Un_Type);
-   --  Low-level UNIX socket address type (struct sockaddr_un).
+   subtype Unix_Path_Range is Positive range 1 .. Constants.UNIX_PATH_MAX - 1;
+   --  Range of unix paths.
 
-   procedure Bind
-     (Socket : Integer;
-      Path   : Types.Unix_Path_Type);
-   --  Bind given UNIX socket to specified path.
+   type Unix_Path_Type is array (Unix_Path_Range range <>) of Character;
+   --  Unix path type.
 
-   procedure Connect
-     (Socket : Integer;
-      Path   : Types.Unix_Path_Type);
-   --  Connect given UNIX socket to specified path.
+   function Is_Valid_Unix (Path : String) return Boolean;
+   --  Returns true if the given path is a valid unix path.
 
-   procedure Receive
-     (Socket :     Integer;
-      Data   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset);
-   --  Receive data from given UNIX domain socket (Family_Unix). Last is the
-   --  index value which designates the last stream element in data.
-
-end Anet.Sockets.Thin.Unix;
+end Anet.Types;

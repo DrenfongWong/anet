@@ -102,7 +102,4 @@ package Socket_Tests is
    procedure Valid_Iface_Names;
    --  Test interface name validation.
 
-   procedure Valid_Unix_Paths;
-   --  Test unix path validation.
-
 end Socket_Tests;

@@ -21,6 +21,8 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Types;
+
 package Anet.Sockets.Unix is
 
    type Unix_Socket_Type is abstract new Socket_Type with private;
@@ -32,12 +34,12 @@ package Anet.Sockets.Unix is
 
    procedure Bind
      (Socket : in out Unix_Socket_Type;
-      Path   :        Unix_Path_Type);
+      Path   :        Types.Unix_Path_Type);
    --  Bind given UNIX domain socket to path.
 
    procedure Connect
      (Socket : in out Unix_Socket_Type;
-      Path   :        Unix_Path_Type);
+      Path   :        Types.Unix_Path_Type);
    --  Connect given UNIX domain socket to path.
 
    type UDP_Socket_Type is new Unix_Socket_Type
@@ -53,9 +55,6 @@ package Anet.Sockets.Unix is
 
    function Create return TCP_Socket_Type;
    --  Create new UNIX/TCP socket.
-
-   function Is_Valid (Path : String) return Boolean;
-   --  Returns true if the given path is a valid unix path.
 
 private
 

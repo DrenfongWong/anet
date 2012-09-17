@@ -33,7 +33,7 @@ package body Anet.Sockets.Thin.Unix is
 
    procedure Bind
      (Socket : Integer;
-      Path   : Unix_Path_Type)
+      Path   : Types.Unix_Path_Type)
    is
       use type C.int;
 
@@ -59,7 +59,7 @@ package body Anet.Sockets.Thin.Unix is
 
    procedure Connect
      (Socket : Integer;
-      Path   : Unix_Path_Type)
+      Path   : Types.Unix_Path_Type)
    is
       use type C.int;
 
