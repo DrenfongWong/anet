@@ -39,6 +39,7 @@ package body Anet.Sockets.Inet is
         (Addr_V4 => Any_Addr, others => <>);
       Iface   :        Types.Iface_Name_Type := "")
    is
+      Result : Boolean;
    begin
       Thin.Set_Socket_Option
         (Socket => Socket.Sock_FD,
@@ -46,7 +47,14 @@ package body Anet.Sockets.Inet is
          Value  => True);
 
       Thin.Inet.Bind (Socket  => Socket.Sock_FD,
-                      Address => Address);
+                      Address => Thin.Inet.To_Sock_Addr (Address),
+                      Success => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to bind socket to "
+           & To_String (Address => Address) & " - " & Get_Errno_String;
+      end if;
+
       Socket.Address := Address;
 
       if Iface'Length /= 0 then

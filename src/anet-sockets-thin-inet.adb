@@ -33,22 +33,18 @@ package body Anet.Sockets.Thin.Inet is
    -------------------------------------------------------------------------
 
    procedure Bind
-     (Socket  : Integer;
-      Address : Socket_Addr_Type)
+     (Socket  :     Integer;
+      Address :     Sockaddr_In_Type;
+      Success : out Boolean)
    is
       use type C.int;
 
-      Res   : C.int;
-      Value : constant Sockaddr_In_Type := To_Sock_Addr (Address => Address);
+      Res : C.int;
    begin
       Res := C_Bind (S       => C.int (Socket),
-                     Name    => Value'Address,
-                     Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind socket to "
-           & To_String (Address => Address) & " - " & Get_Errno_String;
-      end if;
+                     Name    => Address'Address,
+                     Namelen => Address'Size / 8);
+      Success := Res /= C_Failure;
    end Bind;
 
    -------------------------------------------------------------------------
