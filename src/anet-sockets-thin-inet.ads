@@ -57,12 +57,14 @@ package Anet.Sockets.Thin.Inet is
    --  bind operation succeeded, False otherwise.
 
    procedure Send
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset;
-      Dst    :     Socket_Addr_Type);
+     (Socket  :     Integer;
+      Data    :     Ada.Streams.Stream_Element_Array;
+      Last    : out Ada.Streams.Stream_Element_Offset;
+      Dst     :     Sockaddr_In_Type;
+      Success : out Boolean);
    --  Send data to another socket specified by destination. Last is the index
-   --  value which designates the last sent stream element.
+   --  value which designates the last sent stream element. Success is set to
+   --  True if the send operation succeeded, False otherwise.
 
    procedure Receive
      (Socket   :     Integer;

@@ -177,12 +177,19 @@ package body Anet.Sockets.Inet is
    is
       use type Ada.Streams.Stream_Element_Offset;
 
-      Len : Ada.Streams.Stream_Element_Offset;
+      Result : Boolean;
+      Len    : Ada.Streams.Stream_Element_Offset;
    begin
-      Thin.Inet.Send (Socket => Socket.Sock_FD,
-                      Data   => Item,
-                      Last   => Len,
-                      Dst    => Dst);
+      Thin.Inet.Send (Socket  => Socket.Sock_FD,
+                      Data    => Item,
+                      Last    => Len,
+                      Dst     => Thin.Inet.To_Sock_Addr (Address => Dst),
+                      Success => Result);
+
+      if not Result then
+         raise Socket_Error with "Error sending data to "
+           & To_String (Address => Dst) & " - " & Get_Errno_String;
+      end if;
 
       if Len /= Item'Length then
          raise Socket_Error with "Incomplete send operation to "
