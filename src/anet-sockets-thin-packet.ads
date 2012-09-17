@@ -24,18 +24,22 @@
 package Anet.Sockets.Thin.Packet is
 
    procedure Bind
-     (Socket : Integer;
-      Iface  : Types.Iface_Name_Type);
-   --  Bind given packet socket to specified interface.
+     (Socket    :     Integer;
+      Iface_Idx :     Positive;
+      Success   : out Boolean);
+   --  Bind given packet socket to interface specified by index. Success is set
+   --  to True if the bind operation succeeded, False otherwise.
 
    procedure Send
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset;
-      To     :     Hardware_Addr_Type;
-      Iface  :     Types.Iface_Name_Type);
+     (Socket    :     Integer;
+      Data      :     Ada.Streams.Stream_Element_Array;
+      Last      : out Ada.Streams.Stream_Element_Offset;
+      To        :     Hardware_Addr_Type;
+      Iface_Idx :     Positive;
+      Success   : out Boolean);
    --  Send data on packet socket to given hardware address over interface
-   --  specified by name.
+   --  specified by index. Success is set to True if the send operation
+   --  succeeded, False otherwise.
 
    procedure Receive
      (Socket      :     Integer;

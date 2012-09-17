@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Net_Ifaces;
 with Anet.Sockets.Thin.Packet;
 
 package body Anet.Sockets.Packet is
@@ -31,10 +32,19 @@ package body Anet.Sockets.Packet is
      (Socket : in out Packet_Socket_Type;
       Iface  :        Types.Iface_Name_Type)
    is
+      Result : Boolean;
    begin
-      Thin.Packet.Bind (Socket => Socket.Sock_FD,
-                        Iface  => Iface);
-      Socket.Address.HW_Addr := Get_Iface_Mac (Name => Iface);
+      Thin.Packet.Bind
+        (Socket    => Socket.Sock_FD,
+         Iface_Idx => Net_Ifaces.Get_Iface_Index (Name => Iface),
+         Success   => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to bind packet socket to interface "
+           & String (Iface) & " - " & Get_Errno_String;
+      end if;
+
+      Socket.Address.HW_Addr := Net_Ifaces.Get_Iface_Mac (Name => Iface);
    end Bind;
 
    -------------------------------------------------------------------------
@@ -71,14 +81,22 @@ package body Anet.Sockets.Packet is
    is
       use type Ada.Streams.Stream_Element_Offset;
 
-      Len : Ada.Streams.Stream_Element_Offset;
+      Len    : Ada.Streams.Stream_Element_Offset;
+      Result : Boolean;
    begin
       Thin.Packet.Send
-        (Socket => Socket.Sock_FD,
-         Data   => Item,
-         Last   => Len,
-         To     => To,
-         Iface  => Iface);
+        (Socket    => Socket.Sock_FD,
+         Data      => Item,
+         Last      => Len,
+         To        => To,
+         Iface_Idx => Net_Ifaces.Get_Iface_Index (Name => Iface),
+         Success   => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to send packet data on interface "
+           & String (Iface) & " to " & To_String (Address => To)
+           & " - " & Get_Errno_String;
+      end if;
 
       if Len /= Item'Length then
          raise Socket_Error with "Incomplete packet send operation to "

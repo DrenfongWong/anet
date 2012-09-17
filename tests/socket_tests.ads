@@ -87,15 +87,6 @@ package Socket_Tests is
    procedure Error_Callbacks;
    --  Test error callback handling.
 
-   procedure Get_Loopback_Interface_Index;
-   --  Test get interface index function on loopback device.
-
-   procedure Get_Loopback_Interface_Mac;
-   --  Test get interface MAC function on loopback device.
-
-   procedure Get_Loopback_Interface_IP;
-   --  Test get interface IP function on loopback device.
-
    procedure Socket_Addr_To_String;
    --  Test string conversion of socket address type.
 

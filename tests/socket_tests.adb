@@ -131,56 +131,6 @@ package body Socket_Tests is
 
    -------------------------------------------------------------------------
 
-   procedure Get_Loopback_Interface_Index
-   is
-   begin
-      declare
-         Index : Positive;
-         pragma Unreferenced (Index);
-      begin
-         Index := Get_Iface_Index (Name => "nonexistent");
-         Fail (Message => "Expected socket error (nonexistent)");
-
-      exception
-         when Socket_Error => null;
-      end;
-
-      Assert (Condition => Get_Iface_Index (Name => "lo") = 1,
-              Message   => "Loopback index not 1");
-   end Get_Loopback_Interface_Index;
-
-   -------------------------------------------------------------------------
-
-   procedure Get_Loopback_Interface_IP
-   is
-   begin
-      Assert (Condition => Get_Iface_IP (Name => "lo") = Loopback_Addr_V4,
-              Message   => "Loopback IP not 127.0.0.1");
-   end Get_Loopback_Interface_IP;
-
-   -------------------------------------------------------------------------
-
-   procedure Get_Loopback_Interface_Mac
-   is
-      Ref_Mac : constant Hardware_Addr_Type (1 .. 6) := (others => 0);
-   begin
-      Assert (Condition => Get_Iface_Mac (Name => "lo") = Ref_Mac,
-              Message   => "Loopback Mac not zero");
-
-      declare
-         Mac : Hardware_Addr_Type (1 .. 6);
-         pragma Unreferenced (Mac);
-      begin
-         Mac := Get_Iface_Mac (Name => "nonexistent");
-         Fail (Message => "Expected socket error (nonexistent)");
-
-      exception
-         when Socket_Error => null;
-      end;
-   end Get_Loopback_Interface_Mac;
-
-   -------------------------------------------------------------------------
-
    procedure Initialize (T : in out Testcase)
    is
    begin
@@ -242,15 +192,6 @@ package body Socket_Tests is
       T.Add_Test_Routine
         (Routine => Error_Callbacks'Access,
          Name    => "Error callback handling");
-      T.Add_Test_Routine
-        (Routine => Get_Loopback_Interface_Index'Access,
-         Name    => "Get iface index for loopback");
-      T.Add_Test_Routine
-        (Routine => Get_Loopback_Interface_Mac'Access,
-         Name    => "Get iface hw addr for loopback");
-      T.Add_Test_Routine
-        (Routine => Get_Loopback_Interface_IP'Access,
-         Name    => "Get iface IP addr for loopback");
       T.Add_Test_Routine
         (Routine => Socket_Addr_To_String'Access,
          Name    => "Socket address to string conversion");

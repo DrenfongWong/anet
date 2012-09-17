@@ -33,6 +33,7 @@ with Socket_Tests;
 with UDP_Tests;
 with IP_Tests;
 with Stream_Tests;
+with Net_Ifaces_Tests;
 
 procedure Test_Runner is
    use Ahven.Framework;
@@ -54,6 +55,8 @@ begin
              T     => new IP_Tests.Testcase);
    Add_Test (Suite => S.all,
              T     => new Stream_Tests.Testcase);
+   Add_Test (Suite => S.all,
+             T     => new Net_Ifaces_Tests.Testcase);
 
    Ada.Text_IO.Put_Line ("Running " & Name & " ... please wait");
 

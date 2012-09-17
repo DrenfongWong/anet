@@ -52,8 +52,9 @@ package body Anet.Sockets.Thin.Packet is
    -------------------------------------------------------------------------
 
    procedure Bind
-     (Socket : Integer;
-      Iface  : Types.Iface_Name_Type)
+     (Socket    :     Integer;
+      Iface_Idx :     Positive;
+      Success   : out Boolean)
    is
       use type C.int;
 
@@ -63,16 +64,13 @@ package body Anet.Sockets.Thin.Packet is
       Value.Sa_Protocol := C.unsigned_short
         (Byte_Swapping.Host_To_Network
            (Input => Double_Byte (Constants.ETH_P_IP)));
-      Value.Sa_Ifindex  := C.int (Get_Iface_Index (Name => Iface));
+      Value.Sa_Ifindex  := C.int (Iface_Idx);
 
       Res := C_Bind (S       => C.int (Socket),
                      Name    => Value'Address,
                      Namelen => Value'Size / 8);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind packet socket to interface "
-           & String (Iface) & " - " & Get_Errno_String;
-      end if;
+      Success := Res /= C_Failure;
    end Bind;
 
    -------------------------------------------------------------------------
@@ -109,11 +107,12 @@ package body Anet.Sockets.Thin.Packet is
    -------------------------------------------------------------------------
 
    procedure Send
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset;
-      To     :     Hardware_Addr_Type;
-      Iface  :     Types.Iface_Name_Type)
+     (Socket    :     Integer;
+      Data      :     Ada.Streams.Stream_Element_Array;
+      Last      : out Ada.Streams.Stream_Element_Offset;
+      To        :     Hardware_Addr_Type;
+      Iface_Idx :     Positive;
+      Success   : out Boolean)
    is
       use type C.int;
       use type Ada.Streams.Stream_Element_Offset;
@@ -121,7 +120,7 @@ package body Anet.Sockets.Thin.Packet is
       Res     : C.int;
       LL_Dest : Sockaddr_LL_Type;
    begin
-      LL_Dest.Sa_Ifindex  := C.int (Get_Iface_Index (Name => Iface));
+      LL_Dest.Sa_Ifindex  := C.int (Iface_Idx);
       LL_Dest.Sa_Halen    := To'Length;
       LL_Dest.Sa_Protocol := C.unsigned_short
         (Byte_Swapping.Host_To_Network
@@ -136,13 +135,8 @@ package body Anet.Sockets.Thin.Packet is
                        To    => LL_Dest'Address,
                        Tolen => LL_Dest'Size / 8);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to send packet data on interface "
-           & String (Iface) & " to " & To_String (Address => To)
-           & " - " & Get_Errno_String;
-      end if;
-
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      Success := Res /= C_Failure;
+      Last    := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Send;
 
 end Anet.Sockets.Thin.Packet;

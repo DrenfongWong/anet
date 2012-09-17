@@ -25,7 +25,11 @@ with Ada.Streams;
 
 with Interfaces.C;
 
+with Anet.Constants;
+
 package Anet.Sockets.Thin is
+
+   package C renames Interfaces.C;
 
    type Level_Type is (Socket_Level);
    --  Protocol level type.
@@ -36,6 +40,39 @@ package Anet.Sockets.Thin is
       If_Hwaddr,
       If_Index);
    --  Supported netdevice requests.
+
+   type Sockaddr_Type is record
+      Sa_Family : C.unsigned_short;
+      --  Address family
+      Sa_Data   : C.char_array (1 .. 14) := (others => C.nul);
+      --  Family-specific data
+   end record;
+   pragma Convention (C, Sockaddr_Type);
+   --  Generic socket address.
+
+   type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
+      Ifr_Name : Interfaces.C.char_array
+        (1 .. Constants.IFNAMSIZ) := (others => C.nul);
+
+      case Name is
+         when If_Addr   =>
+            Ifr_Addr    : Sockaddr_Type;
+         when If_Hwaddr =>
+            Ifr_Hwaddr  : Sockaddr_Type;
+         when If_Index  =>
+            Ifr_Ifindex : C.int   := 0;
+         when If_Flags  =>
+            Ifr_Flags   : C.short := 0;
+      end case;
+   end record;
+   pragma Unchecked_Union (If_Req_Type);
+   pragma Convention (C, If_Req_Type);
+   --  Interface request structure (struct ifreq).
+
+   Set_Requests : constant array (Netdev_Request_Name) of C.int
+     := (If_Flags => Constants.SIOCSIFFLAGS,
+         others   => C.int (-1));
+   --  Currently supported netdevice ioctl set requests.
 
    procedure Create_Socket
      (Socket : out Integer;
@@ -88,33 +125,24 @@ package Anet.Sockets.Thin is
    --  Set socket option of given socket to specified string value.
 
    procedure Join_Multicast_Group
-     (Socket : Integer;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "");
-   --  Join the given multicast group on the interface specified by name. If no
-   --  interface name is provided, the kernel selects the interface.
+     (Socket    : Integer;
+      Group     : Socket_Addr_Type;
+      Iface_Idx : Natural := 0);
+   --  Join the given multicast group on the interface specified by index. If
+   --  no interface index is provided, the kernel selects the interface.
 
-   function Get_Iface_Index (Name : Types.Iface_Name_Type) return Positive;
-   --  Get interface index of interface given by name.
+   function Query_Iface
+     (Iface_Name : Types.Iface_Name_Type;
+      Request    : Netdev_Request_Name)
+      return If_Req_Type;
+   --  Query interface with given request.
 
-   function Get_Iface_Mac
-     (Name : Types.Iface_Name_Type)
-      return Hardware_Addr_Type;
-   --  Get hardware address of interface given by name.
-
-   function Get_Iface_IP (Name : Types.Iface_Name_Type) return IPv4_Addr_Type;
-   --  Get IP address of interface given by name. If given interface has no
-   --  assigned IP an exception is raised.
-
-   function Is_Iface_Up (Name : Types.Iface_Name_Type) return Boolean;
-   --  Check if interface given by name is up. True is returned if the
-   --  interface is up.
-
-   procedure Set_Iface_State
-     (Name  : Types.Iface_Name_Type;
-      State : Boolean);
-   --  Set state of interface given by name. If state is True the interface is
-   --  brought up.
+   procedure Ioctl
+     (Socket  : Integer;
+      Request : C.int;
+      If_Req  : not null access If_Req_Type);
+   --  Execute netdevice ioctl request on interface with given name and request
+   --  type. The specified socket must have been created beforehand.
 
 private
 

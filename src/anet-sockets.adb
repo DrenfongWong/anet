@@ -21,36 +21,12 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Net_Ifaces;
 with Anet.Sockets.Thin.Inet;
 with Anet.Sockets.Thin.Unix;
 with Anet.Sockets.Thin.Packet;
 
 package body Anet.Sockets is
-
-   function Get_Iface_Index
-     (Name : Types.Iface_Name_Type)
-      return Positive
-      renames Thin.Get_Iface_Index;
-
-   function Get_Iface_Mac
-     (Name : Types.Iface_Name_Type)
-      return Hardware_Addr_Type
-      renames Thin.Get_Iface_Mac;
-
-   function Get_Iface_IP
-     (Name : Types.Iface_Name_Type)
-      return IPv4_Addr_Type
-      renames Thin.Get_Iface_IP;
-
-   function Is_Iface_Up
-     (Name : Types.Iface_Name_Type)
-      return Boolean
-      renames Thin.Is_Iface_Up;
-
-   procedure Set_Iface_State
-     (Name  : Types.Iface_Name_Type;
-      State : Boolean)
-      renames Thin.Set_Iface_State;
 
    -------------------------------------------------------------------------
 
@@ -139,10 +115,15 @@ package body Anet.Sockets is
       Group  : Socket_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
+      Iface_Idx : Natural := 0;
    begin
-      Thin.Join_Multicast_Group (Socket => Socket.Sock_FD,
-                                 Group  => Group,
-                                 Iface  => Iface);
+      if Iface'Length > 0 then
+         Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
+      end if;
+
+      Thin.Join_Multicast_Group (Socket    => Socket.Sock_FD,
+                                 Group     => Group,
+                                 Iface_Idx => Iface_Idx);
    end Join_Multicast_Group;
 
    -------------------------------------------------------------------------

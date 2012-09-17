@@ -21,13 +21,10 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Constants;
 with Anet.Byte_Swapping;
 with Anet.Sockets.Thin.Inet;
 
 package body Anet.Sockets.Thin is
-
-   package C renames Interfaces.C;
 
    Families : constant array (Family_Type) of C.int
      := (Family_Inet   => Constants.Sys.AF_INET,
@@ -61,38 +58,6 @@ package body Anet.Sockets.Thin is
          If_Index  => Constants.SIOCGIFINDEX);
    --  Currently supported netdevice ioctl get requests.
 
-   Set_Requests : constant array (Netdev_Request_Name) of C.int
-     := (If_Flags => Constants.SIOCSIFFLAGS,
-         others   => C.int (-1));
-   --  Currently supported netdevice ioctl set requests.
-
-   type Sockaddr_Type is record
-      Sa_Family : C.unsigned_short;
-      --  Address family
-      Sa_Data   : C.char_array (1 .. 14) := (others => C.nul);
-      --  Family-specific data
-   end record;
-   pragma Convention (C, Sockaddr_Type);
-   --  Generic socket address.
-
-   type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
-      Ifr_Name : C.char_array (1 .. Constants.IFNAMSIZ) := (others => C.nul);
-
-      case Name is
-         when If_Addr   =>
-            Ifr_Addr    : Sockaddr_Type;
-         when If_Hwaddr =>
-            Ifr_Hwaddr  : Sockaddr_Type;
-         when If_Index  =>
-            Ifr_Ifindex : C.int   := 0;
-         when If_Flags  =>
-            Ifr_Flags   : C.short := 0;
-      end case;
-   end record;
-   pragma Unchecked_Union (If_Req_Type);
-   pragma Convention (C, If_Req_Type);
-   --  Interface request structure (struct ifreq).
-
    function C_Send
      (S     : C.int;
       Buf   : System.Address;
@@ -110,30 +75,17 @@ package body Anet.Sockets.Thin is
    --  specified socket must have been created beforehand. The procedure
    --  returns the resulting interface request record to the caller.
 
-   procedure Ioctl
-     (Socket  : Integer;
-      Request : C.int;
-      If_Req  : not null access If_Req_Type);
-   --  Execute netdevice ioctl request on interface with given name and request
-   --  type. The specified socket must have been created beforehand.
-
-   function Query_Iface
-     (Iface_Name : Types.Iface_Name_Type;
-      Request    : Netdev_Request_Name)
-      return If_Req_Type;
-   --  Query interface with given request.
-
    procedure Join_Multicast_Group_V4
-     (Socket : Integer;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "");
-   --  Join the given IPv4 multicast group on the interface specified by name.
+     (Socket    : Integer;
+      Group     : Socket_Addr_Type;
+      Iface_Idx : Natural := 0);
+   --  Join the given IPv4 multicast group on the interface specified by index.
 
    procedure Join_Multicast_Group_V6
-     (Socket : Integer;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "");
-   --  Join the given IPv6 multicast group on the interface specified by name.
+     (Socket    : Integer;
+      Group     : Socket_Addr_Type;
+      Iface_Idx : Natural := 0);
+   --  Join the given IPv6 multicast group on the interface specified by index.
 
    -------------------------------------------------------------------------
 
@@ -245,60 +197,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Get_Iface_Index (Name : Types.Iface_Name_Type) return Positive
-   is
-      Req : constant If_Req_Type := Query_Iface
-        (Iface_Name => Name,
-         Request    => If_Index);
-   begin
-      return Positive (Req.Ifr_Ifindex);
-   end Get_Iface_Index;
-
-   -------------------------------------------------------------------------
-
-   function Get_Iface_IP (Name : Types.Iface_Name_Type) return IPv4_Addr_Type
-   is
-      Req : constant If_Req_Type := Query_Iface
-        (Iface_Name => Name,
-         Request    => If_Addr);
-
-      --  The actual IP address is at range 3 .. 6. The first two bytes of the
-      --  result are the sin_port value.
-
-      Offset : constant := 2;
-   begin
-      return Result : IPv4_Addr_Type do
-         for B in Result'Range loop
-            Result (B) := Character'Pos
-              (C.To_Ada
-                 (Req.Ifr_Addr.Sa_Data
-                    (C.size_t (B + Offset))));
-         end loop;
-      end return;
-   end Get_Iface_IP;
-
-   -------------------------------------------------------------------------
-
-   function Get_Iface_Mac
-     (Name : Types.Iface_Name_Type)
-      return Hardware_Addr_Type
-   is
-      Req  : constant If_Req_Type := Query_Iface
-        (Iface_Name => Name,
-         Request    => If_Hwaddr);
-   begin
-      return Result : Hardware_Addr_Type (1 .. 6) do
-         for B in Result'Range loop
-            Result (B) := Character'Pos
-              (C.To_Ada
-                 (Req.Ifr_Hwaddr.Sa_Data
-                    (C.size_t (B))));
-         end loop;
-      end return;
-   end Get_Iface_Mac;
-
-   -------------------------------------------------------------------------
-
    procedure Ioctl
      (Socket  : Integer;
       Request : C.int;
@@ -349,42 +247,29 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   function Is_Iface_Up (Name : Types.Iface_Name_Type) return Boolean
-   is
-      use type Interfaces.C.short;
-
-      Req : constant If_Req_Type := Query_Iface
-        (Iface_Name => Name,
-         Request    => If_Flags);
-   begin
-      return (Req.Ifr_Flags mod 2) = Constants.IFF_UP;
-   end Is_Iface_Up;
-
-   -------------------------------------------------------------------------
-
    procedure Join_Multicast_Group
-     (Socket : Integer;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "")
+     (Socket    : Integer;
+      Group     : Socket_Addr_Type;
+      Iface_Idx : Natural := 0)
    is
    begin
       if Group.Family = Family_Inet then
-         Join_Multicast_Group_V4 (Socket => Socket,
-                                  Group  => Group,
-                                  Iface  => Iface);
+         Join_Multicast_Group_V4 (Socket    => Socket,
+                                  Group     => Group,
+                                  Iface_Idx => Iface_Idx);
       elsif Group.Family = Family_Inet6 then
-         Join_Multicast_Group_V6 (Socket => Socket,
-                                  Group  => Group,
-                                  Iface  => Iface);
+         Join_Multicast_Group_V6 (Socket    => Socket,
+                                  Group     => Group,
+                                  Iface_Idx => Iface_Idx);
       end if;
    end Join_Multicast_Group;
 
    -------------------------------------------------------------------------
 
    procedure Join_Multicast_Group_V4
-     (Socket : Integer;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "")
+     (Socket    : Integer;
+      Group     : Socket_Addr_Type;
+      Iface_Idx : Natural := 0)
    is
       use type Interfaces.C.int;
 
@@ -397,13 +282,9 @@ package body Anet.Sockets.Thin is
 
       Mreq : IP_Mreq_Type
         := (Imr_Multiaddr => Group.Addr_V4,
-            Imr_Interface => 0);
+            Imr_Interface => C.unsigned (Iface_Idx));
       Res  : C.int;
    begin
-      if Iface'Length /= 0 then
-         Mreq.Imr_Interface := C.unsigned (Get_Iface_Index (Name => Iface));
-      end if;
-
       Res := C_Setsockopt
         (S       => C.int (Socket),
          Level   => Constants.Sys.IPPROTO_IP,
@@ -420,9 +301,9 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Join_Multicast_Group_V6
-     (Socket : Integer;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "")
+     (Socket    : Integer;
+      Group     : Socket_Addr_Type;
+      Iface_Idx : Natural := 0)
    is
       use type Interfaces.C.int;
 
@@ -435,13 +316,9 @@ package body Anet.Sockets.Thin is
 
       Mreq : IPv6_Mreq_Type
         := (IPv6mr_Multiaddr => Group.Addr_V6,
-            IPv6mr_Interface => 0);
+            IPv6mr_Interface => C.unsigned (Iface_Idx));
       Res  : C.int;
    begin
-      if Iface'Length /= 0 then
-         Mreq.IPv6mr_Interface := C.unsigned (Get_Iface_Index (Name => Iface));
-      end if;
-
       Res := C_Setsockopt
         (S       => C.int (Socket),
          Level   => Constants.IPPROTO_IPV6,
@@ -531,40 +408,6 @@ package body Anet.Sockets.Thin is
 
       Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Send_Socket;
-
-   -------------------------------------------------------------------------
-
-   procedure Set_Iface_State
-     (Name  : Types.Iface_Name_Type;
-      State : Boolean)
-   is
-      Sock : Integer := -1;
-   begin
-      Create_Socket (Socket => Sock);
-
-      declare
-         C_Name : constant C.char_array := C.To_C (String (Name));
-         Req    : aliased If_Req_Type (Name => If_Flags);
-      begin
-         Req.Ifr_Name (1 .. C_Name'Length) := C_Name;
-
-         if State then
-            Req.Ifr_Flags := Constants.IFF_UP;
-         else
-            Req.Ifr_Flags := 0;
-         end if;
-
-         Ioctl (Socket  => Sock,
-                Request => Set_Requests (If_Flags),
-                If_Req  => Req'Access);
-
-      exception
-         when Socket_Error =>
-            Close_Socket (Socket => Sock);
-            raise;
-      end;
-      Close_Socket (Socket => Sock);
-   end Set_Iface_State;
 
    -------------------------------------------------------------------------
 
