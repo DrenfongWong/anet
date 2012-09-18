@@ -23,18 +23,6 @@
 
 package Anet.Sockets.Inet is
 
-   type UDPv4_Sockaddr_Type is record
-      Addr : IPv4_Addr_Type;
-      Port : Port_Type;
-   end record;
-   --  UDPv4 socket address.
-
-   type UDPv6_Sockaddr_Type is record
-      Addr : IPv6_Addr_Type;
-      Port : Port_Type;
-   end record;
-   --  UDPv6 socket address.
-
    type Inet_Socket_Type is abstract new Socket_Type with private;
    --  Internet socket.
 
@@ -52,12 +40,25 @@ package Anet.Sockets.Inet is
       Dst    : Socket_Addr_Type);
    --  Send given data to the specified destination via the given socket.
 
-   type UDPv4_Socket_Type is new Inet_Socket_Type
+   ----------
+   -- IPv4 --
+   ----------
+
+   type IPv4_Socket_Type is abstract new Inet_Socket_Type with private;
+   --  IPv4 socket.
+
+   type UDPv4_Socket_Type is new IPv4_Socket_Type
      and Dgram_Socket_Type with private;
    --  IPv4/UDP socket.
 
    function Create return UDPv4_Socket_Type;
    --  Create new IPv4/UDP socket.
+
+   type UDPv4_Sockaddr_Type is record
+      Addr : IPv4_Addr_Type;
+      Port : Port_Type;
+   end record;
+   --  UDPv4 socket address.
 
    procedure Receive
      (Socket :     UDPv4_Socket_Type;
@@ -70,7 +71,7 @@ package Anet.Sockets.Inet is
    --  occurs. The source argument is set to the sender's address and port from
    --  which the data was received.
 
-   type TCPv4_Socket_Type is new Inet_Socket_Type
+   type TCPv4_Socket_Type is new IPv4_Socket_Type
      and Stream_Socket_Type with private;
    --  IPv4/TCP socket.
 
@@ -90,12 +91,22 @@ package Anet.Sockets.Inet is
       Port    :        Port_Type);
    --  Connect TCPv4 socket to specified IPv4 address and port.
 
+   ----------
+   -- IPv6 --
+   ----------
+
    type UDPv6_Socket_Type is new Inet_Socket_Type
      and Dgram_Socket_Type with private;
    --  IPv6/UDP socket.
 
    function Create return UDPv6_Socket_Type;
    --  Create new IPv6/UDP socket.
+
+   type UDPv6_Sockaddr_Type is record
+      Addr : IPv6_Addr_Type;
+      Port : Port_Type;
+   end record;
+   --  UDPv6 socket address.
 
    procedure Receive
      (Socket :     UDPv6_Socket_Type;
@@ -132,10 +143,12 @@ private
 
    type Inet_Socket_Type is abstract new Socket_Type with null record;
 
-   type UDPv4_Socket_Type is new Inet_Socket_Type
+   type IPv4_Socket_Type is abstract new Inet_Socket_Type with null record;
+
+   type UDPv4_Socket_Type is new IPv4_Socket_Type
      and Dgram_Socket_Type with null record;
 
-   type TCPv4_Socket_Type is new Inet_Socket_Type
+   type TCPv4_Socket_Type is new IPv4_Socket_Type
      and Stream_Socket_Type with null record;
 
    type UDPv6_Socket_Type is new Inet_Socket_Type
