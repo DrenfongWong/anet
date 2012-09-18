@@ -61,8 +61,6 @@ package Anet.Sockets is
    --  family-specific address information such as the IP address and port of a
    --  sender of data.
 
-   No_Addr : constant Socket_Addr_Type;
-
    function To_String (Address : Socket_Addr_Type) return String;
    --  Return string representation for given socket address type.
 
@@ -144,9 +142,6 @@ package Anet.Sockets is
    Socket_Error : exception;
 
 private
-
-   No_Addr : constant Socket_Addr_Type := (Family => Family_Inet,
-                                           others => <>);
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD : Integer := -1;
