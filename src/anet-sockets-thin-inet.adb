@@ -21,11 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
-
 package body Anet.Sockets.Thin.Inet is
-
-   package C renames Interfaces.C;
 
    type IPv4_Mreq_Type is record
       Imr_Multiaddr : IPv4_Addr_Type;

@@ -21,14 +21,10 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
-
 with Anet.Constants;
 with Anet.Byte_Swapping;
 
 package body Anet.Sockets.Thin.Packet is
-
-   package C renames Interfaces.C;
 
    type Sockaddr_LL_Type is record
       Sa_Family   : C.unsigned_short            := Constants.AF_PACKET;

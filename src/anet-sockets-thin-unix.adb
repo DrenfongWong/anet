@@ -21,13 +21,9 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
-
 with Anet.OS;
 
 package body Anet.Sockets.Thin.Unix is
-
-   package C renames Interfaces.C;
 
    -------------------------------------------------------------------------
 
