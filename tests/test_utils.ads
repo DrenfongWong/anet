@@ -23,7 +23,7 @@
 
 with Ada.Streams;
 
-with Anet.Sockets;
+with Anet.Sockets.Inet;
 
 package Test_Utils is
 
@@ -100,7 +100,13 @@ package Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Socket_Addr_Type);
+      Src  : Anet.Sockets.Inet.UDPv4_Sockaddr_Type);
+   --  This procedure dumps the given data to an internal buffer. Use the
+   --  Get_Dump function to retrieve the content of the buffer.
+
+   procedure Dump
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Sockets.Inet.UDPv6_Sockaddr_Type);
    --  This procedure dumps the given data to an internal buffer. Use the
    --  Get_Dump function to retrieve the content of the buffer.
 
@@ -109,7 +115,7 @@ package Test_Utils is
 
    procedure Raise_Error
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Socket_Addr_Type);
+      Src  : Anet.Sockets.Inet.UDPv4_Sockaddr_Type);
    --  This procedure raises a constraint error. It is used to verify error
    --  handling of the receiver type.
 

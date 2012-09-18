@@ -31,12 +31,13 @@ with Anet.OS;
 with Anet.Types;
 with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
-with Anet.Sockets.Tasking;
+with Anet.Sockets.Dgram_Receiver;
 with Anet.Util;
 
 with Test_Utils;
 
 pragma Elaborate_All (Anet.OS);
+pragma Elaborate_All (Anet.Sockets.Dgram_Receiver);
 
 package body Socket_Tests is
 
@@ -44,6 +45,16 @@ package body Socket_Tests is
    use Anet;
    use Anet.Sockets;
    use type Ada.Streams.Stream_Element_Array;
+
+   package UDPv4_Receiver is new Dgram_Receiver
+     (Socket_Type  => Inet.UDPv4_Socket_Type,
+      Address_Type => Inet.UDPv4_Sockaddr_Type,
+      Receive      => Inet.Receive);
+
+   package UDPv6_Receiver is new Dgram_Receiver
+     (Socket_Type  => Inet.UDPv6_Socket_Type,
+      Address_Type => Inet.UDPv6_Sockaddr_Type,
+      Receive      => Inet.Receive);
 
    Ref_Chunk : constant Ada.Streams.Stream_Element_Array
      := OS.Read_File (Filename => "data/chunk1.dat");
@@ -77,44 +88,45 @@ package body Socket_Tests is
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
       declare
-         R : Tasking.Dgram_Receiver_Type
-           (S => Dgram_Socket_Type (Sock)'Access);
+         R : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
       begin
-         Tasking.Listen (Receiver => R,
-                         Callback => Test_Utils.Raise_Error'Access);
+         UDPv4_Receiver.Listen
+           (Receiver => R,
+            Callback => Test_Utils.Raise_Error'Access);
 
          Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
          --  By default all errors should be ignored
 
-         Assert (Condition => Tasking.Is_Listening (Receiver => R),
+         Assert (Condition => UDPv4_Receiver.Is_Listening (Receiver => R),
                  Message   => "Receiver not listening");
 
-         Tasking.Stop (Receiver => R);
+         UDPv4_Receiver.Stop (Receiver => R);
 
       exception
          when others =>
-            Tasking.Stop (Receiver => R);
+            UDPv4_Receiver.Stop (Receiver => R);
             raise;
       end;
 
       declare
-         R : Tasking.Dgram_Receiver_Type
-           (S => Dgram_Socket_Type (Sock)'Access);
+         R : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
       begin
-         Tasking.Register_Error_Handler (Receiver => R,
-                                         Callback => Error_Handler'Access);
-         Tasking.Listen (Receiver => R,
-                         Callback => Test_Utils.Raise_Error'Access);
+         UDPv4_Receiver.Register_Error_Handler
+           (Receiver => R,
+            Callback => Error_Handler'Access);
+         UDPv4_Receiver.Listen
+           (Receiver => R,
+            Callback => Test_Utils.Raise_Error'Access);
 
          Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
-         Assert (Condition => not Tasking.Is_Listening (Receiver => R),
+         Assert (Condition => not UDPv4_Receiver.Is_Listening (Receiver => R),
                  Message   => "Receiver still listening");
 
       exception
          when others =>
-            Tasking.Stop (Receiver => R);
+            UDPv4_Receiver.Stop (Receiver => R);
             raise;
       end;
    end Error_Callbacks;
@@ -202,31 +214,30 @@ package body Socket_Tests is
 
    procedure Listen_Callbacks
    is
-      use type Anet.Sockets.Tasking.Count_Type;
+      use type UDPv4_Receiver.Count_Type;
 
-      C    : Tasking.Count_Type             := 0;
+      C    : UDPv4_Receiver.Count_Type      := 0;
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type
-        (S => Dgram_Socket_Type (Sock)'Access);
+      R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
-      Tasking.Listen (Receiver => R,
-                      Callback => Test_Utils.Dump'Access);
+      UDPv4_Receiver.Listen (Receiver => R,
+                             Callback => Test_Utils.Dump'Access);
 
-      Assert (Condition => Tasking.Is_Listening (Receiver => R),
+      Assert (Condition => UDPv4_Receiver.Is_Listening (Receiver => R),
               Message   => "Receiver not listening");
 
       Test_Utils.Send_Data (Filename => "data/chunk1.dat");
 
       for I in 1 .. 30 loop
-         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
+         C := UDPv4_Receiver.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Tasking.Stop (Receiver => R);
+      UDPv4_Receiver.Stop (Receiver => R);
 
-      Assert (Condition => not Tasking.Is_Listening (Receiver => R),
+      Assert (Condition => not UDPv4_Receiver.Is_Listening (Receiver => R),
               Message   => "Receiver still listening");
 
       Assert (Condition => C = 1,
@@ -236,7 +247,7 @@ package body Socket_Tests is
 
    exception
       when others =>
-         Tasking.Stop (Receiver => R);
+         UDPv4_Receiver.Stop (Receiver => R);
          raise;
    end Listen_Callbacks;
 
@@ -622,12 +633,11 @@ package body Socket_Tests is
 
    procedure Send_Multicast_V4
    is
-      use type Anet.Sockets.Tasking.Count_Type;
+      use type UDPv4_Receiver.Count_Type;
 
-      C    : Tasking.Count_Type             := 0;
+      C    : UDPv4_Receiver.Count_Type      := 0;
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type
-        (S => Dgram_Socket_Type (Sock)'Access);
+      R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv4_Addr_Type
         := To_IPv4_Addr (Str => "224.0.0.117");
       Addr : constant Socket_Addr_Type
@@ -638,8 +648,8 @@ package body Socket_Tests is
       Sock.Bind (Address => Addr);
       Sock.Join_Multicast_Group (Group => Addr);
 
-      Tasking.Listen (Receiver => R,
-                      Callback => Test_Utils.Dump'Access);
+      UDPv4_Receiver.Listen (Receiver => R,
+                             Callback => Test_Utils.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -649,12 +659,12 @@ package body Socket_Tests is
                  Dst  => Addr);
 
       for I in 1 .. 30 loop
-         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
+         C := UDPv4_Receiver.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Tasking.Stop (Receiver => R);
+      UDPv4_Receiver.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -663,7 +673,7 @@ package body Socket_Tests is
 
    exception
       when others =>
-         Tasking.Stop (Receiver => R);
+         UDPv4_Receiver.Stop (Receiver => R);
          raise;
    end Send_Multicast_V4;
 
@@ -671,12 +681,11 @@ package body Socket_Tests is
 
    procedure Send_Multicast_V6
    is
-      use type Anet.Sockets.Tasking.Count_Type;
+      use type UDPv6_Receiver.Count_Type;
 
-      C    : Tasking.Count_Type             := 0;
+      C    : UDPv6_Receiver.Count_Type      := 0;
       Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type
-        (S => Dgram_Socket_Type (Sock)'Access);
+      R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
       Addr : constant Socket_Addr_Type
@@ -687,8 +696,8 @@ package body Socket_Tests is
       Sock.Bind (Address => Addr);
       Sock.Join_Multicast_Group (Group => Addr);
 
-      Tasking.Listen (Receiver => R,
-                      Callback => Test_Utils.Dump'Access);
+      UDPv6_Receiver.Listen (Receiver => R,
+                             Callback => Test_Utils.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -698,12 +707,12 @@ package body Socket_Tests is
                  Dst  => Addr);
 
       for I in 1 .. 30 loop
-         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
+         C := UDPv6_Receiver.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Tasking.Stop (Receiver => R);
+      UDPv6_Receiver.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -712,7 +721,7 @@ package body Socket_Tests is
 
    exception
       when others =>
-         Tasking.Stop (Receiver => R);
+         UDPv6_Receiver.Stop (Receiver => R);
          raise;
    end Send_Multicast_V6;
 
@@ -801,17 +810,16 @@ package body Socket_Tests is
 
    procedure Send_V4_Datagram
    is
-      use type Anet.Sockets.Tasking.Count_Type;
+      use type UDPv4_Receiver.Count_Type;
 
-      C    : Tasking.Count_Type             := 0;
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type
-        (S => Dgram_Socket_Type (Sock)'Access);
+      C    : UDPv4_Receiver.Count_Type      := 0;
+      R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
       Sock.Bind (Address => Test_Utils.Test_Addr_V4);
 
-      Tasking.Listen (Receiver => R,
-                      Callback => Test_Utils.Dump'Access);
+      UDPv4_Receiver.Listen (Receiver => R,
+                             Callback => Test_Utils.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -821,12 +829,12 @@ package body Socket_Tests is
                  Dst  => Test_Utils.Test_Addr_V4);
 
       for I in 1 .. 30 loop
-         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
+         C := UDPv4_Receiver.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Tasking.Stop (Receiver => R);
+      UDPv4_Receiver.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -835,7 +843,7 @@ package body Socket_Tests is
 
    exception
       when others =>
-         Tasking.Stop (Receiver => R);
+         UDPv4_Receiver.Stop (Receiver => R);
          raise;
    end Send_V4_Datagram;
 
@@ -888,17 +896,16 @@ package body Socket_Tests is
 
    procedure Send_V6_Datagram
    is
-      use type Anet.Sockets.Tasking.Count_Type;
+      use type UDPv6_Receiver.Count_Type;
 
-      C    : Tasking.Count_Type             := 0;
+      C    : UDPv6_Receiver.Count_Type      := 0;
       Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
-      R    : Tasking.Dgram_Receiver_Type
-        (S => Dgram_Socket_Type (Sock)'Access);
+      R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
    begin
       Sock.Bind (Address => Test_Utils.Test_Addr_V6);
 
-      Tasking.Listen (Receiver => R,
-                      Callback => Test_Utils.Dump'Access);
+      UDPv6_Receiver.Listen (Receiver => R,
+                             Callback => Test_Utils.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -908,12 +915,12 @@ package body Socket_Tests is
                  Dst  => Test_Utils.Test_Addr_V6);
 
       for I in 1 .. 30 loop
-         C := Tasking.Get_Rcv_Msg_Count (Receiver => R);
+         C := UDPv6_Receiver.Get_Rcv_Msg_Count (Receiver => R);
          exit when C > 0;
          delay 0.1;
       end loop;
 
-      Tasking.Stop (Receiver => R);
+      UDPv6_Receiver.Stop (Receiver => R);
 
       Assert (Condition => C = 1,
               Message   => "Message count not 1:" & C'Img);
@@ -922,7 +929,7 @@ package body Socket_Tests is
 
    exception
       when others =>
-         Tasking.Stop (Receiver => R);
+         UDPv6_Receiver.Stop (Receiver => R);
          raise;
    end Send_V6_Datagram;
 
