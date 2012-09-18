@@ -116,7 +116,7 @@ package body Anet.Sockets is
          Last   => Len);
 
       if Len /= Item'Length then
-         raise Socket_Error with "Incomplete send operation on unix socket"
+         raise Socket_Error with "Incomplete send operation on socket"
          & ", only" & Len'Img & " of" & Item'Length'Img & " bytes sent";
       end if;
    end Send;

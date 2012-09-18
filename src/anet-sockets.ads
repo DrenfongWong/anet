@@ -70,8 +70,7 @@ package Anet.Sockets is
    procedure Send
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array);
-   --  Send data on unix socket to connected or bound path. The socket must be
-   --  of type Family_Unix for this to work.
+   --  Send data on socket to connected endpoint.
 
    procedure Receive
      (Socket :     Socket_Type;
