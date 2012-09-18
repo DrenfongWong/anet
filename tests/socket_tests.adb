@@ -419,14 +419,12 @@ package body Socket_Tests is
       end Receiver;
 
       task body Receiver is
-         Sender : Socket_Addr_Type (Family => Family_Unix);
-         S2     : Unix.TCP_Socket_Type;
+         S2 : Unix.TCP_Socket_Type;
       begin
          Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
-         S2.Receive (Src  => Sender,
-                     Item => Buffer,
+         S2.Receive (Item => Buffer,
                      Last => Last);
 
          accept Wait;

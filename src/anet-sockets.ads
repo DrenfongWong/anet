@@ -92,16 +92,6 @@ package Anet.Sockets is
    --  been received. Last is the index value such that Item (Last) is the last
    --  character assigned. An exception is raised if a socket error occurs.
 
-   procedure Receive
-     (Socket :     Socket_Type;
-      Src    : out Socket_Addr_Type;
-      Item   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset);
-   --  Receive data from given socket. This procedure blocks until data has
-   --  been received. Last is the index value such that Item (Last) is the last
-   --  character assigned. An exception is raised if a socket error occurs. The
-   --  Src argument specifies the sender from which the data was received.
-
    procedure Listen
      (Socket  : Socket_Type;
       Backlog : Positive := 1);

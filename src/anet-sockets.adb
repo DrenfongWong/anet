@@ -140,27 +140,6 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Receive
-     (Socket :     Socket_Type;
-      Src    : out Socket_Addr_Type;
-      Item   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset)
-   is
-   begin
-      if Socket.Address.Family = Family_Unix then
-         Thin.Receive_Socket (Socket => Socket.Sock_FD,
-                              Data   => Item,
-                              Last   => Last);
-      else
-         Thin.Inet.Receive (Socket => Socket.Sock_FD,
-                            Data   => Item,
-                            Last   => Last,
-                            Source => Src);
-      end if;
-   end Receive;
-
-   -------------------------------------------------------------------------
-
    procedure Send
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array)

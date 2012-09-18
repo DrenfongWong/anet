@@ -114,14 +114,12 @@ package body Stream_Tests is
       end Receiver;
 
       task body Receiver is
-         Sender : Socket_Addr_Type (Family => Family_Unix);
-         S1     : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
+         S1 : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
       begin
          Server.Bind (Path => Types.Unix_Path_Type (Path));
          accept Ready;
 
-         Server.Receive (Src  => Sender,
-                         Item => Buffer,
+         Server.Receive (Item => Buffer,
                          Last => Last);
          S1.Set_Buffer (Buffer (Buffer'First .. Last));
          Test_Record'Read (S1'Access, There);
