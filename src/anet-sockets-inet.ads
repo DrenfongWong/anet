@@ -21,6 +21,8 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Types;
+
 package Anet.Sockets.Inet is
 
    type Inet_Socket_Type is abstract new Socket_Type with private;

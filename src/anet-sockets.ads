@@ -30,8 +30,6 @@ with Interfaces.C;
 
 with System;
 
-with Anet.Types;
-
 package Anet.Sockets is
 
    type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
@@ -121,13 +119,6 @@ package Anet.Sockets is
       Option : Option_Name_Str;
       Value  : String);
    --  Set socket option of given socket to specified string value.
-
-   procedure Join_Multicast_Group
-     (Socket : Socket_Type;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "");
-   --  Join the given multicast group on the interface specified by name. If no
-   --  interface name is provided, the kernel selects the interface.
 
    Socket_Error : exception;
 

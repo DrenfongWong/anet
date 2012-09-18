@@ -21,7 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Net_Ifaces;
 with Anet.Sockets.Thin;
 
 package body Anet.Sockets is
@@ -57,24 +56,6 @@ package body Anet.Sockets is
    begin
       Socket_Type'Class (Socket).Close;
    end Finalize;
-
-   -------------------------------------------------------------------------
-
-   procedure Join_Multicast_Group
-     (Socket : Socket_Type;
-      Group  : Socket_Addr_Type;
-      Iface  : Types.Iface_Name_Type := "")
-   is
-      Iface_Idx : Natural := 0;
-   begin
-      if Iface'Length > 0 then
-         Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
-      end if;
-
-      Thin.Join_Multicast_Group (Socket    => Socket.Sock_FD,
-                                 Group     => Group,
-                                 Iface_Idx => Iface_Idx);
-   end Join_Multicast_Group;
 
    -------------------------------------------------------------------------
 

@@ -26,6 +26,7 @@ with Ada.Streams;
 with Interfaces.C;
 
 with Anet.Constants;
+with Anet.Types;
 
 package Anet.Sockets.Thin is
 
@@ -125,13 +126,6 @@ package Anet.Sockets.Thin is
       Option : Option_Name_Str;
       Value  : String);
    --  Set socket option of given socket to specified string value.
-
-   procedure Join_Multicast_Group
-     (Socket    : Integer;
-      Group     : Socket_Addr_Type;
-      Iface_Idx : Natural := 0);
-   --  Join the given multicast group on the interface specified by index. If
-   --  no interface index is provided, the kernel selects the interface.
 
    function Query_Iface
      (Iface_Name : Types.Iface_Name_Type;
