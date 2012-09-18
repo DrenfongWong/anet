@@ -130,23 +130,4 @@ package body Anet.Sockets is
          Value  => Value);
    end Set_Socket_Option;
 
-   -------------------------------------------------------------------------
-
-   function To_String (Address : Socket_Addr_Type) return String
-   is
-   begin
-      case Address.Family is
-         when Family_Inet   =>
-            return To_String (Address => Address.Addr_V4)
-              & " (" & Address.Port_V4'Img & " )";
-         when Family_Inet6  =>
-            return To_String (Address => Address.Addr_V6)
-              & " (" & Address.Port_V6'Img & " )";
-         when Family_Packet =>
-            return To_String (Address => Address.HW_Addr);
-         when Family_Unix   =>
-            return Ada.Strings.Unbounded.To_String (Source => Address.Path);
-      end case;
-   end To_String;
-
 end Anet.Sockets;

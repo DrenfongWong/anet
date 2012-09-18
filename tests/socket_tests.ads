@@ -87,7 +87,4 @@ package Socket_Tests is
    procedure Error_Callbacks;
    --  Test error callback handling.
 
-   procedure Socket_Addr_To_String;
-   --  Test string conversion of socket address type.
-
 end Socket_Tests;

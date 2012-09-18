@@ -29,18 +29,6 @@ package Test_Utils is
 
    Listen_Port : constant := 32101;
 
-   Test_Addr_V4 : constant Anet.Sockets.Socket_Addr_Type
-     := (Family  => Anet.Sockets.Family_Inet,
-         Addr_V4 => Anet.Loopback_Addr_V4,
-         Port_V4 => Test_Utils.Listen_Port);
-   --  IPv4 test address constant.
-
-   Test_Addr_V6 : constant Anet.Sockets.Socket_Addr_Type
-     := (Family  => Anet.Sockets.Family_Inet6,
-         Addr_V6 => Anet.Loopback_Addr_V6,
-         Port_V6 => Test_Utils.Listen_Port);
-   --  IPv6 test address constant.
-
    DHCP_Ack : constant Ada.Streams.Stream_Element_Array
      := (16#02#, 16#13#, 16#06#, 16#0c#, 16#9e#, 16#eb#, 16#b7#, 16#66#,
          16#ca#, 16#fe#, 16#80#, 16#00#, 16#0a#, 16#38#, 16#15#, 16#f2#,

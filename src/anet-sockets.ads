@@ -22,7 +22,6 @@
 --
 
 with Ada.Streams;
-with Ada.Strings.Unbounded;
 
 private with Ada.Finalization;
 
@@ -37,27 +36,6 @@ package Anet.Sockets is
 
    type Mode_Type is (Stream_Socket, Datagram_Socket);
    --  Supported socket modes.
-
-   type Socket_Addr_Type (Family : Family_Type := Family_Inet) is record
-      case Family is
-         when Family_Inet  =>
-            Addr_V4 : IPv4_Addr_Type := (others => 0);
-            Port_V4 : Port_Type      := 0;
-         when Family_Inet6 =>
-            Addr_V6 : IPv6_Addr_Type := (others => 0);
-            Port_V6 : Port_Type      := 0;
-         when Family_Packet =>
-            HW_Addr : Hardware_Addr_Type (1 .. 6) := (others => 0);
-         when Family_Unix =>
-            Path    : Ada.Strings.Unbounded.Unbounded_String;
-      end case;
-   end record;
-   --  Socket address information. This record is used to specify
-   --  family-specific address information such as the IP address and port of a
-   --  sender of data.
-
-   function To_String (Address : Socket_Addr_Type) return String;
-   --  Return string representation for given socket address type.
 
    type Socket_Type is abstract tagged limited private;
    --  Communication socket.
