@@ -74,6 +74,13 @@ package Anet.Sockets.Inet is
      and Stream_Socket_Type with private;
    --  IPv4/TCP socket.
 
+   overriding
+   procedure Accept_Connection
+     (Socket     :     TCPv4_Socket_Type;
+      New_Socket : out TCPv4_Socket_Type);
+   --  Accept first connection request from listening socket and return new
+   --  connected socket.
+
    function Create return TCPv4_Socket_Type;
    --  Create new IPv4/TCP socket.
 
@@ -104,6 +111,13 @@ package Anet.Sockets.Inet is
    type TCPv6_Socket_Type is new Inet_Socket_Type
      and Stream_Socket_Type with private;
    --  IPv6/TCP socket.
+
+   overriding
+   procedure Accept_Connection
+     (Socket     :     TCPv6_Socket_Type;
+      New_Socket : out TCPv6_Socket_Type);
+   --  Accept first connection request from listening socket and return new
+   --  connected socket.
 
    function Create return TCPv6_Socket_Type;
    --  Create new IPv6/TCP socket.

@@ -33,6 +33,46 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
+   procedure Accept_Connection
+     (Socket     :     TCPv4_Socket_Type;
+      New_Socket : out TCPv4_Socket_Type)
+   is
+      Sock_In   : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
+      Sock_Addr : System.Address;
+      Sock_Len  : Integer := 0;
+   begin
+      New_Socket.Address := Socket.Address;
+      Sock_Addr          := Sock_In'Address;
+      Sock_Len           := Sock_In'Size / 8;
+
+      Thin.Accept_Socket (Socket       => Socket.Sock_FD,
+                          Sockaddr     => Sock_Addr,
+                          Sockaddr_Len => Sock_Len,
+                          New_Socket   => New_Socket.Sock_FD);
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
+   procedure Accept_Connection
+     (Socket     :     TCPv6_Socket_Type;
+      New_Socket : out TCPv6_Socket_Type)
+   is
+      Sock_In   : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
+      Sock_Addr : System.Address;
+      Sock_Len  : Integer := 0;
+   begin
+      New_Socket.Address := Socket.Address;
+      Sock_Addr          := Sock_In'Address;
+      Sock_Len           := Sock_In'Size / 8;
+
+      Thin.Accept_Socket (Socket       => Socket.Sock_FD,
+                          Sockaddr     => Sock_Addr,
+                          Sockaddr_Len => Sock_Len,
+                          New_Socket   => New_Socket.Sock_FD);
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
    procedure Bind
      (Socket  : in out Inet_Socket_Type;
       Address :        Socket_Addr_Type      :=
