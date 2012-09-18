@@ -99,7 +99,7 @@ package body Stream_Tests is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
 
-      Server, Client : Unix.UDP_Socket_Type := Unix.Create;
+      Server, Client : Unix.UDP_Socket_Type := Unix.Init;
 
       There : Test_Record;
       Here  : constant Test_Record

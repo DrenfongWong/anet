@@ -54,8 +54,8 @@ package Anet.Sockets.Packet is
      and Dgram_Socket_Type with private;
    --  Packet socket in datagram mode.
 
-   function Create return UDP_Socket_Type;
-   --  Create new Packet/UDP socket.
+   function Init return UDP_Socket_Type;
+   --  Initialize given Packet/UDP socket.
 
 private
 

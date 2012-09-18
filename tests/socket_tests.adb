@@ -82,7 +82,7 @@ package body Socket_Tests is
 
    procedure Error_Callbacks
    is
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
    begin
       Sock.Bind (Address => Loopback_Addr_V4,
                  Port    => Test_Utils.Listen_Port);
@@ -214,7 +214,7 @@ package body Socket_Tests is
       use type UDPv4_Receiver.Count_Type;
 
       C    : UDPv4_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
       Sock.Bind (Address => Loopback_Addr_V4,
@@ -255,7 +255,7 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv4_Socket_Type  := Inet.Create;
+      Sock   : Inet.UDPv4_Socket_Type  := Inet.Init;
       Grp    : constant IPv4_Addr_Type := To_IPv4_Addr (Str => "224.0.0.117");
 
       task Receiver is
@@ -302,7 +302,7 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv6_Socket_Type  := Inet.Create;
+      Sock   : Inet.UDPv6_Socket_Type  := Inet.Init;
       Grp    : constant IPv6_Addr_Type := To_IPv6_Addr
         (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
 
@@ -355,7 +355,7 @@ package body Socket_Tests is
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Unix.UDP_Socket_Type := Unix.Create;
+      Sock   : Unix.UDP_Socket_Type := Unix.Init;
       Sender : Types.Unix_Path_Type (1 .. Path'Length);
 
       task Receiver is
@@ -404,7 +404,7 @@ package body Socket_Tests is
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Unix.TCP_Socket_Type := Unix.Create;
+      Sock   : Unix.TCP_Socket_Type := Unix.Init;
 
       task Receiver is
          entry Wait;
@@ -447,7 +447,7 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv4_Socket_Type := Inet.Create;
+      Sock   : Inet.UDPv4_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
@@ -490,7 +490,7 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.TCPv4_Socket_Type := Inet.Create;
+      Sock   : Inet.TCPv4_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
@@ -535,7 +535,7 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv6_Socket_Type := Inet.Create;
+      Sock   : Inet.UDPv6_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
@@ -578,7 +578,7 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.TCPv6_Socket_Type := Inet.Create;
+      Sock   : Inet.TCPv6_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
@@ -625,7 +625,7 @@ package body Socket_Tests is
       use type UDPv4_Receiver.Count_Type;
 
       C    : UDPv4_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv4_Addr_Type
         := To_IPv4_Addr (Str => "224.0.0.117");
@@ -671,7 +671,7 @@ package body Socket_Tests is
       use type UDPv6_Receiver.Count_Type;
 
       C    : UDPv6_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
+      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Init;
       R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
@@ -718,7 +718,7 @@ package body Socket_Tests is
         & Util.Random_String (Len => 8);
       Dump : constant String         := Path & ".dump";
       Cmd  : aliased constant String := "socat UNIX-RECV:" & Path & " " & Dump;
-      Sock : Unix.UDP_Socket_Type    := Unix.Create;
+      Sock : Unix.UDP_Socket_Type    := Unix.Init;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
@@ -759,7 +759,7 @@ package body Socket_Tests is
       Dump : constant String         := Path & ".dump";
       Cmd  : aliased constant String := "socat UNIX-LISTEN:" & Path & " "
         & Dump;
-      Sock : Unix.TCP_Socket_Type    := Unix.Create;
+      Sock : Unix.TCP_Socket_Type    := Unix.Init;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
@@ -797,7 +797,7 @@ package body Socket_Tests is
    is
       use type UDPv4_Receiver.Count_Type;
 
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
+      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
       C    : UDPv4_Receiver.Count_Type      := 0;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
@@ -844,7 +844,7 @@ package body Socket_Tests is
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
         & ",reuseaddr " & Dump;
-      Sock : Inet.TCPv4_Socket_Type  := Inet.Create;
+      Sock : Inet.TCPv4_Socket_Type  := Inet.Init;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
@@ -886,7 +886,7 @@ package body Socket_Tests is
       use type UDPv6_Receiver.Count_Type;
 
       C    : UDPv6_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
+      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Init;
       R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
    begin
       Sock.Bind (Address => Loopback_Addr_V6,
@@ -932,7 +932,7 @@ package body Socket_Tests is
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
         & ",reuseaddr " & Dump;
-      Sock : Inet.TCPv6_Socket_Type  := Inet.Create;
+      Sock : Inet.TCPv6_Socket_Type  := Inet.Init;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
@@ -974,7 +974,7 @@ package body Socket_Tests is
       Path : constant String := "./my_socket";
    begin
       declare
-         Sock : Unix.UDP_Socket_Type := Unix.Create;
+         Sock : Unix.UDP_Socket_Type := Unix.Init;
       begin
          Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Assert (Condition => Ada.Directories.Exists (Name => Path),

@@ -47,15 +47,15 @@ package body Anet.Sockets.Packet is
 
    -------------------------------------------------------------------------
 
-   function Create return UDP_Socket_Type
+   function Init return UDP_Socket_Type
    is
    begin
       return Socket : UDP_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Packet,
-                 Mode   => Datagram_Socket);
+         Init (Socket => Socket,
+               Family => Family_Packet,
+               Mode   => Datagram_Socket);
       end return;
-   end Create;
+   end Init;
 
    -------------------------------------------------------------------------
 

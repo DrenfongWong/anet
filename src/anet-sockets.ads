@@ -110,11 +110,11 @@ private
    procedure Finalize (Socket : in out Socket_Type);
    --  Close socket.
 
-   procedure Create
+   procedure Init
      (Socket : in out Socket_Type;
       Family :        Family_Type;
       Mode   :        Mode_Type);
-   --  Create a new socket with given family and mode.
+   --  Initialize given socket with specified family and mode.
 
    function C_Setsockopt
      (S       : Interfaces.C.int;

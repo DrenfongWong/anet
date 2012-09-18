@@ -222,54 +222,6 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
-   function Create return UDPv4_Socket_Type
-   is
-   begin
-      return Socket : UDPv4_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Inet,
-                 Mode   => Datagram_Socket);
-      end return;
-   end Create;
-
-   -------------------------------------------------------------------------
-
-   function Create return TCPv4_Socket_Type
-   is
-   begin
-      return Socket : TCPv4_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Inet,
-                 Mode   => Stream_Socket);
-      end return;
-   end Create;
-
-   -------------------------------------------------------------------------
-
-   function Create return UDPv6_Socket_Type
-   is
-   begin
-      return Socket : UDPv6_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Inet6,
-                 Mode   => Datagram_Socket);
-      end return;
-   end Create;
-
-   -------------------------------------------------------------------------
-
-   function Create return TCPv6_Socket_Type
-   is
-   begin
-      return Socket : TCPv6_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Inet6,
-                 Mode   => Stream_Socket);
-      end return;
-   end Create;
-
-   -------------------------------------------------------------------------
-
    function Create_Inet4
      (Address : IPv4_Addr_Type;
       Port    : Port_Type)
@@ -299,6 +251,54 @@ package body Anet.Sockets.Inet is
               Sin6_Addr  => Address,
               others     => 0);
    end Create_Inet6;
+
+   -------------------------------------------------------------------------
+
+   function Init return UDPv4_Socket_Type
+   is
+   begin
+      return Socket : UDPv4_Socket_Type do
+         Init (Socket => Socket,
+               Family => Family_Inet,
+               Mode   => Datagram_Socket);
+      end return;
+   end Init;
+
+   -------------------------------------------------------------------------
+
+   function Init return TCPv4_Socket_Type
+   is
+   begin
+      return Socket : TCPv4_Socket_Type do
+         Init (Socket => Socket,
+               Family => Family_Inet,
+               Mode   => Stream_Socket);
+      end return;
+   end Init;
+
+   -------------------------------------------------------------------------
+
+   function Init return UDPv6_Socket_Type
+   is
+   begin
+      return Socket : UDPv6_Socket_Type do
+         Init (Socket => Socket,
+               Family => Family_Inet6,
+               Mode   => Datagram_Socket);
+      end return;
+   end Init;
+
+   -------------------------------------------------------------------------
+
+   function Init return TCPv6_Socket_Type
+   is
+   begin
+      return Socket : TCPv6_Socket_Type do
+         Init (Socket => Socket,
+               Family => Family_Inet6,
+               Mode   => Stream_Socket);
+      end return;
+   end Init;
 
    -------------------------------------------------------------------------
 

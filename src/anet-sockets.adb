@@ -38,7 +38,15 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   procedure Create
+   procedure Finalize (Socket : in out Socket_Type)
+   is
+   begin
+      Socket_Type'Class (Socket).Close;
+   end Finalize;
+
+   -------------------------------------------------------------------------
+
+   procedure Init
      (Socket : in out Socket_Type;
       Family :        Family_Type;
       Mode   :        Mode_Type)
@@ -47,15 +55,7 @@ package body Anet.Sockets is
       Thin.Create_Socket (Socket => Socket.Sock_FD,
                           Family => Family,
                           Mode   => Mode);
-   end Create;
-
-   -------------------------------------------------------------------------
-
-   procedure Finalize (Socket : in out Socket_Type)
-   is
-   begin
-      Socket_Type'Class (Socket).Close;
-   end Finalize;
+   end Init;
 
    -------------------------------------------------------------------------
 
