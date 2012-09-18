@@ -26,14 +26,6 @@ package Anet.Sockets.Inet is
    type Inet_Socket_Type is abstract new Socket_Type with private;
    --  Internet socket.
 
-   procedure Bind
-     (Socket  : in out Inet_Socket_Type;
-      Address :        Socket_Addr_Type      :=
-        (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        Types.Iface_Name_Type := "");
-   --  Bind given Internet socket to the specified IP address and port. If an
-   --  interface name is given, the socket is bound to it.
-
    procedure Send
      (Socket : Inet_Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;

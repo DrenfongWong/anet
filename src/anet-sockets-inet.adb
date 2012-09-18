@@ -81,39 +81,6 @@ package body Anet.Sockets.Inet is
    -------------------------------------------------------------------------
 
    procedure Bind
-     (Socket  : in out Inet_Socket_Type;
-      Address :        Socket_Addr_Type      :=
-        (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        Types.Iface_Name_Type := "")
-   is
-      Result : Boolean;
-   begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Reuse_Address,
-         Value  => True);
-
-      Thin.Inet.Bind (Socket  => Socket.Sock_FD,
-                      Address => Thin.Inet.To_Sock_Addr (Address),
-                      Success => Result);
-
-      if not Result then
-         raise Socket_Error with "Unable to bind socket to "
-           & To_String (Address => Address) & " - " & Get_Errno_String;
-      end if;
-
-      if Iface'Length /= 0 then
-         Thin.Set_Socket_Option
-           (Socket => Socket.Sock_FD,
-            Level  => Thin.Socket_Level,
-            Option => Bind_To_Device,
-            Value  => String (Iface));
-      end if;
-   end Bind;
-
-   -------------------------------------------------------------------------
-
-   procedure Bind
      (Socket    :     Integer;
       Sock_Addr :     Thin.Inet.Sockaddr_In_Type;
       Iface     :     Types.Iface_Name_Type := "";
