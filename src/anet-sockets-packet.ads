@@ -54,7 +54,7 @@ package Anet.Sockets.Packet is
      and Dgram_Socket_Type with private;
    --  Packet socket in datagram mode.
 
-   function Init return UDP_Socket_Type;
+   procedure Init (Socket : in out UDP_Socket_Type);
    --  Initialize given Packet/UDP socket.
 
 private

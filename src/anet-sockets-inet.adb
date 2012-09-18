@@ -254,50 +254,42 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
-   function Init return UDPv4_Socket_Type
+   procedure Init (Socket : in out UDPv4_Socket_Type)
    is
    begin
-      return Socket : UDPv4_Socket_Type do
-         Init (Socket => Socket,
-               Family => Family_Inet,
-               Mode   => Datagram_Socket);
-      end return;
+      Init (Socket => Socket,
+            Family => Family_Inet,
+            Mode   => Datagram_Socket);
    end Init;
 
    -------------------------------------------------------------------------
 
-   function Init return TCPv4_Socket_Type
+   procedure Init (Socket : in out TCPv4_Socket_Type)
    is
    begin
-      return Socket : TCPv4_Socket_Type do
-         Init (Socket => Socket,
-               Family => Family_Inet,
-               Mode   => Stream_Socket);
-      end return;
+      Init (Socket => Socket,
+            Family => Family_Inet,
+            Mode   => Stream_Socket);
    end Init;
 
    -------------------------------------------------------------------------
 
-   function Init return UDPv6_Socket_Type
+   procedure Init (Socket : in out UDPv6_Socket_Type)
    is
    begin
-      return Socket : UDPv6_Socket_Type do
-         Init (Socket => Socket,
-               Family => Family_Inet6,
-               Mode   => Datagram_Socket);
-      end return;
+      Init (Socket => Socket,
+            Family => Family_Inet6,
+            Mode   => Datagram_Socket);
    end Init;
 
    -------------------------------------------------------------------------
 
-   function Init return TCPv6_Socket_Type
+   procedure Init (Socket : in out TCPv6_Socket_Type)
    is
    begin
-      return Socket : TCPv6_Socket_Type do
-         Init (Socket => Socket,
-               Family => Family_Inet6,
-               Mode   => Stream_Socket);
-      end return;
+      Init (Socket => Socket,
+            Family => Family_Inet6,
+            Mode   => Stream_Socket);
    end Init;
 
    -------------------------------------------------------------------------

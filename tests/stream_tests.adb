@@ -99,8 +99,6 @@ package body Stream_Tests is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
 
-      Server, Client : Unix.UDP_Socket_Type := Unix.Init;
-
       There : Test_Record;
       Here  : constant Test_Record
         := (A => 12333,
@@ -114,8 +112,10 @@ package body Stream_Tests is
       end Receiver;
 
       task body Receiver is
-         S1 : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
+         Server : Unix.UDP_Socket_Type;
+         S1     : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
       begin
+         Server.Init;
          Server.Bind (Path => Types.Unix_Path_Type (Path));
          accept Ready;
 
@@ -127,8 +127,10 @@ package body Stream_Tests is
          accept Done;
       end Receiver;
 
-      S2 : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
+      Client : Unix.UDP_Socket_Type;
+      S2     : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
    begin
+      Client.Init;
       Receiver.Ready;
 
       Client.Connect (Path => Types.Unix_Path_Type (Path));

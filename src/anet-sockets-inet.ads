@@ -54,7 +54,7 @@ package Anet.Sockets.Inet is
      and Dgram_Socket_Type with private;
    --  IPv4/UDP socket.
 
-   function Init return UDPv4_Socket_Type;
+   procedure Init (Socket : in out UDPv4_Socket_Type);
    --  Initialize given IPv4/UDP socket.
 
    type UDPv4_Sockaddr_Type is record
@@ -92,7 +92,7 @@ package Anet.Sockets.Inet is
    --  Accept first connection request from listening socket and return new
    --  connected socket.
 
-   function Init return TCPv4_Socket_Type;
+   procedure Init (Socket : in out TCPv4_Socket_Type);
    --  Initialize given IPv4/TCP socket.
 
    procedure Connect
@@ -127,7 +127,7 @@ package Anet.Sockets.Inet is
      and Dgram_Socket_Type with private;
    --  IPv6/UDP socket.
 
-   function Init return UDPv6_Socket_Type;
+   procedure Init (Socket : in out UDPv6_Socket_Type);
    --  Initialize given IPv6/UDP socket.
 
    type UDPv6_Sockaddr_Type is record
@@ -165,7 +165,7 @@ package Anet.Sockets.Inet is
    --  Accept first connection request from listening socket and return new
    --  connected socket.
 
-   function Init return TCPv6_Socket_Type;
+   procedure Init (Socket : in out TCPv6_Socket_Type);
    --  Initialize given IPv6/TCP socket.
 
    procedure Connect

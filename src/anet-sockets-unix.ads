@@ -48,7 +48,7 @@ package Anet.Sockets.Unix is
      and Dgram_Socket_Type with private;
    --  UNIX domain socket in datagram mode.
 
-   function Init return UDP_Socket_Type;
+   procedure Init (Socket : in out UDP_Socket_Type);
    --  Initialize given UNIX/UDP socket.
 
    procedure Receive
@@ -66,7 +66,7 @@ package Anet.Sockets.Unix is
      and Stream_Socket_Type with private;
    --  UNIX domain socket in stream mode.
 
-   function Init return TCP_Socket_Type;
+   procedure Init (Socket : in out TCP_Socket_Type);
    --  Initialize given UNIX/TCP socket.
 
    overriding

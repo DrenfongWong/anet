@@ -85,26 +85,22 @@ package body Anet.Sockets.Unix is
 
    -------------------------------------------------------------------------
 
-   function Init return UDP_Socket_Type
+   procedure Init (Socket : in out UDP_Socket_Type)
    is
    begin
-      return Socket : UDP_Socket_Type do
-         Init (Socket => Socket,
-               Family => Family_Unix,
-               Mode   => Datagram_Socket);
-      end return;
+      Init (Socket => Socket,
+            Family => Family_Unix,
+            Mode   => Datagram_Socket);
    end Init;
 
    -------------------------------------------------------------------------
 
-   function Init return TCP_Socket_Type
+   procedure Init (Socket : in out TCP_Socket_Type)
    is
    begin
-      return Socket : TCP_Socket_Type do
-         Init (Socket => Socket,
-               Family => Family_Unix,
-               Mode   => Stream_Socket);
-      end return;
+      Init (Socket => Socket,
+            Family => Family_Unix,
+            Mode   => Stream_Socket);
    end Init;
 
    -------------------------------------------------------------------------

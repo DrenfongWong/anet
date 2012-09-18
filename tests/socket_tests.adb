@@ -82,8 +82,9 @@ package body Socket_Tests is
 
    procedure Error_Callbacks
    is
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
+      Sock : aliased Inet.UDPv4_Socket_Type;
    begin
+      Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V4,
                  Port    => Test_Utils.Listen_Port);
 
@@ -214,9 +215,10 @@ package body Socket_Tests is
       use type UDPv4_Receiver.Count_Type;
 
       C    : UDPv4_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
+      Sock : aliased Inet.UDPv4_Socket_Type;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
+      Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V4,
                  Port    => Test_Utils.Listen_Port);
       UDPv4_Receiver.Listen (Receiver => R,
@@ -255,7 +257,6 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv4_Socket_Type  := Inet.Init;
       Grp    : constant IPv4_Addr_Type := To_IPv4_Addr (Str => "224.0.0.117");
 
       task Receiver is
@@ -263,8 +264,10 @@ package body Socket_Tests is
       end Receiver;
 
       task body Receiver is
+         Sock   : Inet.UDPv4_Socket_Type;
          Sender : Inet.UDPv4_Sockaddr_Type;
       begin
+         Sock.Init;
          Sock.Bind (Address => Grp,
                     Port    => Test_Utils.Listen_Port);
          Sock.Join_Multicast_Group (Group => Grp);
@@ -302,7 +305,6 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv6_Socket_Type  := Inet.Init;
       Grp    : constant IPv6_Addr_Type := To_IPv6_Addr
         (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
 
@@ -311,8 +313,10 @@ package body Socket_Tests is
       end Receiver;
 
       task body Receiver is
+         Sock   : Inet.UDPv6_Socket_Type;
          Sender : Inet.UDPv6_Sockaddr_Type;
       begin
+         Sock.Init;
          Sock.Bind (Address => Grp,
                     Port    => Test_Utils.Listen_Port);
          Sock.Join_Multicast_Group (Group => Grp);
@@ -355,7 +359,6 @@ package body Socket_Tests is
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Unix.UDP_Socket_Type := Unix.Init;
       Sender : Types.Unix_Path_Type (1 .. Path'Length);
 
       task Receiver is
@@ -363,7 +366,9 @@ package body Socket_Tests is
       end Receiver;
 
       task body Receiver is
+         Sock : Unix.UDP_Socket_Type;
       begin
+         Sock.Init;
          Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -404,15 +409,16 @@ package body Socket_Tests is
 
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Unix.TCP_Socket_Type := Unix.Init;
 
       task Receiver is
          entry Wait;
       end Receiver;
 
       task body Receiver is
-         S2 : Unix.TCP_Socket_Type;
+         Sock : Unix.TCP_Socket_Type;
+         S2   : Unix.TCP_Socket_Type;
       begin
+         Sock.Init;
          Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
@@ -447,15 +453,16 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv4_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
       end Receiver;
 
       task body Receiver is
+         Sock   : Inet.UDPv4_Socket_Type;
          Sender : Inet.UDPv4_Sockaddr_Type;
       begin
+         Sock.Init;
          Sock.Bind (Address => Loopback_Addr_V4,
                     Port    => Test_Utils.Listen_Port);
          Sock.Receive (Src  => Sender,
@@ -490,15 +497,16 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.TCPv4_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
       end Receiver;
 
       task body Receiver is
-         S2 : Inet.TCPv4_Socket_Type;
+         Sock : Inet.TCPv4_Socket_Type;
+         S2   : Inet.TCPv4_Socket_Type;
       begin
+         Sock.Init;
          Sock.Bind (Address => Loopback_Addr_V4,
                     Port    => Test_Utils.Listen_Port);
          Sock.Listen;
@@ -535,15 +543,16 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.UDPv6_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
       end Receiver;
 
       task body Receiver is
+         Sock   : Inet.UDPv6_Socket_Type;
          Sender : Inet.UDPv6_Sockaddr_Type;
       begin
+         Sock.Init;
          Sock.Bind (Address => Loopback_Addr_V6,
                     Port    => Test_Utils.Listen_Port);
          Sock.Receive (Src  => Sender,
@@ -578,15 +587,16 @@ package body Socket_Tests is
    is
       Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
       Last   : Ada.Streams.Stream_Element_Offset;
-      Sock   : Inet.TCPv6_Socket_Type := Inet.Init;
 
       task Receiver is
          entry Wait;
       end Receiver;
 
       task body Receiver is
-         S2 : Inet.TCPv6_Socket_Type;
+         Sock : Inet.TCPv6_Socket_Type;
+         S2   : Inet.TCPv6_Socket_Type;
       begin
+         Sock.Init;
          Sock.Bind (Address => Loopback_Addr_V6,
                     Port    => Test_Utils.Listen_Port);
          Sock.Listen;
@@ -624,12 +634,13 @@ package body Socket_Tests is
    is
       use type UDPv4_Receiver.Count_Type;
 
-      C    : UDPv4_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
+      C    : UDPv4_Receiver.Count_Type := 0;
+      Sock : aliased Inet.UDPv4_Socket_Type;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv4_Addr_Type
         := To_IPv4_Addr (Str => "224.0.0.117");
    begin
+      Sock.Init;
       Sock.Bind (Address => Grp,
                  Port    => Test_Utils.Listen_Port);
       Sock.Join_Multicast_Group (Group => Grp);
@@ -670,12 +681,13 @@ package body Socket_Tests is
    is
       use type UDPv6_Receiver.Count_Type;
 
-      C    : UDPv6_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Init;
+      C    : UDPv6_Receiver.Count_Type := 0;
+      Sock : aliased Inet.UDPv6_Socket_Type;
       R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
    begin
+      Sock.Init;
       Sock.Bind (Address => Grp,
                  Port    => Test_Utils.Listen_Port);
       Sock.Join_Multicast_Group (Group => Grp);
@@ -718,10 +730,11 @@ package body Socket_Tests is
         & Util.Random_String (Len => 8);
       Dump : constant String         := Path & ".dump";
       Cmd  : aliased constant String := "socat UNIX-RECV:" & Path & " " & Dump;
-      Sock : Unix.UDP_Socket_Type    := Unix.Init;
+      Sock : Unix.UDP_Socket_Type;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
+      Sock.Init;
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
@@ -759,10 +772,11 @@ package body Socket_Tests is
       Dump : constant String         := Path & ".dump";
       Cmd  : aliased constant String := "socat UNIX-LISTEN:" & Path & " "
         & Dump;
-      Sock : Unix.TCP_Socket_Type    := Unix.Init;
+      Sock : Unix.TCP_Socket_Type;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
+      Sock.Init;
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
@@ -797,10 +811,11 @@ package body Socket_Tests is
    is
       use type UDPv4_Receiver.Count_Type;
 
-      Sock : aliased Inet.UDPv4_Socket_Type := Inet.Init;
-      C    : UDPv4_Receiver.Count_Type      := 0;
+      C    : UDPv4_Receiver.Count_Type := 0;
+      Sock : aliased Inet.UDPv4_Socket_Type;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
+      Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V4,
                  Port    => Test_Utils.Listen_Port);
 
@@ -844,10 +859,11 @@ package body Socket_Tests is
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
         & ",reuseaddr " & Dump;
-      Sock : Inet.TCPv4_Socket_Type  := Inet.Init;
+      Sock : Inet.TCPv4_Socket_Type;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
+      Sock.Init;
 
       --  Give receiver/socat enough time to create socket
 
@@ -885,10 +901,11 @@ package body Socket_Tests is
    is
       use type UDPv6_Receiver.Count_Type;
 
-      C    : UDPv6_Receiver.Count_Type      := 0;
-      Sock : aliased Inet.UDPv6_Socket_Type := Inet.Init;
+      C    : UDPv6_Receiver.Count_Type := 0;
+      Sock : aliased Inet.UDPv6_Socket_Type;
       R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
    begin
+      Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V6,
                  Port    => Test_Utils.Listen_Port);
 
@@ -932,10 +949,11 @@ package body Socket_Tests is
         & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
                                   Side   => Ada.Strings.Left)
         & ",reuseaddr " & Dump;
-      Sock : Inet.TCPv6_Socket_Type  := Inet.Init;
+      Sock : Inet.TCPv6_Socket_Type;
 
       Receiver : Command_Task (Command => Cmd'Access);
    begin
+      Sock.Init;
 
       --  Give receiver/socat enough time to create socket
 
@@ -974,8 +992,9 @@ package body Socket_Tests is
       Path : constant String := "./my_socket";
    begin
       declare
-         Sock : Unix.UDP_Socket_Type := Unix.Init;
+         Sock : Unix.UDP_Socket_Type;
       begin
+         Sock.Init;
          Sock.Bind (Path => Types.Unix_Path_Type (Path));
          Assert (Condition => Ada.Directories.Exists (Name => Path),
                  Message   => "Path not found");
