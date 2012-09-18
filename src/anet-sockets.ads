@@ -67,12 +67,6 @@ package Anet.Sockets is
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
 
-   procedure Accept_Connection
-     (Socket     :     Socket_Type;
-      New_Socket : out Socket_Type);
-   --  Accept first connection request from listening socket and return new
-   --  connected socket.
-
    procedure Send
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array);
