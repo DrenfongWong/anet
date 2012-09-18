@@ -61,18 +61,6 @@ package body Anet.Sockets.Packet is
 
    -------------------------------------------------------------------------
 
-   function Create return TCP_Socket_Type
-   is
-   begin
-      return Socket : TCP_Socket_Type do
-         Create (Socket => Socket,
-                 Family => Family_Packet,
-                 Mode   => Stream_Socket);
-      end return;
-   end Create;
-
-   -------------------------------------------------------------------------
-
    procedure Receive
      (Socket :     Packet_Socket_Type;
       Src    : out Hardware_Addr_Type;

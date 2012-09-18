@@ -55,21 +55,11 @@ package Anet.Sockets.Packet is
    function Create return UDP_Socket_Type;
    --  Create new Packet/UDP socket.
 
-   type TCP_Socket_Type is new Packet_Socket_Type
-     and Stream_Socket_Type with private;
-   --  Packet socket in stream mode.
-
-   function Create return TCP_Socket_Type;
-   --  Create new Packet/TCP socket.
-
 private
 
    type Packet_Socket_Type is abstract new Socket_Type with null record;
 
    type UDP_Socket_Type is new Packet_Socket_Type
      and Dgram_Socket_Type with null record;
-
-   type TCP_Socket_Type is new Packet_Socket_Type
-     and Stream_Socket_Type with null record;
 
 end Anet.Sockets.Packet;
