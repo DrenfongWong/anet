@@ -37,9 +37,6 @@ package Anet.Sockets is
    type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
    --  Address families (IPv4, IPv6, raw).
 
-   subtype Family_Inet_Type is Family_Type range Family_Inet .. Family_Inet6;
-   --  Internet protocol address families.
-
    type Mode_Type is (Stream_Socket, Datagram_Socket);
    --  Supported socket modes.
 

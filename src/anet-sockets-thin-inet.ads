@@ -23,6 +23,9 @@
 
 package Anet.Sockets.Thin.Inet is
 
+   subtype Family_Inet_Type is Family_Type range Family_Inet .. Family_Inet6;
+   --  Internet protocol address families.
+
    type Sockaddr_In_Type (Family : Family_Inet_Type := Family_Inet) is record
       Sin_Family : Interfaces.C.unsigned_short;
       --  Address family
