@@ -95,7 +95,10 @@ package Anet.Sockets.Inet is
    -- IPv6 --
    ----------
 
-   type UDPv6_Socket_Type is new Inet_Socket_Type
+   type IPv6_Socket_Type is abstract new Inet_Socket_Type with private;
+   --  IPv6 socket.
+
+   type UDPv6_Socket_Type is new IPv6_Socket_Type
      and Dgram_Socket_Type with private;
    --  IPv6/UDP socket.
 
@@ -119,7 +122,7 @@ package Anet.Sockets.Inet is
    --  occurs. The source argument is set to the sender's address and port from
    --  which the data was received.
 
-   type TCPv6_Socket_Type is new Inet_Socket_Type
+   type TCPv6_Socket_Type is new IPv6_Socket_Type
      and Stream_Socket_Type with private;
    --  IPv6/TCP socket.
 
@@ -145,16 +148,18 @@ private
 
    type IPv4_Socket_Type is abstract new Inet_Socket_Type with null record;
 
+   type IPv6_Socket_Type is abstract new Inet_Socket_Type with null record;
+
    type UDPv4_Socket_Type is new IPv4_Socket_Type
      and Dgram_Socket_Type with null record;
 
    type TCPv4_Socket_Type is new IPv4_Socket_Type
      and Stream_Socket_Type with null record;
 
-   type UDPv6_Socket_Type is new Inet_Socket_Type
+   type UDPv6_Socket_Type is new IPv6_Socket_Type
      and Dgram_Socket_Type with null record;
 
-   type TCPv6_Socket_Type is new Inet_Socket_Type
+   type TCPv6_Socket_Type is new IPv6_Socket_Type
      and Stream_Socket_Type with null record;
 
 end Anet.Sockets.Inet;
