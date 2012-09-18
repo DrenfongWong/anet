@@ -658,8 +658,9 @@ package body Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Ref_Chunk,
-                 Dst  => Addr);
+      Sock.Send (Item     => Ref_Chunk,
+                 Dst_Addr => Grp,
+                 Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
          C := UDPv4_Receiver.Get_Rcv_Msg_Count (Receiver => R);
@@ -707,8 +708,9 @@ package body Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Ref_Chunk,
-                 Dst  => Addr);
+      Sock.Send (Item     => Ref_Chunk,
+                 Dst_Addr => Grp,
+                 Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
          C := UDPv6_Receiver.Get_Rcv_Msg_Count (Receiver => R);
@@ -830,8 +832,9 @@ package body Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Ref_Chunk,
-                 Dst  => Test_Utils.Test_Addr_V4);
+      Sock.Send (Item     => Ref_Chunk,
+                 Dst_Addr => Loopback_Addr_V4,
+                 Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
          C := UDPv4_Receiver.Get_Rcv_Msg_Count (Receiver => R);
@@ -917,8 +920,9 @@ package body Socket_Tests is
 
       delay 0.2;
 
-      Sock.Send (Item => Ref_Chunk,
-                 Dst  => Test_Utils.Test_Addr_V6);
+      Sock.Send (Item     => Ref_Chunk,
+                 Dst_Addr => Loopback_Addr_V6,
+                 Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
          C := UDPv6_Receiver.Get_Rcv_Msg_Count (Receiver => R);

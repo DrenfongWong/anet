@@ -26,12 +26,6 @@ package Anet.Sockets.Inet is
    type Inet_Socket_Type is abstract new Socket_Type with private;
    --  Internet socket.
 
-   procedure Send
-     (Socket : Inet_Socket_Type;
-      Item   : Ada.Streams.Stream_Element_Array;
-      Dst    : Socket_Addr_Type);
-   --  Send given data to the specified destination via the given socket.
-
    ----------
    -- IPv4 --
    ----------
@@ -46,6 +40,13 @@ package Anet.Sockets.Inet is
       Iface   :        Types.Iface_Name_Type := "");
    --  Bind given IPv4 socket to the specified IPv4 address and port. If an
    --  interface name is given, the socket is bound to it.
+
+   procedure Send
+     (Socket   : IPv4_Socket_Type;
+      Item     : Ada.Streams.Stream_Element_Array;
+      Dst_Addr : IPv4_Addr_Type;
+      Dst_Port : Port_Type);
+   --  Send given data to the specified destination via the given socket.
 
    type UDPv4_Socket_Type is new IPv4_Socket_Type
      and Dgram_Socket_Type with private;
@@ -105,6 +106,13 @@ package Anet.Sockets.Inet is
       Iface   :        Types.Iface_Name_Type := "");
    --  Bind given IPv6 socket to the specified IPv6 address and port. If an
    --  interface name is given, the socket is bound to it.
+
+   procedure Send
+     (Socket   : IPv6_Socket_Type;
+      Item     : Ada.Streams.Stream_Element_Array;
+      Dst_Addr : IPv6_Addr_Type;
+      Dst_Port : Port_Type);
+   --  Send given data to the specified destination via the given socket.
 
    type UDPv6_Socket_Type is new IPv6_Socket_Type
      and Dgram_Socket_Type with private;
