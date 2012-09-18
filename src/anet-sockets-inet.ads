@@ -72,6 +72,13 @@ package Anet.Sockets.Inet is
    --  occurs. The source argument is set to the sender's address and port from
    --  which the data was received.
 
+   procedure Join_Multicast_Group
+     (Socket : UDPv4_Socket_Type;
+      Group  : IPv4_Addr_Type;
+      Iface  : Types.Iface_Name_Type := "");
+   --  Join the given multicast group on the interface specified by name. If no
+   --  interface name is provided, the kernel selects the interface.
+
    type TCPv4_Socket_Type is new IPv4_Socket_Type
      and Stream_Socket_Type with private;
    --  IPv4/TCP socket.
@@ -137,6 +144,13 @@ package Anet.Sockets.Inet is
    --  last character assigned. An exception is raised if a socket error
    --  occurs. The source argument is set to the sender's address and port from
    --  which the data was received.
+
+   procedure Join_Multicast_Group
+     (Socket : UDPv6_Socket_Type;
+      Group  : IPv6_Addr_Type;
+      Iface  : Types.Iface_Name_Type := "");
+   --  Join the given multicast group on the interface specified by name. If no
+   --  interface name is provided, the kernel selects the interface.
 
    type TCPv6_Socket_Type is new IPv6_Socket_Type
      and Stream_Socket_Type with private;

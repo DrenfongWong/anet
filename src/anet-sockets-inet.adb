@@ -26,6 +26,7 @@ with Interfaces.C;
 with Anet.Constants;
 with Anet.Sockets.Thin.Inet;
 with Anet.Byte_Swapping;
+with Anet.Net_Ifaces;
 
 package body Anet.Sockets.Inet is
 
@@ -298,6 +299,62 @@ package body Anet.Sockets.Inet is
               Sin6_Addr  => Address,
               others     => 0);
    end Create_Inet6;
+
+   -------------------------------------------------------------------------
+
+   procedure Join_Multicast_Group
+     (Socket : UDPv4_Socket_Type;
+      Group  : IPv4_Addr_Type;
+      Iface  : Types.Iface_Name_Type := "")
+   is
+      Result    : Boolean;
+      Iface_Idx : Natural := 0;
+   begin
+      if Iface'Length > 0 then
+         Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
+      end if;
+
+      Thin.Inet.Join_Multicast_Group
+        (Socket    => Socket.Sock_FD,
+         Group     => Create_Inet4
+           (Address => Group,
+            Port    => 0),
+         Iface_Idx => Iface_Idx,
+         Success   => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to join multicast group "
+           & To_String (Address => Group) & ": " & Get_Errno_String;
+      end if;
+   end Join_Multicast_Group;
+
+   -------------------------------------------------------------------------
+
+   procedure Join_Multicast_Group
+     (Socket : UDPv6_Socket_Type;
+      Group  : IPv6_Addr_Type;
+      Iface  : Types.Iface_Name_Type := "")
+   is
+      Result    : Boolean;
+      Iface_Idx : Natural := 0;
+   begin
+      if Iface'Length > 0 then
+         Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
+      end if;
+
+      Thin.Inet.Join_Multicast_Group
+        (Socket    => Socket.Sock_FD,
+         Group     => Create_Inet6
+           (Address => Group,
+            Port    => 0),
+         Iface_Idx => Iface_Idx,
+         Success   => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to join multicast group "
+           & To_String (Address => Group) & ": " & Get_Errno_String;
+      end if;
+   end Join_Multicast_Group;
 
    -------------------------------------------------------------------------
 
