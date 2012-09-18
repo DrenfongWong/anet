@@ -44,12 +44,10 @@ package body Anet.Sockets is
       Family :        Family_Type;
       Mode   :        Mode_Type)
    is
-      Addr : Socket_Addr_Type (Family => Family);
    begin
       Thin.Create_Socket (Socket => Socket.Sock_FD,
                           Family => Family,
                           Mode   => Mode);
-      Socket.Address := Addr;
    end Create;
 
    -------------------------------------------------------------------------

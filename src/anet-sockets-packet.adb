@@ -43,8 +43,6 @@ package body Anet.Sockets.Packet is
          raise Socket_Error with "Unable to bind packet socket to interface "
            & String (Iface) & " - " & Get_Errno_String;
       end if;
-
-      Socket.Address.HW_Addr := Net_Ifaces.Get_Iface_Mac (Name => Iface);
    end Bind;
 
    -------------------------------------------------------------------------

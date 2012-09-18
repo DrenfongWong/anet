@@ -21,6 +21,8 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Strings.Unbounded;
+
 with Anet.Types;
 
 package Anet.Sockets.Unix is
@@ -76,7 +78,9 @@ package Anet.Sockets.Unix is
 
 private
 
-   type Unix_Socket_Type is abstract new Socket_Type with null record;
+   type Unix_Socket_Type is abstract new Socket_Type with record
+      Path : Ada.Strings.Unbounded.Unbounded_String;
+   end record;
 
    type UDP_Socket_Type is new Unix_Socket_Type
      and Dgram_Socket_Type with null record;

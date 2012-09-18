@@ -136,7 +136,6 @@ private
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD : Integer := -1;
-      Address : Socket_Addr_Type;
    end record;
 
    overriding

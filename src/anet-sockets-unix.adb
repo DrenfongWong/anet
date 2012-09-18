@@ -36,9 +36,9 @@ package body Anet.Sockets.Unix is
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin
-      New_Socket.Address := Socket.Address;
-      Sock_Addr          := Sock_Un'Address;
-      Sock_Len           := Sock_Un'Size / 8;
+      New_Socket.Path := Socket.Path;
+      Sock_Addr       := Sock_Un'Address;
+      Sock_Len        := Sock_Un'Size / 8;
 
       Thin.Accept_Socket (Socket       => Socket.Sock_FD,
                           Sockaddr     => Sock_Addr,
@@ -55,7 +55,7 @@ package body Anet.Sockets.Unix is
    begin
       Thin.Unix.Bind (Socket => Socket.Sock_FD,
                       Path   => Path);
-      Socket.Address.Path := Ada.Strings.Unbounded.To_Unbounded_String
+      Socket.Path := Ada.Strings.Unbounded.To_Unbounded_String
         (String (Path));
    end Bind;
 
@@ -66,7 +66,7 @@ package body Anet.Sockets.Unix is
    begin
       if Socket.Sock_FD /= -1 then
          OS.Delete_File (Filename => Ada.Strings.Unbounded.To_String
-                         (Socket.Address.Path));
+                         (Socket.Path));
          Socket_Type (Socket).Close;
       end if;
    end Close;
@@ -120,7 +120,7 @@ package body Anet.Sockets.Unix is
                            Data   => Item,
                            Last   => Last);
       Src := Types.Unix_Path_Type (Ada.Strings.Unbounded.To_String
-                                   (Socket.Address.Path));
+                                   (Socket.Path));
    end Receive;
 
 end Anet.Sockets.Unix;

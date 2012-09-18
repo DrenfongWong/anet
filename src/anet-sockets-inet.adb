@@ -41,9 +41,8 @@ package body Anet.Sockets.Inet is
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin
-      New_Socket.Address := Socket.Address;
-      Sock_Addr          := Sock_In'Address;
-      Sock_Len           := Sock_In'Size / 8;
+      Sock_Addr := Sock_In'Address;
+      Sock_Len  := Sock_In'Size / 8;
 
       Thin.Accept_Socket (Socket       => Socket.Sock_FD,
                           Sockaddr     => Sock_Addr,
@@ -61,9 +60,8 @@ package body Anet.Sockets.Inet is
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin
-      New_Socket.Address := Socket.Address;
-      Sock_Addr          := Sock_In'Address;
-      Sock_Len           := Sock_In'Size / 8;
+      Sock_Addr := Sock_In'Address;
+      Sock_Len  := Sock_In'Size / 8;
 
       Thin.Accept_Socket (Socket       => Socket.Sock_FD,
                           Sockaddr     => Sock_Addr,
@@ -94,8 +92,6 @@ package body Anet.Sockets.Inet is
          raise Socket_Error with "Unable to bind socket to "
            & To_String (Address => Address) & " - " & Get_Errno_String;
       end if;
-
-      Socket.Address := Address;
 
       if Iface'Length /= 0 then
          Thin.Set_Socket_Option
