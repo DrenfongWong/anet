@@ -104,6 +104,9 @@ package Anet is
    function To_String (Address : IPv6_Addr_Type) return String;
    --  Return string representation of an IPv6 address.
 
+   Any_Addr_V6 : constant IPv6_Addr_Type;
+   --  IPv6 in6addr_any (::).
+
    Loopback_Addr_V6 : constant IPv6_Addr_Type;
    --  IPv6 loopback address (::1).
 
@@ -125,6 +128,7 @@ private
 
    Any_Addr         : constant IPv4_Addr_Type := (others => 0);
    Loopback_Addr_V4 : constant IPv4_Addr_Type := (127, 0, 0, 1);
+   Any_Addr_V6      : constant IPv6_Addr_Type := (others => 0);
    Loopback_Addr_V6 : constant IPv6_Addr_Type := (16 => 1, others => 0);
    Bcast_Addr       : constant IPv4_Addr_Type := (others => 255);
    Any_Port         : constant Port_Type      := 0;
