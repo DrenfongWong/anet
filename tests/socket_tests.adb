@@ -325,7 +325,8 @@ package body Socket_Tests is
       task body Receiver is
          Sender : Inet.UDPv6_Sockaddr_Type;
       begin
-         Sock.Bind (Address => Addr);
+         Sock.Bind (Address => Grp,
+                    Port    => Test_Utils.Listen_Port);
          Sock.Join_Multicast_Group (Group => Addr);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -555,7 +556,8 @@ package body Socket_Tests is
       task body Receiver is
          Sender : Inet.UDPv6_Sockaddr_Type;
       begin
-         Sock.Bind (Address => Test_Utils.Test_Addr_V6);
+         Sock.Bind (Address => Loopback_Addr_V6,
+                    Port    => Test_Utils.Listen_Port);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -598,7 +600,8 @@ package body Socket_Tests is
       task body Receiver is
          S2 : Inet.TCPv6_Socket_Type;
       begin
-         Sock.Bind (Address => Test_Utils.Test_Addr_V6);
+         Sock.Bind (Address => Loopback_Addr_V6,
+                    Port    => Test_Utils.Listen_Port);
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
          S2.Receive (Item => Buffer,
@@ -693,7 +696,8 @@ package body Socket_Tests is
             Addr_V6 => Grp,
             Port_V6 => Test_Utils.Listen_Port);
    begin
-      Sock.Bind (Address => Addr);
+      Sock.Bind (Address => Grp,
+                 Port    => Test_Utils.Listen_Port);
       Sock.Join_Multicast_Group (Group => Addr);
 
       UDPv6_Receiver.Listen (Receiver => R,
@@ -903,7 +907,8 @@ package body Socket_Tests is
       Sock : aliased Inet.UDPv6_Socket_Type := Inet.Create;
       R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
    begin
-      Sock.Bind (Address => Test_Utils.Test_Addr_V6);
+      Sock.Bind (Address => Loopback_Addr_V6,
+                 Port    => Test_Utils.Listen_Port);
 
       UDPv6_Receiver.Listen (Receiver => R,
                              Callback => Test_Utils.Dump'Access);

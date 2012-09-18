@@ -31,6 +31,15 @@ package body Anet.Sockets.Inet is
 
    package C renames Interfaces.C;
 
+   procedure Bind
+     (Socket    :     Integer;
+      Sock_Addr :     Thin.Inet.Sockaddr_In_Type;
+      Iface     :     Types.Iface_Name_Type := "";
+      Success   : out Boolean);
+   --  Bind given socket to the specified sockaddr and set reuse address flag.
+   --  If an interface name is given, the socket is bound to it. Success is set
+   --  to True if the operation was successful, False if not.
+
    -------------------------------------------------------------------------
 
    procedure Accept_Connection
@@ -105,6 +114,39 @@ package body Anet.Sockets.Inet is
    -------------------------------------------------------------------------
 
    procedure Bind
+     (Socket    :     Integer;
+      Sock_Addr :     Thin.Inet.Sockaddr_In_Type;
+      Iface     :     Types.Iface_Name_Type := "";
+      Success   : out Boolean)
+   is
+   begin
+      Thin.Set_Socket_Option
+        (Socket => Socket,
+         Option => Reuse_Address,
+         Value  => True);
+
+      Thin.Inet.Bind (Socket  => Socket,
+                      Address => Sock_Addr,
+                      Success => Success);
+
+      if not Success then
+         return;
+      end if;
+
+      if Iface'Length /= 0 then
+         Thin.Set_Socket_Option
+           (Socket => Socket,
+            Level  => Thin.Socket_Level,
+            Option => Bind_To_Device,
+            Value  => String (Iface));
+      end if;
+
+      Success := True;
+   end Bind;
+
+   -------------------------------------------------------------------------
+
+   procedure Bind
      (Socket  : in out IPv4_Socket_Type;
       Address :        IPv4_Addr_Type        := Any_Addr;
       Port    :        Port_Type;
@@ -119,27 +161,44 @@ package body Anet.Sockets.Inet is
             Sin_Addr   => Address,
             Sin_Zero   => <>);
    begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Reuse_Address,
-         Value  => True);
-
-      Thin.Inet.Bind (Socket  => Socket.Sock_FD,
-                      Address => Sockaddr,
-                      Success => Result);
+      Bind (Socket    => Socket.Sock_FD,
+            Sock_Addr => Sockaddr,
+            Iface     => Iface,
+            Success   => Result);
 
       if not Result then
          raise Socket_Error with "Unable to bind socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
            & Get_Errno_String;
       end if;
+   end Bind;
 
-      if Iface'Length /= 0 then
-         Thin.Set_Socket_Option
-           (Socket => Socket.Sock_FD,
-            Level  => Thin.Socket_Level,
-            Option => Bind_To_Device,
-            Value  => String (Iface));
+   -------------------------------------------------------------------------
+
+   procedure Bind
+     (Socket  : in out IPv6_Socket_Type;
+      Address :        IPv6_Addr_Type        := Any_Addr_V6;
+      Port    :        Port_Type;
+      Iface   :        Types.Iface_Name_Type := "")
+   is
+      Result   : Boolean;
+      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
+        := (Family     => Family_Inet6,
+            Sin_Family => Constants.Sys.AF_INET6,
+            Sin_Port   => C.unsigned_short
+              (Byte_Swapping.Host_To_Network (Input => Port)),
+            Sin6_Addr  => Address,
+            others     => 0);
+   begin
+      Bind (Socket    => Socket.Sock_FD,
+            Sock_Addr => Sockaddr,
+            Iface     => Iface,
+            Success   => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to bind socket to "
+           & To_String (Address => Address) & "," & Port'Img & " - "
+           & Get_Errno_String;
       end if;
    end Bind;
 

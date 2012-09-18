@@ -106,6 +106,14 @@ package Anet.Sockets.Inet is
    type IPv6_Socket_Type is abstract new Inet_Socket_Type with private;
    --  IPv6 socket.
 
+   procedure Bind
+     (Socket  : in out IPv6_Socket_Type;
+      Address :        IPv6_Addr_Type        := Any_Addr_V6;
+      Port    :        Port_Type;
+      Iface   :        Types.Iface_Name_Type := "");
+   --  Bind given IPv6 socket to the specified IPv6 address and port. If an
+   --  interface name is given, the socket is bound to it.
+
    type UDPv6_Socket_Type is new IPv6_Socket_Type
      and Dgram_Socket_Type with private;
    --  IPv6/UDP socket.
