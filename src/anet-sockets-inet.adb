@@ -40,6 +40,18 @@ package body Anet.Sockets.Inet is
    --  If an interface name is given, the socket is bound to it. Success is set
    --  to True if the operation was successful, False if not.
 
+   function Create_Inet4
+     (Address : IPv4_Addr_Type;
+      Port    : Port_Type)
+      return Thin.Inet.Sockaddr_In_Type;
+   --  Create inet4 sockaddr type from given address and port.
+
+   function Create_Inet6
+     (Address : IPv6_Addr_Type;
+      Port    : Port_Type)
+      return Thin.Inet.Sockaddr_In_Type;
+   --  Create inet6 sockaddr type from given address and port.
+
    -------------------------------------------------------------------------
 
    procedure Accept_Connection
@@ -121,12 +133,8 @@ package body Anet.Sockets.Inet is
    is
       Result   : Boolean;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
-        := (Family     => Family_Inet,
-            Sin_Family => Constants.Sys.AF_INET,
-            Sin_Port   => C.unsigned_short
-              (Byte_Swapping.Host_To_Network (Input => Port)),
-            Sin_Addr   => Address,
-            Sin_Zero   => <>);
+        := Create_Inet4 (Address => Address,
+                         Port    => Port);
    begin
       Bind (Socket    => Socket.Sock_FD,
             Sock_Addr => Sockaddr,
@@ -150,12 +158,8 @@ package body Anet.Sockets.Inet is
    is
       Result   : Boolean;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
-        := (Family     => Family_Inet6,
-            Sin_Family => Constants.Sys.AF_INET6,
-            Sin_Port   => C.unsigned_short
-              (Byte_Swapping.Host_To_Network (Input => Port)),
-            Sin6_Addr  => Address,
-            others     => 0);
+        := Create_Inet6 (Address => Address,
+                         Port    => Port);
    begin
       Bind (Socket    => Socket.Sock_FD,
             Sock_Addr => Sockaddr,
@@ -178,12 +182,8 @@ package body Anet.Sockets.Inet is
    is
       Result : Boolean;
       Sin    : constant Thin.Inet.Sockaddr_In_Type
-        := (Family     => Family_Inet,
-            Sin_Family => Constants.Sys.AF_INET,
-            Sin_Port   => C.unsigned_short
-              (Byte_Swapping.Host_To_Network (Input => Port)),
-            Sin_Addr   => Address,
-            Sin_Zero   => <>);
+        := Create_Inet4 (Address => Address,
+                         Port    => Port);
    begin
       Thin.Inet.Connect (Socket  => Socket.Sock_FD,
                          Dst     => Sin,
@@ -205,12 +205,8 @@ package body Anet.Sockets.Inet is
    is
       Result : Boolean;
       Sin    : constant Thin.Inet.Sockaddr_In_Type
-        := (Family     => Family_Inet6,
-            Sin_Family => Constants.Sys.AF_INET6,
-            Sin_Port   => C.unsigned_short
-              (Byte_Swapping.Host_To_Network (Input => Port)),
-            Sin6_Addr  => Address,
-            others     => 0);
+        := Create_Inet6 (Address => Address,
+                         Port    => Port);
    begin
       Thin.Inet.Connect (Socket  => Socket.Sock_FD,
                          Dst     => Sin,
@@ -270,6 +266,38 @@ package body Anet.Sockets.Inet is
                  Mode   => Stream_Socket);
       end return;
    end Create;
+
+   -------------------------------------------------------------------------
+
+   function Create_Inet4
+     (Address : IPv4_Addr_Type;
+      Port    : Port_Type)
+      return Thin.Inet.Sockaddr_In_Type
+   is
+   begin
+      return (Family     => Family_Inet,
+              Sin_Family => Constants.Sys.AF_INET,
+              Sin_Port   => C.unsigned_short
+                (Byte_Swapping.Host_To_Network (Input => Port)),
+              Sin_Addr   => Address,
+              Sin_Zero   => <>);
+   end Create_Inet4;
+
+   -------------------------------------------------------------------------
+
+   function Create_Inet6
+     (Address : IPv6_Addr_Type;
+      Port    : Port_Type)
+      return Thin.Inet.Sockaddr_In_Type
+   is
+   begin
+      return (Family     => Family_Inet6,
+              Sin_Family => Constants.Sys.AF_INET6,
+              Sin_Port   => C.unsigned_short
+                (Byte_Swapping.Host_To_Network (Input => Port)),
+              Sin6_Addr  => Address,
+              others     => 0);
+   end Create_Inet6;
 
    -------------------------------------------------------------------------
 
