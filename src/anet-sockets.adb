@@ -23,7 +23,6 @@
 
 with Anet.Net_Ifaces;
 with Anet.Sockets.Thin.Inet;
-with Anet.Sockets.Thin.Unix;
 
 package body Anet.Sockets is
 
@@ -35,7 +34,6 @@ package body Anet.Sockets is
    is
       Sock_In   : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
       Sock_In6  : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
-      Sock_Un   : Thin.Unix.Sockaddr_Un_Type;
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin
@@ -48,9 +46,6 @@ package body Anet.Sockets is
          when Family_Inet6 =>
             Sock_Addr := Sock_In6'Address;
             Sock_Len  := Sock_In6'Size / 8;
-         when Family_Unix  =>
-            Sock_Addr := Sock_Un'Address;
-            Sock_Len  := Sock_Un'Size / 8;
          when others       =>
             raise Socket_Error with "Accept operation not supported for "
               & Socket.Address.Family'Img & " sockets";

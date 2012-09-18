@@ -67,6 +67,13 @@ package Anet.Sockets.Unix is
    function Create return TCP_Socket_Type;
    --  Create new UNIX/TCP socket.
 
+   overriding
+   procedure Accept_Connection
+     (Socket     :     TCP_Socket_Type;
+      New_Socket : out TCP_Socket_Type);
+   --  Accept first connection request from listening socket and return new
+   --  connected socket.
+
 private
 
    type Unix_Socket_Type is abstract new Socket_Type with null record;

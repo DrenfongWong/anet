@@ -28,6 +28,26 @@ package body Anet.Sockets.Unix is
 
    -------------------------------------------------------------------------
 
+   procedure Accept_Connection
+     (Socket     :     TCP_Socket_Type;
+      New_Socket : out TCP_Socket_Type)
+   is
+      Sock_Un   : Thin.Unix.Sockaddr_Un_Type;
+      Sock_Addr : System.Address;
+      Sock_Len  : Integer := 0;
+   begin
+      New_Socket.Address := Socket.Address;
+      Sock_Addr          := Sock_Un'Address;
+      Sock_Len           := Sock_Un'Size / 8;
+
+      Thin.Accept_Socket (Socket       => Socket.Sock_FD,
+                          Sockaddr     => Sock_Addr,
+                          Sockaddr_Len => Sock_Len,
+                          New_Socket   => New_Socket.Sock_FD);
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
    procedure Bind
      (Socket : in out Unix_Socket_Type;
       Path   :        Types.Unix_Path_Type)
