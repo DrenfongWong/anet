@@ -47,6 +47,14 @@ package Anet.Sockets.Inet is
    type IPv4_Socket_Type is abstract new Inet_Socket_Type with private;
    --  IPv4 socket.
 
+   procedure Bind
+     (Socket  : in out IPv4_Socket_Type;
+      Address :        IPv4_Addr_Type        := Any_Addr;
+      Port    :        Port_Type;
+      Iface   :        Types.Iface_Name_Type := "");
+   --  Bind given IPv4 socket to the specified IPv4 address and port. If an
+   --  interface name is given, the socket is bound to it.
+
    type UDPv4_Socket_Type is new IPv4_Socket_Type
      and Dgram_Socket_Type with private;
    --  IPv4/UDP socket.

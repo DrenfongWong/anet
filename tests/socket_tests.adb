@@ -85,7 +85,8 @@ package body Socket_Tests is
    is
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
    begin
-      Sock.Bind (Address => Test_Utils.Test_Addr_V4);
+      Sock.Bind (Address => Loopback_Addr_V4,
+                 Port    => Test_Utils.Listen_Port);
 
       declare
          R : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
@@ -220,7 +221,8 @@ package body Socket_Tests is
       Sock : aliased Inet.UDPv4_Socket_Type := Inet.Create;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
-      Sock.Bind (Address => Test_Utils.Test_Addr_V4);
+      Sock.Bind (Address => Loopback_Addr_V4,
+                 Port    => Test_Utils.Listen_Port);
       UDPv4_Receiver.Listen (Receiver => R,
                              Callback => Test_Utils.Dump'Access);
 
@@ -271,7 +273,8 @@ package body Socket_Tests is
       task body Receiver is
          Sender : Inet.UDPv4_Sockaddr_Type;
       begin
-         Sock.Bind (Address => Addr);
+         Sock.Bind (Address => Grp,
+                    Port    => Test_Utils.Listen_Port);
          Sock.Join_Multicast_Group (Group => Addr);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
@@ -464,7 +467,8 @@ package body Socket_Tests is
       task body Receiver is
          Sender : Inet.UDPv4_Sockaddr_Type;
       begin
-         Sock.Bind (Address => Test_Utils.Test_Addr_V4);
+         Sock.Bind (Address => Loopback_Addr_V4,
+                    Port    => Test_Utils.Listen_Port);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -506,9 +510,8 @@ package body Socket_Tests is
       task body Receiver is
          S2 : Inet.TCPv4_Socket_Type;
       begin
-         Sock.Set_Socket_Option (Option => Reuse_Address,
-                                 Value  => True);
-         Sock.Bind (Address => Test_Utils.Test_Addr_V4);
+         Sock.Bind (Address => Loopback_Addr_V4,
+                    Port    => Test_Utils.Listen_Port);
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
          S2.Receive (Item => Buffer,
@@ -595,8 +598,6 @@ package body Socket_Tests is
       task body Receiver is
          S2 : Inet.TCPv6_Socket_Type;
       begin
-         Sock.Set_Socket_Option (Option => Reuse_Address,
-                                 Value  => True);
          Sock.Bind (Address => Test_Utils.Test_Addr_V6);
          Sock.Listen;
          Sock.Accept_Connection (New_Socket => S2);
@@ -643,7 +644,8 @@ package body Socket_Tests is
             Addr_V4 => Grp,
             Port_V4 => Test_Utils.Listen_Port);
    begin
-      Sock.Bind (Address => Addr);
+      Sock.Bind (Address => Grp,
+                 Port    => Test_Utils.Listen_Port);
       Sock.Join_Multicast_Group (Group => Addr);
 
       UDPv4_Receiver.Listen (Receiver => R,
@@ -814,7 +816,8 @@ package body Socket_Tests is
       C    : UDPv4_Receiver.Count_Type      := 0;
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
-      Sock.Bind (Address => Test_Utils.Test_Addr_V4);
+      Sock.Bind (Address => Loopback_Addr_V4,
+                 Port    => Test_Utils.Listen_Port);
 
       UDPv4_Receiver.Listen (Receiver => R,
                              Callback => Test_Utils.Dump'Access);

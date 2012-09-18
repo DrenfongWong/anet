@@ -104,6 +104,47 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
+   procedure Bind
+     (Socket  : in out IPv4_Socket_Type;
+      Address :        IPv4_Addr_Type        := Any_Addr;
+      Port    :        Port_Type;
+      Iface   :        Types.Iface_Name_Type := "")
+   is
+      Result   : Boolean;
+      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
+        := (Family     => Family_Inet,
+            Sin_Family => Constants.Sys.AF_INET,
+            Sin_Port   => C.unsigned_short
+              (Byte_Swapping.Host_To_Network (Input => Port)),
+            Sin_Addr   => Address,
+            Sin_Zero   => <>);
+   begin
+      Thin.Set_Socket_Option
+        (Socket => Socket.Sock_FD,
+         Option => Reuse_Address,
+         Value  => True);
+
+      Thin.Inet.Bind (Socket  => Socket.Sock_FD,
+                      Address => Sockaddr,
+                      Success => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to bind socket to "
+           & To_String (Address => Address) & "," & Port'Img & " - "
+           & Get_Errno_String;
+      end if;
+
+      if Iface'Length /= 0 then
+         Thin.Set_Socket_Option
+           (Socket => Socket.Sock_FD,
+            Level  => Thin.Socket_Level,
+            Option => Bind_To_Device,
+            Value  => String (Iface));
+      end if;
+   end Bind;
+
+   -------------------------------------------------------------------------
+
    procedure Connect
      (Socket  : in out TCPv4_Socket_Type;
       Address :        IPv4_Addr_Type;
