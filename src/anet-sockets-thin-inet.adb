@@ -27,6 +27,20 @@ package body Anet.Sockets.Thin.Inet is
 
    package C renames Interfaces.C;
 
+   type IPv4_Mreq_Type is record
+      Imr_Multiaddr : IPv4_Addr_Type;
+      Imr_Interface : C.unsigned;
+   end record;
+   pragma Convention (C, IPv4_Mreq_Type);
+   --  struct ip_mreq (netinet/in.h).
+
+   type IPv6_Mreq_Type is record
+      IPv6mr_Multiaddr : IPv6_Addr_Type;
+      IPv6mr_Interface : C.unsigned;
+   end record;
+   pragma Convention (C, IPv6_Mreq_Type);
+   --  struct ipv6_mreq (netinet/in.h).
+
    -------------------------------------------------------------------------
 
    procedure Bind
@@ -60,6 +74,51 @@ package body Anet.Sockets.Thin.Inet is
                         Namelen => Dst'Size / 8);
       Success := Res /= C_Failure;
    end Connect;
+
+   -------------------------------------------------------------------------
+
+   procedure Join_Multicast_Group
+     (Socket    :     Integer;
+      Group     :     Sockaddr_In_Type;
+      Iface_Idx :     Natural := 0;
+      Success   : out Boolean)
+   is
+      use type C.int;
+      use type C.unsigned_short;
+
+      Mreq      : IPv4_Mreq_Type;
+      Mreq6     : IPv6_Mreq_Type;
+      Mreq_Addr : System.Address;
+      Mreq_Size : C.int;
+      Opt       : C.int;
+      Level     : C.int;
+      Res       : C.int;
+   begin
+      if Group.Sin_Family = Constants.Sys.AF_INET then
+         Mreq.Imr_Multiaddr := Group.Sin_Addr;
+         Mreq.Imr_Interface := C.unsigned (Iface_Idx);
+         Mreq_Addr          := Mreq'Address;
+         Mreq_Size          := Mreq'Size / 8;
+         Opt                := Constants.Sys.IP_ADD_MEMBERSHIP;
+         Level              := Constants.Sys.IPPROTO_IP;
+      else
+         Mreq6.IPv6mr_Multiaddr := Group.Sin6_Addr;
+         Mreq6.IPv6mr_Interface := C.unsigned (Iface_Idx);
+         Mreq_Addr              := Mreq6'Address;
+         Mreq_Size              := Mreq6'Size / 8;
+         Opt                    := Constants.IPV6_ADD_MEMBERSHIP;
+         Level                  := Constants.IPPROTO_IPV6;
+      end if;
+
+      Res := C_Setsockopt
+        (S       => C.int (Socket),
+         Level   => Level,
+         Optname => Opt,
+         Optval  => Mreq_Addr,
+         Optlen  => Mreq_Size);
+
+      Success := Res /= C_Failure;
+   end Join_Multicast_Group;
 
    -------------------------------------------------------------------------
 

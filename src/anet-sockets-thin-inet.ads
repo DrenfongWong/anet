@@ -85,4 +85,12 @@ package Anet.Sockets.Thin.Inet is
    --  Connect given socket to specified destination address. Success is set to
    --  True if the connect operation succeeded, False otherwise.
 
+   procedure Join_Multicast_Group
+     (Socket    :     Integer;
+      Group     :     Sockaddr_In_Type;
+      Iface_Idx :     Natural := 0;
+      Success   : out Boolean);
+   --  Join the given multicast group on the interface specified by index.
+   --  Success is set to True if the join operation succeeded, False otherwise.
+
 end Anet.Sockets.Thin.Inet;
