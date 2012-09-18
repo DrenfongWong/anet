@@ -145,35 +145,45 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
-   procedure Send_Data
-     (Dst      : Anet.Sockets.Socket_Addr_Type := Test_Addr_V4;
-      Mode     : String := "UDP-DATAGRAM";
+   procedure Send_Data_V4
+     (Dst_Addr : Anet.IPv4_Addr_Type := Anet.Loopback_Addr_V4;
+      Dst_Port : Anet.Port_Type      := Listen_Port;
+      Mode     : String              := "UDP-DATAGRAM";
       Filename : String)
    is
-      use Anet;
       use Ada.Strings.Unbounded;
-      use type Anet.Sockets.Family_Type;
 
-      Port_Str : Unbounded_String;
-      IP_Str   : Unbounded_String;
+      IP_Str   : constant Unbounded_String
+        := To_Unbounded_String (Anet.To_String (Address => Dst_Addr));
+      Port_Str : constant Unbounded_String
+        := To_Unbounded_String
+          (Source => Ada.Strings.Fixed.Trim (Source => Dst_Port'Img,
+                                             Side   => Ada.Strings.Left));
    begin
-      if Dst.Family = Sockets.Family_Inet then
-         IP_Str   := To_Unbounded_String (To_String (Address => Dst.Addr_V4));
-         Port_Str := To_Unbounded_String
-           (Source => Ada.Strings.Fixed.Trim (Source => Dst.Port_V4'Img,
-                                              Side   => Ada.Strings.Left));
-      elsif Dst.Family = Sockets.Family_Inet6 then
-         IP_Str   := To_Unbounded_String
-           ("[" & To_String (Address => Dst.Addr_V6) & "]");
-         Port_Str := To_Unbounded_String
-           (Source => Ada.Strings.Fixed.Trim (Source => Dst.Port_V6'Img,
-                                              Side   => Ada.Strings.Left));
-      else
-         raise Constraint_Error with "Invalid family type " & Dst.Family'Img;
-      end if;
+      Anet.OS.Execute (Command => "socat " & Filename & " " & Mode & ":"
+                       & To_String (IP_Str) & ":" & To_String (Port_Str));
+   end Send_Data_V4;
 
-      OS.Execute (Command => "socat " & Filename & " " & Mode & ":"
-                  & To_String (IP_Str) & ":" & To_String (Port_Str));
-   end Send_Data;
+   -------------------------------------------------------------------------
+
+   procedure Send_Data_V6
+     (Dst_Addr : Anet.IPv6_Addr_Type := Anet.Loopback_Addr_V6;
+      Dst_Port : Anet.Port_Type      := Listen_Port;
+      Mode     : String              := "UDP-DATAGRAM";
+      Filename : String)
+   is
+      use Ada.Strings.Unbounded;
+
+      IP_Str   : constant Unbounded_String
+        := To_Unbounded_String
+          ("[" & Anet.To_String (Address => Dst_Addr) & "]");
+      Port_Str : constant Unbounded_String
+        := To_Unbounded_String
+          (Source => Ada.Strings.Fixed.Trim (Source => Dst_Port'Img,
+                                             Side   => Ada.Strings.Left));
+   begin
+      Anet.OS.Execute (Command => "socat " & Filename & " " & Mode & ":"
+                       & To_String (IP_Str) & ":" & To_String (Port_Str));
+   end Send_Data_V6;
 
 end Test_Utils;

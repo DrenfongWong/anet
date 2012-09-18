@@ -82,12 +82,22 @@ package Test_Utils is
          16#2d#, 16#69#, 16#74#, 16#2e#, 16#63#, 16#68#, 16#ff#);
    --  Hex stream of reference DHCP Ack bootp message.
 
-   procedure Send_Data
-     (Dst      : Anet.Sockets.Socket_Addr_Type := Test_Addr_V4;
-      Mode     : String := "UDP-DATAGRAM";
+   procedure Send_Data_V4
+     (Dst_Addr : Anet.IPv4_Addr_Type := Anet.Loopback_Addr_V4;
+      Dst_Port : Anet.Port_Type      := Listen_Port;
+      Mode     : String              := "UDP-DATAGRAM";
       Filename : String);
-   --  Send data from file given by filename to socket. The Mode argument is
-   --  directly passed to the socat command, use either 'TCP' or
+   --  Send data from file given by filename to IPv4 socket. The Mode argument
+   --  is directly passed to the socat command, use either 'TCP' or
+   --  'UDP-DATAGRAM'.
+
+   procedure Send_Data_V6
+     (Dst_Addr : Anet.IPv6_Addr_Type := Anet.Loopback_Addr_V6;
+      Dst_Port : Anet.Port_Type      := Listen_Port;
+      Mode     : String              := "UDP-DATAGRAM";
+      Filename : String);
+   --  Send data from file given by filename to IPv6 socket. The Mode argument
+   --  is directly passed to the socat command, use either 'TCP' or
    --  'UDP-DATAGRAM'.
 
    function Equal_Files

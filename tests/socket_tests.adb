@@ -95,7 +95,7 @@ package body Socket_Tests is
            (Receiver => R,
             Callback => Test_Utils.Raise_Error'Access);
 
-         Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+         Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat");
 
          --  By default all errors should be ignored
 
@@ -120,7 +120,7 @@ package body Socket_Tests is
            (Receiver => R,
             Callback => Test_Utils.Raise_Error'Access);
 
-         Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+         Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat");
 
          Assert (Condition => not UDPv4_Receiver.Is_Listening (Receiver => R),
                  Message   => "Receiver still listening");
@@ -229,7 +229,7 @@ package body Socket_Tests is
       Assert (Condition => UDPv4_Receiver.Is_Listening (Receiver => R),
               Message   => "Receiver not listening");
 
-      Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+      Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat");
 
       for I in 1 .. 30 loop
          C := UDPv4_Receiver.Get_Rcv_Msg_Count (Receiver => R);
@@ -261,10 +261,6 @@ package body Socket_Tests is
       Last   : Ada.Streams.Stream_Element_Offset;
       Sock   : Inet.UDPv4_Socket_Type  := Inet.Create;
       Grp    : constant IPv4_Addr_Type := To_IPv4_Addr (Str => "224.0.0.117");
-      Addr   : constant Socket_Addr_Type
-        := (Family  => Family_Inet,
-            Addr_V4 => Grp,
-            Port_V4 => Test_Utils.Listen_Port);
 
       task Receiver is
          entry Wait;
@@ -275,7 +271,7 @@ package body Socket_Tests is
       begin
          Sock.Bind (Address => Grp,
                     Port    => Test_Utils.Listen_Port);
-         Sock.Join_Multicast_Group (Group => Addr);
+         Sock.Join_Multicast_Group (Group => Grp);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -283,8 +279,8 @@ package body Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Test_Utils.Send_Data
-        (Dst      => Addr,
+      Test_Utils.Send_Data_V4
+        (Dst_Addr => Grp,
          Filename => "data/chunk1.dat");
 
       select
@@ -313,10 +309,6 @@ package body Socket_Tests is
       Sock   : Inet.UDPv6_Socket_Type  := Inet.Create;
       Grp    : constant IPv6_Addr_Type := To_IPv6_Addr
         (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
-      Addr   : constant Socket_Addr_Type
-        := (Family  => Family_Inet6,
-            Addr_V6 => Grp,
-            Port_V6 => Test_Utils.Listen_Port);
 
       task Receiver is
          entry Wait;
@@ -327,7 +319,7 @@ package body Socket_Tests is
       begin
          Sock.Bind (Address => Grp,
                     Port    => Test_Utils.Listen_Port);
-         Sock.Join_Multicast_Group (Group => Addr);
+         Sock.Join_Multicast_Group (Group => Grp);
          Sock.Receive (Src  => Sender,
                        Item => Buffer,
                        Last => Last);
@@ -335,8 +327,8 @@ package body Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Test_Utils.Send_Data
-        (Dst      => Addr,
+      Test_Utils.Send_Data_V6
+        (Dst_Addr => Grp,
          Filename => "data/chunk1.dat");
 
       select
@@ -477,7 +469,7 @@ package body Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Test_Utils.Send_Data (Filename => "data/chunk1.dat");
+      Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat");
 
       select
          delay 3.0;
@@ -521,8 +513,8 @@ package body Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Test_Utils.Send_Data (Filename => "data/chunk1.dat",
-                            Mode     => "TCP");
+      Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat",
+                               Mode     => "TCP");
 
       select
          delay 3.0;
@@ -565,8 +557,7 @@ package body Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Test_Utils.Send_Data (Dst      => Test_Utils.Test_Addr_V6,
-                            Filename => "data/chunk1.dat");
+      Test_Utils.Send_Data_V6 (Filename => "data/chunk1.dat");
 
       select
          delay 3.0;
@@ -610,9 +601,9 @@ package body Socket_Tests is
          accept Wait;
       end Receiver;
    begin
-      Test_Utils.Send_Data (Dst      => Test_Utils.Test_Addr_V6,
-                            Filename => "data/chunk1.dat",
-                            Mode     => "TCP");
+      Test_Utils.Send_Data_V6
+        (Filename => "data/chunk1.dat",
+         Mode     => "TCP");
 
       select
          delay 3.0;
@@ -642,14 +633,10 @@ package body Socket_Tests is
       R    : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv4_Addr_Type
         := To_IPv4_Addr (Str => "224.0.0.117");
-      Addr : constant Socket_Addr_Type
-        := (Family  => Family_Inet,
-            Addr_V4 => Grp,
-            Port_V4 => Test_Utils.Listen_Port);
    begin
       Sock.Bind (Address => Grp,
                  Port    => Test_Utils.Listen_Port);
-      Sock.Join_Multicast_Group (Group => Addr);
+      Sock.Join_Multicast_Group (Group => Grp);
 
       UDPv4_Receiver.Listen (Receiver => R,
                              Callback => Test_Utils.Dump'Access);
@@ -692,14 +679,10 @@ package body Socket_Tests is
       R    : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
-      Addr : constant Socket_Addr_Type
-        := (Family  => Family_Inet6,
-            Addr_V6 => Grp,
-            Port_V6 => Test_Utils.Listen_Port);
    begin
       Sock.Bind (Address => Grp,
                  Port    => Test_Utils.Listen_Port);
-      Sock.Join_Multicast_Group (Group => Addr);
+      Sock.Join_Multicast_Group (Group => Grp);
 
       UDPv6_Receiver.Listen (Receiver => R,
                              Callback => Test_Utils.Dump'Access);
