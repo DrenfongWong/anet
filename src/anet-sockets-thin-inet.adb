@@ -23,9 +23,6 @@
 
 with Interfaces.C;
 
-with Anet.Constants;
-with Anet.Byte_Swapping;
-
 package body Anet.Sockets.Thin.Inet is
 
    package C renames Interfaces.C;
@@ -119,33 +116,5 @@ package body Anet.Sockets.Thin.Inet is
       Success := Res /= C_Failure;
       Last    := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Send;
-
-   -------------------------------------------------------------------------
-
-   function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type
-   is
-   begin
-      case Address.Family is
-         when Family_Inet  =>
-            return
-              (Family     => Family_Inet,
-               Sin_Family => Constants.Sys.AF_INET,
-               Sin_Port   => C.unsigned_short
-                 (Byte_Swapping.Host_To_Network (Input => Address.Port_V4)),
-               Sin_Addr   => Address.Addr_V4,
-               Sin_Zero   => <>);
-         when Family_Inet6 =>
-            return
-              (Family     => Family_Inet6,
-               Sin_Family => Constants.Sys.AF_INET6,
-               Sin_Port   => C.unsigned_short
-                 (Byte_Swapping.Host_To_Network (Input => Address.Port_V6)),
-               Sin6_Addr  => Address.Addr_V6,
-               others     => 0);
-         when others =>
-            raise Socket_Error with "Unable to convert '" & To_String
-              (Address => Address) & "' to IPv4 or IPv6 socket address";
-      end case;
-   end To_Sock_Addr;
 
 end Anet.Sockets.Thin.Inet;

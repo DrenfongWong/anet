@@ -85,7 +85,4 @@ package Anet.Sockets.Thin.Inet is
    --  Connect given socket to specified destination address. Success is set to
    --  True if the connect operation succeeded, False otherwise.
 
-   function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type;
-   --  Return inet sock address for given socket address.
-
 end Anet.Sockets.Thin.Inet;
