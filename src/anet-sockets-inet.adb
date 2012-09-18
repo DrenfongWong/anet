@@ -176,14 +176,14 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Source : Socket_Addr_Type (Family => Family_Inet);
+      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
    begin
       Thin.Inet.Receive (Socket => Socket.Sock_FD,
                          Data   => Item,
                          Last   => Last,
-                         Source => Source);
-      Src.Addr := Source.Addr_V4;
-      Src.Port := Source.Port_V4;
+                         Source => Sockaddr);
+      Src.Addr := Sockaddr.Sin_Addr;
+      Src.Port := Port_Type (Sockaddr.Sin_Port);
    end Receive;
 
    -------------------------------------------------------------------------
@@ -194,14 +194,14 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Source : Socket_Addr_Type (Family => Family_Inet6);
+      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
    begin
       Thin.Inet.Receive (Socket => Socket.Sock_FD,
                          Data   => Item,
                          Last   => Last,
-                         Source => Source);
-      Src.Addr := Source.Addr_V6;
-      Src.Port := Source.Port_V6;
+                         Source => Sockaddr);
+      Src.Addr := Sockaddr.Sin6_Addr;
+      Src.Port := Port_Type (Sockaddr.Sin_Port);
    end Receive;
 
    -------------------------------------------------------------------------

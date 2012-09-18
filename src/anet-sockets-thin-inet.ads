@@ -70,9 +70,9 @@ package Anet.Sockets.Thin.Inet is
      (Socket :     Integer;
       Data   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset;
-      Source : out Socket_Addr_Type);
+      Source : out Sockaddr_In_Type);
    --  Receive data from given socket. Last is the index value which designates
-   --  the last stream element in data. The source IP and port specify the
+   --  the last stream element in data. The source sockaddr specifies the
    --  sender socket from which the data was received.
 
    procedure Connect
@@ -81,11 +81,6 @@ package Anet.Sockets.Thin.Inet is
       Success : out Boolean);
    --  Connect given socket to specified destination address. Success is set to
    --  True if the connect operation succeeded, False otherwise.
-
-   procedure Get_Socket_Info
-     (Sock_Addr :     Sockaddr_In_Type;
-      Source    : out Socket_Addr_Type);
-   --  Get IP address and port from given low-level inet sock address.
 
    function To_Sock_Addr (Address : Socket_Addr_Type) return Sockaddr_In_Type;
    --  Return inet sock address for given socket address.

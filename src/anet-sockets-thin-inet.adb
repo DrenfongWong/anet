@@ -66,59 +66,34 @@ package body Anet.Sockets.Thin.Inet is
 
    -------------------------------------------------------------------------
 
-   procedure Get_Socket_Info
-     (Sock_Addr :     Sockaddr_In_Type;
-      Source    : out Socket_Addr_Type)
-   is
-      use type Interfaces.C.unsigned_short;
-   begin
-      if Sock_Addr.Sin_Family = Constants.Sys.AF_INET then
-         Source.Addr_V4 := Sock_Addr.Sin_Addr;
-         Source.Port_V4 := Byte_Swapping.Host_To_Network
-           (Input => Port_Type (Sock_Addr.Sin_Port));
-      elsif Sock_Addr.Sin_Family = Constants.Sys.AF_INET6 then
-         Source.Addr_V6 := Sock_Addr.Sin6_Addr;
-         Source.Port_V6 := Byte_Swapping.Host_To_Network
-           (Input => Port_Type (Sock_Addr.Sin_Port));
-      else
-         raise Socket_Error with "Invalid source address family";
-      end if;
-   end Get_Socket_Info;
-
-   -------------------------------------------------------------------------
-
    procedure Receive
      (Socket :     Integer;
       Data   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset;
-      Source : out Socket_Addr_Type)
+      Source : out Sockaddr_In_Type)
    is
       use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.int;
-      Sin : Sockaddr_In_Type;
-      Len : aliased C.int := Sin'Size / 8;
+      Len : aliased C.int := Source'Size / 8;
    begin
       Res := C_Recvfrom (S       => C.int (Socket),
                          Msg     => Data'Address,
                          Len     => Data'Length,
                          Flags   => 0,
-                         From    => Sin'Address,
+                         From    => Source'Address,
                          Fromlen => Len'Access);
 
       if Res = C_Failure then
          raise Socket_Error with "Error receiving data: " & Get_Errno_String;
       end if;
 
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-
-      if Len /= 0 then
-         Get_Socket_Info (Sock_Addr => Sin,
-                          Source    => Source);
-      else
-         Source := No_Addr;
+      if Len = 0 then
+         raise Socket_Error with "No address information received";
       end if;
+
+      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive;
 
    -------------------------------------------------------------------------
