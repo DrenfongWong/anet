@@ -46,12 +46,14 @@ package body Socket_Tests is
    use type Ada.Streams.Stream_Element_Array;
 
    package UDPv4_Receiver is new Dgram_Receiver
-     (Socket_Type  => Inet.UDPv4_Socket_Type,
+     (Buffer_Size  => 1024,
+      Socket_Type  => Inet.UDPv4_Socket_Type,
       Address_Type => Inet.UDPv4_Sockaddr_Type,
       Receive      => Inet.Receive);
 
    package UDPv6_Receiver is new Dgram_Receiver
-     (Socket_Type  => Inet.UDPv6_Socket_Type,
+     (Buffer_Size  => 1024,
+      Socket_Type  => Inet.UDPv6_Socket_Type,
       Address_Type => Inet.UDPv6_Sockaddr_Type,
       Receive      => Inet.Receive);
 

@@ -118,7 +118,7 @@ package body Anet.Sockets.Dgram_Receiver is
          loop
             declare
                Sender : Address_Type;
-               Buffer : Ada.Streams.Stream_Element_Array (1 .. 2048);
+               Buffer : Ada.Streams.Stream_Element_Array (1 .. Buffer_Size);
                Last   : Ada.Streams.Stream_Element_Offset;
             begin
                Receive
@@ -126,6 +126,7 @@ package body Anet.Sockets.Dgram_Receiver is
                   Src    => Sender,
                   Item   => Buffer,
                   Last   => Last);
+
                Data_Callback (Item => Buffer (Buffer'First .. Last),
                               Src  => Sender);
                Parent.Item_Count := Parent.Item_Count + 1;
