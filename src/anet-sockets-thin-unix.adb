@@ -28,8 +28,9 @@ package body Anet.Sockets.Thin.Unix is
    -------------------------------------------------------------------------
 
    procedure Bind
-     (Socket : Integer;
-      Path   : Types.Unix_Path_Type)
+     (Socket  :     Integer;
+      Path    :     Types.Unix_Path_Type;
+      Success : out Boolean)
    is
       use type C.int;
 
@@ -44,18 +45,15 @@ package body Anet.Sockets.Thin.Unix is
       Res := C_Bind (S       => C.int (Socket),
                      Name    => Value'Address,
                      Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
-      end if;
+      Success := Res /= C_Failure;
    end Bind;
 
    -------------------------------------------------------------------------
 
    procedure Connect
-     (Socket : Integer;
-      Path   : Types.Unix_Path_Type)
+     (Socket  :     Integer;
+      Path    :     Types.Unix_Path_Type;
+      Success : out Boolean)
    is
       use type C.int;
 
@@ -68,11 +66,7 @@ package body Anet.Sockets.Thin.Unix is
       Res := C_Connect (S       => C.int (Socket),
                         Name    => Value'Address,
                         Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to connect unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
-      end if;
+      Success := Res /= C_Failure;
    end Connect;
 
 end Anet.Sockets.Thin.Unix;

@@ -52,9 +52,17 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Types.Unix_Path_Type)
    is
+      Result : Boolean;
    begin
-      Thin.Unix.Bind (Socket => Socket.Sock_FD,
-                      Path   => Path);
+      Thin.Unix.Bind (Socket  => Socket.Sock_FD,
+                      Path    => Path,
+                      Success => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to bind unix socket to path "
+           & String (Path) & " - " & Get_Errno_String;
+      end if;
+
       Socket.Path := Ada.Strings.Unbounded.To_Unbounded_String
         (String (Path));
    end Bind;
@@ -77,10 +85,17 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Types.Unix_Path_Type)
    is
+      Result : Boolean;
    begin
       Thin.Unix.Connect
-        (Socket => Socket.Sock_FD,
-         Path   => Path);
+        (Socket  => Socket.Sock_FD,
+         Path    => Path,
+         Success => Result);
+
+      if not Result then
+         raise Socket_Error with "Unable to connect unix socket to path "
+           & String (Path) & " - " & Get_Errno_String;
+      end if;
    end Connect;
 
    -------------------------------------------------------------------------

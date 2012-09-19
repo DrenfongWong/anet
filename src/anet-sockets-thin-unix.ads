@@ -37,13 +37,17 @@ package Anet.Sockets.Thin.Unix is
    --  Low-level UNIX socket address type (struct sockaddr_un).
 
    procedure Bind
-     (Socket : Integer;
-      Path   : Types.Unix_Path_Type);
-   --  Bind given UNIX socket to specified path.
+     (Socket  :     Integer;
+      Path    :     Types.Unix_Path_Type;
+      Success : out Boolean);
+   --  Bind given UNIX socket to specified path. Success is set to True if the
+   --  bind operation succeeded, False otherwise.
 
    procedure Connect
-     (Socket : Integer;
-      Path   : Types.Unix_Path_Type);
-   --  Connect given UNIX socket to specified path.
+     (Socket  :     Integer;
+      Path    :     Types.Unix_Path_Type;
+      Success : out Boolean);
+   --  Connect given UNIX socket to specified path. Success is set to True if
+   --  the connect operation succeeded, False otherwise.
 
 end Anet.Sockets.Thin.Unix;
