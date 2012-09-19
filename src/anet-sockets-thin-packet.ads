@@ -45,9 +45,11 @@ package Anet.Sockets.Thin.Packet is
      (Socket      :     Integer;
       Data        : out Ada.Streams.Stream_Element_Array;
       Last        : out Ada.Streams.Stream_Element_Offset;
-      Src_HW_Addr : out Hardware_Addr_Type);
+      Src_HW_Addr : out Hardware_Addr_Type;
+      Success     : out Boolean);
    --  Receive data from given packet socket (Family_Packet). Last is the index
    --  value which designates the last stream element in data. The source
-   --  hardware address specifies the MAC of the packet sender.
+   --  hardware address specifies the MAC of the packet sender. Success is set
+   --  to True if the receive operation succeeded, False otherwise.
 
 end Anet.Sockets.Thin.Packet;

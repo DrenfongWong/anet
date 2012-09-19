@@ -63,11 +63,18 @@ package body Anet.Sockets.Packet is
       Data   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
+      Result : Boolean;
    begin
       Thin.Packet.Receive (Socket      => Socket.Sock_FD,
                            Data        => Data,
                            Last        => Last,
-                           Src_HW_Addr => Src);
+                           Src_HW_Addr => Src,
+                           Success     => Result);
+
+      if not Result then
+         raise Socket_Error with "Error receiving packet data: "
+           & Get_Errno_String;
+      end if;
    end Receive;
 
    -------------------------------------------------------------------------

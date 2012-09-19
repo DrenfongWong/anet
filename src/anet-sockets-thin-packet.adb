@@ -75,7 +75,8 @@ package body Anet.Sockets.Thin.Packet is
      (Socket      :     Integer;
       Data        : out Ada.Streams.Stream_Element_Array;
       Last        : out Ada.Streams.Stream_Element_Offset;
-      Src_HW_Addr : out Hardware_Addr_Type)
+      Src_HW_Addr : out Hardware_Addr_Type;
+      Success     : out Boolean)
    is
       use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
@@ -91,9 +92,9 @@ package body Anet.Sockets.Thin.Packet is
                          From    => Saddr'Address,
                          Fromlen => Len'Access);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Error receiving packet data: "
-           & Get_Errno_String;
+      Success := Res /= C_Failure;
+      if not Success then
+         return;
       end if;
 
       Src_HW_Addr := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src_HW_Addr'Length);
