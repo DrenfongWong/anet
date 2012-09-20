@@ -119,10 +119,12 @@ package body Anet.Sockets.Thin.Inet is
    -------------------------------------------------------------------------
 
    procedure Receive
-     (Socket :     Integer;
-      Data   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset;
-      Source : out Sockaddr_In_Type)
+     (Socket     :     Integer;
+      Data       : out Ada.Streams.Stream_Element_Array;
+      Last       : out Ada.Streams.Stream_Element_Offset;
+      Source_Len : out Natural;
+      Source     : out Sockaddr_In_Type;
+      Success    : out Boolean)
    is
       use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
@@ -137,15 +139,9 @@ package body Anet.Sockets.Thin.Inet is
                          From    => Source'Address,
                          Fromlen => Len'Access);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Error receiving data: " & Get_Errno_String;
-      end if;
-
-      if Len = 0 then
-         raise Socket_Error with "No address information received";
-      end if;
-
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      Success    := Res /= C_Failure;
+      Source_Len := Natural (Len);
+      Last       := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive;
 
    -------------------------------------------------------------------------

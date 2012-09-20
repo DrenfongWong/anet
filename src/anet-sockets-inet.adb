@@ -41,6 +41,17 @@ package body Anet.Sockets.Inet is
    --  If an interface name is given, the socket is bound to it. Success is set
    --  to True if the operation was successful, False if not.
 
+   procedure Receive
+     (Socket :     Integer;
+      Src    : out Thin.Inet.Sockaddr_In_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset);
+   --  Receive data from given inet socket. This procedure blocks until data
+   --  has been received. Last is the index value such that Item (Last) is the
+   --  last character assigned. An exception is raised if a socket error
+   --  occurs or if no address information could be retrieved from the
+   --  underlying protocol.
+
    function Create_Inet4
      (Address : IPv4_Addr_Type;
       Port    : Port_Type)
@@ -351,6 +362,32 @@ package body Anet.Sockets.Inet is
    -------------------------------------------------------------------------
 
    procedure Receive
+     (Socket :     Integer;
+      Src    : out Thin.Inet.Sockaddr_In_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset)
+   is
+      Src_Len : Natural;
+      Result  : Boolean;
+   begin
+      Thin.Inet.Receive (Socket     => Socket,
+                         Data       => Item,
+                         Last       => Last,
+                         Source_Len => Src_Len,
+                         Source     => Src,
+                         Success    => Result);
+      if not Result then
+         raise Socket_Error with "Error receiving data: " & Get_Errno_String;
+      end if;
+
+      if Src_Len = 0 then
+         raise Socket_Error with "No address information received";
+      end if;
+   end Receive;
+
+   -------------------------------------------------------------------------
+
+   procedure Receive
      (Socket :     UDPv4_Socket_Type;
       Src    : out UDPv4_Sockaddr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
@@ -358,10 +395,11 @@ package body Anet.Sockets.Inet is
    is
       Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
    begin
-      Thin.Inet.Receive (Socket => Socket.Sock_FD,
-                         Data   => Item,
-                         Last   => Last,
-                         Source => Sockaddr);
+      Receive (Socket => Socket.Sock_FD,
+               Src    => Sockaddr,
+               Item   => Item,
+               Last   => Last);
+
       Src.Addr := Sockaddr.Sin_Addr;
       Src.Port := Port_Type (Sockaddr.Sin_Port);
    end Receive;
@@ -376,10 +414,11 @@ package body Anet.Sockets.Inet is
    is
       Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
    begin
-      Thin.Inet.Receive (Socket => Socket.Sock_FD,
-                         Data   => Item,
-                         Last   => Last,
-                         Source => Sockaddr);
+      Receive (Socket => Socket.Sock_FD,
+               Src    => Sockaddr,
+               Item   => Item,
+               Last   => Last);
+
       Src.Addr := Sockaddr.Sin6_Addr;
       Src.Port := Port_Type (Sockaddr.Sin_Port);
    end Receive;
