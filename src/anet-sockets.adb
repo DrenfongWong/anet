@@ -21,17 +21,28 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Interfaces.C;
+
 with Anet.Sockets.Thin;
 
 package body Anet.Sockets is
+
+   package C renames Interfaces.C;
 
    -------------------------------------------------------------------------
 
    procedure Close (Socket : in out Socket_Type)
    is
+      use type C.int;
+
+      Res : C.int;
    begin
       if Socket.Sock_FD /= -1 then
-         Thin.Close_Socket (Socket => Socket.Sock_FD);
+         Res := Thin.C_Close (C.int (Socket.Sock_FD));
+         if Res = C_Failure then
+            raise Socket_Error with "Unable to close socket: "
+              & Get_Errno_String;
+         end if;
          Socket.Sock_FD := -1;
       end if;
    end Close;

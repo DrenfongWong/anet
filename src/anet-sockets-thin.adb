@@ -108,21 +108,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Close_Socket (Socket : Integer)
-   is
-      use type C.int;
-
-      Res : C.int;
-   begin
-      Res := C_Close (C.int (Socket));
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to close socket: " & Get_Errno_String;
-      end if;
-   end Close_Socket;
-
-   -------------------------------------------------------------------------
-
    procedure Create_Socket
      (Socket : out Integer;
       Family :     Family_Type := Family_Inet;
@@ -241,6 +226,9 @@ package body Anet.Sockets.Thin is
    is
       Req  : If_Req_Type;
       Sock : Integer := -1;
+      Res  : C.int;
+      pragma Unreferenced (Res);
+      --  Ignore socket close errors.
    begin
       Create_Socket (Socket => Sock);
 
@@ -251,10 +239,10 @@ package body Anet.Sockets.Thin is
 
       exception
          when Socket_Error =>
-            Close_Socket (Socket => Sock);
+            Res := C_Close (Fd => C.int (Sock));
             raise;
       end;
-      Close_Socket (Socket => Sock);
+      Res := C_Close (Fd => C.int (Sock));
 
       return Req;
    end Query_Iface;

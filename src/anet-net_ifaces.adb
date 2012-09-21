@@ -106,6 +106,9 @@ package body Anet.Net_Ifaces is
       State : Boolean)
    is
       Sock : Integer := -1;
+      Res  : C.int;
+      pragma Unreferenced (Res);
+      --  Ignore socket close errors.
    begin
       Create_Socket (Socket => Sock);
 
@@ -127,10 +130,10 @@ package body Anet.Net_Ifaces is
 
       exception
          when Sockets.Socket_Error =>
-            Close_Socket (Socket => Sock);
+            Res := C_Close (Fd => C.int (Sock));
             raise;
       end;
-      Close_Socket (Socket => Sock);
+      Res := C_Close (Fd => C.int (Sock));
    end Set_Iface_State;
 
 end Anet.Net_Ifaces;
