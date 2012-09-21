@@ -22,8 +22,11 @@
 --
 
 with Ada.Streams;
-
 private with Ada.Finalization;
+
+with Interfaces.C;
+
+with Anet.Constants;
 
 package Anet.Sockets is
 
@@ -97,6 +100,18 @@ package Anet.Sockets is
    Socket_Error : exception;
 
 private
+
+   Families : constant array (Family_Type) of Interfaces.C.int
+     := (Family_Inet   => Constants.Sys.AF_INET,
+         Family_Inet6  => Constants.Sys.AF_INET6,
+         Family_Packet => Constants.AF_PACKET,
+         Family_Unix   => Constants.AF_UNIX);
+   --  Address family mapping.
+
+   Modes : constant array (Mode_Type) of Interfaces.C.int
+     := (Stream_Socket   => Constants.Sys.SOCK_STREAM,
+         Datagram_Socket => Constants.Sys.SOCK_DGRAM);
+   --  Socket mode mapping.
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD : Integer := -1;

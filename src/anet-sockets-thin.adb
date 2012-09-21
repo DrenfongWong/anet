@@ -27,13 +27,6 @@ package body Anet.Sockets.Thin is
 
    package C renames Interfaces.C;
 
-   Families : constant array (Family_Type) of C.int
-     := (Family_Inet   => Constants.Sys.AF_INET,
-         Family_Inet6  => Constants.Sys.AF_INET6,
-         Family_Packet => Constants.AF_PACKET,
-         Family_Unix   => Constants.AF_UNIX);
-   --  Address family mapping.
-
    Levels : constant array (Level_Type) of C.int
      := (Socket_Level => Constants.Sys.SOL_SOCKET);
    --  Protocol level mapping.
@@ -46,11 +39,6 @@ package body Anet.Sockets.Thin is
    Options_Str : constant array (Option_Name_Str) of C.int
      := (Bind_To_Device => Constants.SO_BINDTODEVICE);
    --  Mapping for option names with string value.
-
-   Modes : constant array (Mode_Type) of C.int
-     := (Stream_Socket   => Constants.Sys.SOCK_STREAM,
-         Datagram_Socket => Constants.Sys.SOCK_DGRAM);
-   --  Socket mode mapping.
 
    Get_Requests : constant array (Netdev_Request_Name) of C.int
      := (If_Addr   => Constants.SIOCGIFADDR,
