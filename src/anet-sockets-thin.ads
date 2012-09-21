@@ -30,9 +30,6 @@ with Anet.Types;
 
 package Anet.Sockets.Thin is
 
-   type Level_Type is (Socket_Level);
-   --  Protocol level type.
-
    type Netdev_Request_Name is
      (If_Addr,
       If_Flags,

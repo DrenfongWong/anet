@@ -134,7 +134,7 @@ package body Anet.Sockets.Inet is
       if Iface'Length /= 0 then
          Thin.Set_Socket_Option
            (Socket => Socket,
-            Level  => Thin.Socket_Level,
+            Level  => Socket_Level,
             Option => Bind_To_Device,
             Value  => String (Iface));
       end if;

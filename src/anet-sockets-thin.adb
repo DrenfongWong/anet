@@ -25,10 +25,6 @@ package body Anet.Sockets.Thin is
 
    package C renames Interfaces.C;
 
-   Levels : constant array (Level_Type) of C.int
-     := (Socket_Level => Constants.Sys.SOL_SOCKET);
-   --  Protocol level mapping.
-
    Options_Bool : constant array (Option_Name_Bool) of C.int
      := (Reuse_Address => Constants.Sys.SO_REUSEADDR,
          Broadcast     => Constants.Sys.SO_BROADCAST);
