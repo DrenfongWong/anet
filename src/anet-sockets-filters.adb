@@ -21,7 +21,12 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with System;
+
+with Interfaces.C;
+
 with Anet.Constants;
+with Anet.Sockets.Thin;
 
 package body Anet.Sockets.Filters is
 
@@ -44,7 +49,7 @@ package body Anet.Sockets.Filters is
       Meta : Sock_Fprog_Type := (Len    => Filter'Length,
                                  Filter => Filter'Address);
    begin
-      Res := C_Setsockopt
+      Res := Thin.C_Setsockopt
         (S       => Interfaces.C.int (Socket.Sock_FD),
          Level   => Constants.Sys.SOL_SOCKET,
          Optname => Constants.SO_ATTACH_FILTER,

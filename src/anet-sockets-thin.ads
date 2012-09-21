@@ -23,6 +23,8 @@
 
 with Ada.Streams;
 
+with System;
+
 with Interfaces.C;
 
 with Anet.Constants;
@@ -249,5 +251,15 @@ package Anet.Sockets.Thin is
       Tolen : Interfaces.C.int)
       return Interfaces.C.int;
    pragma Import (C, C_Sendto, "sendto");
+
+   function C_Setsockopt
+     (S       : Interfaces.C.int;
+      Level   : Interfaces.C.int;
+      Optname : Interfaces.C.int;
+      Optval  : System.Address;
+      Optlen  : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Setsockopt, "setsockopt");
+   --  Set given socket option on specified protocol level.
 
 end Anet.Sockets.Thin;

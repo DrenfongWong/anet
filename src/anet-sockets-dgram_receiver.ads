@@ -23,6 +23,8 @@
 
 with Ada.Exceptions;
 
+with System;
+
 generic
 
    Buffer_Size : Ada.Streams.Stream_Element_Offset := 2048;

@@ -25,10 +25,6 @@ with Ada.Streams;
 
 private with Ada.Finalization;
 
-with Interfaces.C;
-
-with System;
-
 package Anet.Sockets is
 
    type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
@@ -115,15 +111,5 @@ private
       Family :        Family_Type;
       Mode   :        Mode_Type);
    --  Initialize given socket with specified family and mode.
-
-   function C_Setsockopt
-     (S       : Interfaces.C.int;
-      Level   : Interfaces.C.int;
-      Optname : Interfaces.C.int;
-      Optval  : System.Address;
-      Optlen  : Interfaces.C.int)
-      return Interfaces.C.int;
-   pragma Import (C, C_Setsockopt, "setsockopt");
-   --  Set given socket option on specified protocol level.
 
 end Anet.Sockets;
