@@ -63,9 +63,11 @@ package body Anet.Sockets.Packet is
    procedure Init (Socket : in out UDP_Socket_Type)
    is
    begin
-      Init (Socket => Socket,
-            Family => Family_Packet,
-            Mode   => Datagram_Socket);
+      Init (Socket   => Socket,
+            Family   => Family_Packet,
+            Mode     => Datagram_Socket,
+            Protocol => Integer (Byte_Swapping.Host_To_Network
+              (Input => Double_Byte (Constants.ETH_P_IP))));
    end Init;
 
    -------------------------------------------------------------------------

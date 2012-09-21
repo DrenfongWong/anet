@@ -105,12 +105,13 @@ package body Anet.Net_Ifaces is
      (Name  : Types.Iface_Name_Type;
       State : Boolean)
    is
-      Sock : Integer := -1;
-      Res  : C.int;
+      Res, Sock : C.int;
       pragma Unreferenced (Res);
       --  Ignore socket close errors.
    begin
-      Create_Socket (Socket => Sock);
+      Sock := C_Socket (Domain   => Constants.Sys.AF_INET,
+                        Typ      => Constants.Sys.SOCK_DGRAM,
+                        Protocol => 0);
 
       declare
          C_Name : constant C.char_array := C.To_C (String (Name));
@@ -124,16 +125,16 @@ package body Anet.Net_Ifaces is
             Req.Ifr_Flags := 0;
          end if;
 
-         Ioctl (Socket  => Sock,
+         Ioctl (Socket  => Integer (Sock),
                 Request => Set_Requests (If_Flags),
                 If_Req  => Req'Access);
 
       exception
          when Sockets.Socket_Error =>
-            Res := C_Close (Fd => C.int (Sock));
+            Res := C_Close (Fd => Sock);
             raise;
       end;
-      Res := C_Close (Fd => C.int (Sock));
+      Res := C_Close (Fd => Sock);
    end Set_Iface_State;
 
 end Anet.Net_Ifaces;

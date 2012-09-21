@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
-
 with Anet.Sockets.Thin;
 
 package body Anet.Sockets is
@@ -58,14 +56,26 @@ package body Anet.Sockets is
    -------------------------------------------------------------------------
 
    procedure Init
-     (Socket : in out Socket_Type;
-      Family :        Family_Type;
-      Mode   :        Mode_Type)
+     (Socket   : in out Socket_Type;
+      Family   :        Family_Type;
+      Mode     :        Mode_Type;
+      Protocol :        Natural := 0)
    is
+      use type C.int;
+
+      Res : C.int;
    begin
-      Thin.Create_Socket (Socket => Socket.Sock_FD,
-                          Family => Family,
-                          Mode   => Mode);
+      Res := Thin.C_Socket (Domain   => Families (Family),
+                            Typ      => Modes (Mode),
+                            Protocol => C.int (Protocol));
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to create socket (" & Family'Img & "/"
+           & Mode'Img & ", protocol" & Protocol'Img & "): "
+           & Get_Errno_String;
+      end if;
+
+      Socket.Sock_FD := Integer (Res);
    end Init;
 
    -------------------------------------------------------------------------

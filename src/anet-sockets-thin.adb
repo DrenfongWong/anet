@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Byte_Swapping;
-
 package body Anet.Sockets.Thin is
 
    package C renames Interfaces.C;
@@ -63,35 +61,6 @@ package body Anet.Sockets.Thin is
    --  Execute netdevice ioctl get request on interface with given name. The
    --  specified socket must have been created beforehand. The procedure
    --  returns the resulting interface request record to the caller.
-
-   -------------------------------------------------------------------------
-
-   procedure Create_Socket
-     (Socket : out Integer;
-      Family :     Family_Type := Family_Inet;
-      Mode   :     Mode_Type   := Datagram_Socket)
-   is
-      use type Interfaces.C.int;
-
-      Res   : C.int;
-      Proto : C.int := 0;
-   begin
-      if Family = Family_Packet then
-         Proto := C.int (Byte_Swapping.Host_To_Network
-                         (Input => Double_Byte (Constants.ETH_P_IP)));
-      end if;
-
-      Res := C_Socket (Domain   => Families (Family),
-                       Typ      => Modes (Mode),
-                       Protocol => Proto);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to create socket (" & Family'Img & "/"
-           & Mode'Img & "): " & Get_Errno_String;
-      end if;
-
-      Socket := Integer (Res);
-   end Create_Socket;
 
    -------------------------------------------------------------------------
 
@@ -151,24 +120,26 @@ package body Anet.Sockets.Thin is
       return If_Req_Type
    is
       Req  : If_Req_Type;
-      Sock : Integer := -1;
+      Sock : C.int;
       Res  : C.int;
       pragma Unreferenced (Res);
       --  Ignore socket close errors.
    begin
-      Create_Socket (Socket => Sock);
+      Sock := C_Socket (Domain   => Constants.Sys.AF_INET,
+                        Typ      => Constants.Sys.SOCK_DGRAM,
+                        Protocol => 0);
 
       begin
-         Req := Ioctl_Get (Socket     => Sock,
+         Req := Ioctl_Get (Socket     => Integer (Sock),
                            Request    => Request,
                            Iface_Name => Iface_Name);
 
       exception
          when Socket_Error =>
-            Res := C_Close (Fd => C.int (Sock));
+            Res := C_Close (Fd => Sock);
             raise;
       end;
-      Res := C_Close (Fd => C.int (Sock));
+      Res := C_Close (Fd => Sock);
 
       return Req;
    end Query_Iface;

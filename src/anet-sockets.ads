@@ -122,9 +122,10 @@ private
    --  Close socket.
 
    procedure Init
-     (Socket : in out Socket_Type;
-      Family :        Family_Type;
-      Mode   :        Mode_Type);
-   --  Initialize given socket with specified family and mode.
+     (Socket   : in out Socket_Type;
+      Family   :        Family_Type;
+      Mode     :        Mode_Type;
+      Protocol :        Natural := 0);
+   --  Initialize given socket with specified family, mode and protocol.
 
 end Anet.Sockets;

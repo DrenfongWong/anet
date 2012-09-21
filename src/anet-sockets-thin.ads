@@ -148,12 +148,6 @@ package Anet.Sockets.Thin is
          others   => Interfaces.C.int (-1));
    --  Currently supported netdevice ioctl set requests.
 
-   procedure Create_Socket
-     (Socket : out Integer;
-      Family :     Family_Type := Family_Inet;
-      Mode   :     Mode_Type   := Datagram_Socket);
-   --  Create a new communication socket with specified family and mode.
-
    procedure Send_Socket
      (Socket :     Integer;
       Data   :     Ada.Streams.Stream_Element_Array;
