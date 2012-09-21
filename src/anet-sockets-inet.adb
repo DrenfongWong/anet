@@ -26,7 +26,7 @@ with System;
 with Interfaces.C;
 
 with Anet.Constants;
-with Anet.Sockets.Thin.Inet;
+with Anet.Sockets.Thin;
 with Anet.Byte_Swapping;
 with Anet.Net_Ifaces;
 
@@ -317,22 +317,28 @@ package body Anet.Sockets.Inet is
       Group  : IPv4_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      Result    : Boolean;
+      use type C.int;
+      use type C.unsigned_short;
+
+      Mreq      : Thin.IPv4_Mreq_Type;
       Iface_Idx : Natural := 0;
+      Res       : C.int;
    begin
       if Iface'Length > 0 then
          Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
       end if;
 
-      Thin.Inet.Join_Multicast_Group
-        (Socket    => Socket.Sock_FD,
-         Group     => Create_Inet4
-           (Address => Group,
-            Port    => 0),
-         Iface_Idx => Iface_Idx,
-         Success   => Result);
+      Mreq.Imr_Multiaddr := Group;
+      Mreq.Imr_Interface := C.unsigned (Iface_Idx);
 
-      if not Result then
+      Res := Thin.C_Setsockopt
+        (S       => C.int (Socket.Sock_FD),
+         Level   => Constants.Sys.IPPROTO_IP,
+         Optname => Constants.Sys.IP_ADD_MEMBERSHIP,
+         Optval  => Mreq'Address,
+         Optlen  => Mreq'Size / 8);
+
+      if Res = C_Failure then
          raise Socket_Error with "Unable to join multicast group "
            & To_String (Address => Group) & ": " & Get_Errno_String;
       end if;
@@ -345,22 +351,28 @@ package body Anet.Sockets.Inet is
       Group  : IPv6_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      Result    : Boolean;
+      use type C.int;
+      use type C.unsigned_short;
+
+      Mreq6     : Thin.IPv6_Mreq_Type;
       Iface_Idx : Natural := 0;
+      Res       : C.int;
    begin
       if Iface'Length > 0 then
          Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
       end if;
 
-      Thin.Inet.Join_Multicast_Group
-        (Socket    => Socket.Sock_FD,
-         Group     => Create_Inet6
-           (Address => Group,
-            Port    => 0),
-         Iface_Idx => Iface_Idx,
-         Success   => Result);
+      Mreq6.IPv6mr_Multiaddr := Group;
+      Mreq6.IPv6mr_Interface := C.unsigned (Iface_Idx);
 
-      if not Result then
+      Res := Thin.C_Setsockopt
+        (S       => C.int (Socket.Sock_FD),
+         Level   => Constants.IPPROTO_IPV6,
+         Optname => Constants.IPV6_ADD_MEMBERSHIP,
+         Optval  => Mreq6'Address,
+         Optlen  => Mreq6'Size / 8);
+
+      if Res = C_Failure then
          raise Socket_Error with "Unable to join multicast group "
            & To_String (Address => Group) & ": " & Get_Errno_String;
       end if;
