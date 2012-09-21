@@ -25,13 +25,6 @@ package body Anet.Sockets.Thin is
 
    package C renames Interfaces.C;
 
-   Get_Requests : constant array (Netdev_Request_Name) of C.int
-     := (If_Addr   => Constants.SIOCGIFADDR,
-         If_Flags  => Constants.SIOCGIFFLAGS,
-         If_Hwaddr => Constants.SIOCGIFHWADDR,
-         If_Index  => Constants.SIOCGIFINDEX);
-   --  Currently supported netdevice ioctl get requests.
-
    function Ioctl_Get
      (Socket     : C.int;
       Request    : Netdev_Request_Name;

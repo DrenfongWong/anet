@@ -138,6 +138,13 @@ package Anet.Sockets.Thin is
    pragma Convention (C, If_Req_Type);
    --  Interface request structure (struct ifreq).
 
+   Get_Requests : constant array (Netdev_Request_Name) of Interfaces.C.int
+     := (If_Addr   => Constants.SIOCGIFADDR,
+         If_Flags  => Constants.SIOCGIFFLAGS,
+         If_Hwaddr => Constants.SIOCGIFHWADDR,
+         If_Index  => Constants.SIOCGIFINDEX);
+   --  Currently supported netdevice ioctl get requests.
+
    Set_Requests : constant array (Netdev_Request_Name) of Interfaces.C.int
      := (If_Flags => Constants.SIOCSIFFLAGS,
          others   => Interfaces.C.int (-1));
