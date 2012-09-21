@@ -187,7 +187,15 @@ package Anet.Sockets.Thin is
       return Interfaces.C.int;
    pragma Import (C, C_Connect, "connect");
 
-private
+   function C_Recvfrom
+     (S       : Interfaces.C.int;
+      Msg     : System.Address;
+      Len     : Interfaces.C.int;
+      Flags   : Interfaces.C.int;
+      From    : System.Address;
+      Fromlen : not null access Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Recvfrom, "recvfrom");
 
    function C_Sendto
      (S     : Interfaces.C.int;
@@ -198,15 +206,5 @@ private
       Tolen : Interfaces.C.int)
       return Interfaces.C.int;
    pragma Import (C, C_Sendto, "sendto");
-
-   function C_Recvfrom
-     (S       : Interfaces.C.int;
-      Msg     : System.Address;
-      Len     : Interfaces.C.int;
-      Flags   : Interfaces.C.int;
-      From    : System.Address;
-      Fromlen : not null access Interfaces.C.int)
-      return Interfaces.C.int;
-   pragma Import (C, C_Recvfrom, "recvfrom");
 
 end Anet.Sockets.Thin;
