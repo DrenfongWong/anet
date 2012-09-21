@@ -45,14 +45,6 @@ package body Anet.Sockets.Thin is
          If_Index  => Constants.SIOCGIFINDEX);
    --  Currently supported netdevice ioctl get requests.
 
-   function C_Send
-     (S     : C.int;
-      Buf   : System.Address;
-      Len   : C.int;
-      Flags : C.int)
-      return C.int;
-   pragma Import (C, C_Send, "send");
-
    function Ioctl_Get
      (Socket     : Integer;
       Request    : Netdev_Request_Name;

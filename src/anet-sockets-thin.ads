@@ -225,6 +225,14 @@ package Anet.Sockets.Thin is
       return Interfaces.C.int;
    pragma Import (C, C_Recvfrom, "recvfrom");
 
+   function C_Send
+     (S     : Interfaces.C.int;
+      Buf   : System.Address;
+      Len   : Interfaces.C.int;
+      Flags : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Send, "send");
+
    function C_Sendto
      (S     : Interfaces.C.int;
       Buf   : System.Address;
