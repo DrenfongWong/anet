@@ -34,7 +34,7 @@ package body Anet.Sockets.Inet is
 
    procedure Bind
      (Socket    :     Integer;
-      Sock_Addr :     Thin.Inet.Sockaddr_In_Type;
+      Sock_Addr :     Thin.Sockaddr_In_Type;
       Iface     :     Types.Iface_Name_Type := "";
       Success   : out Boolean);
    --  Bind given socket to the specified sockaddr and set reuse address flag.
@@ -43,7 +43,7 @@ package body Anet.Sockets.Inet is
 
    procedure Receive
      (Socket :     Integer;
-      Src    : out Thin.Inet.Sockaddr_In_Type;
+      Src    : out Thin.Sockaddr_In_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given inet socket. This procedure blocks until data
@@ -55,13 +55,13 @@ package body Anet.Sockets.Inet is
    function Create_Inet4
      (Address : IPv4_Addr_Type;
       Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type;
+      return Thin.Sockaddr_In_Type;
    --  Create inet4 sockaddr type from given address and port.
 
    function Create_Inet6
      (Address : IPv6_Addr_Type;
       Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type;
+      return Thin.Sockaddr_In_Type;
    --  Create inet6 sockaddr type from given address and port.
 
    -------------------------------------------------------------------------
@@ -70,7 +70,7 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv4_Socket_Type;
       New_Socket : out TCPv4_Socket_Type)
    is
-      Sock_In   : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
+      Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet);
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin
@@ -89,7 +89,7 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv6_Socket_Type;
       New_Socket : out TCPv6_Socket_Type)
    is
-      Sock_In   : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
+      Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet6);
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin
@@ -106,7 +106,7 @@ package body Anet.Sockets.Inet is
 
    procedure Bind
      (Socket    :     Integer;
-      Sock_Addr :     Thin.Inet.Sockaddr_In_Type;
+      Sock_Addr :     Thin.Sockaddr_In_Type;
       Iface     :     Types.Iface_Name_Type := "";
       Success   : out Boolean)
    is
@@ -144,7 +144,7 @@ package body Anet.Sockets.Inet is
       Iface   :        Types.Iface_Name_Type := "")
    is
       Result   : Boolean;
-      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
+      Sockaddr : constant Thin.Sockaddr_In_Type
         := Create_Inet4 (Address => Address,
                          Port    => Port);
    begin
@@ -169,7 +169,7 @@ package body Anet.Sockets.Inet is
       Iface   :        Types.Iface_Name_Type := "")
    is
       Result   : Boolean;
-      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
+      Sockaddr : constant Thin.Sockaddr_In_Type
         := Create_Inet6 (Address => Address,
                          Port    => Port);
    begin
@@ -193,7 +193,7 @@ package body Anet.Sockets.Inet is
       Port    :        Port_Type)
    is
       Result : Boolean;
-      Sin    : constant Thin.Inet.Sockaddr_In_Type
+      Sin    : constant Thin.Sockaddr_In_Type
         := Create_Inet4 (Address => Address,
                          Port    => Port);
    begin
@@ -216,7 +216,7 @@ package body Anet.Sockets.Inet is
       Port    :        Port_Type)
    is
       Result : Boolean;
-      Sin    : constant Thin.Inet.Sockaddr_In_Type
+      Sin    : constant Thin.Sockaddr_In_Type
         := Create_Inet6 (Address => Address,
                          Port    => Port);
    begin
@@ -236,7 +236,7 @@ package body Anet.Sockets.Inet is
    function Create_Inet4
      (Address : IPv4_Addr_Type;
       Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type
+      return Thin.Sockaddr_In_Type
    is
    begin
       return (Family     => Family_Inet,
@@ -252,7 +252,7 @@ package body Anet.Sockets.Inet is
    function Create_Inet6
      (Address : IPv6_Addr_Type;
       Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type
+      return Thin.Sockaddr_In_Type
    is
    begin
       return (Family     => Family_Inet6,
@@ -363,7 +363,7 @@ package body Anet.Sockets.Inet is
 
    procedure Receive
      (Socket :     Integer;
-      Src    : out Thin.Inet.Sockaddr_In_Type;
+      Src    : out Thin.Sockaddr_In_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
@@ -393,7 +393,7 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
+      Sockaddr : Thin.Sockaddr_In_Type (Family => Family_Inet);
    begin
       Receive (Socket => Socket.Sock_FD,
                Src    => Sockaddr,
@@ -412,7 +412,7 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
+      Sockaddr : Thin.Sockaddr_In_Type (Family => Family_Inet6);
    begin
       Receive (Socket => Socket.Sock_FD,
                Src    => Sockaddr,
@@ -435,7 +435,7 @@ package body Anet.Sockets.Inet is
 
       Result   : Boolean;
       Len      : Ada.Streams.Stream_Element_Offset;
-      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
+      Sockaddr : constant Thin.Sockaddr_In_Type
         := Create_Inet4 (Address => Dst_Addr,
                          Port    => Dst_Port);
    begin
@@ -470,7 +470,7 @@ package body Anet.Sockets.Inet is
 
       Result   : Boolean;
       Len      : Ada.Streams.Stream_Element_Offset;
-      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
+      Sockaddr : constant Thin.Sockaddr_In_Type
         := Create_Inet6 (Address => Dst_Addr,
                          Port    => Dst_Port);
    begin
