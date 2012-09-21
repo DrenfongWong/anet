@@ -32,7 +32,7 @@ package body Anet.Sockets.Unix is
      (Socket     :     TCP_Socket_Type;
       New_Socket : out TCP_Socket_Type)
    is
-      Sock_Un   : Thin.Unix.Sockaddr_Un_Type;
+      Sock_Un   : Thin.Sockaddr_Un_Type;
       Sock_Addr : System.Address;
       Sock_Len  : Integer := 0;
    begin

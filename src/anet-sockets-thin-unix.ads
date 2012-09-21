@@ -21,20 +21,9 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Constants;
 with Anet.Types;
 
 package Anet.Sockets.Thin.Unix is
-
-   type Sockaddr_Un_Type is record
-      Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
-      --  Address family
-      Pathname   : Interfaces.C.char_array (1 .. Constants.UNIX_PATH_MAX)
-        := (others => Interfaces.C.nul);
-      --  Pathname
-   end record;
-   pragma Convention (C, Sockaddr_Un_Type);
-   --  Low-level UNIX socket address type (struct sockaddr_un).
 
    procedure Bind
      (Socket  :     Integer;
