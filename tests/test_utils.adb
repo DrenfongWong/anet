@@ -62,6 +62,18 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
+   procedure Dump
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Sockets.Netlink.Netlink_Addr_Type)
+   is
+      pragma Unreferenced (Src);
+   begin
+      Buffer (Buffer'First .. Data'Length) := Data;
+      Last                                 := Data'Length;
+   end Dump;
+
+   -------------------------------------------------------------------------
+
    function Equal_Files
      (Filename1 : String;
       Filename2 : String)

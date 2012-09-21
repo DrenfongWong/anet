@@ -30,6 +30,7 @@ with Anet.OS;
 with Anet.Types;
 with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
+with Anet.Sockets.Netlink;
 with Anet.Sockets.Dgram_Receiver;
 with Anet.Util;
 
@@ -56,6 +57,12 @@ package body Socket_Tests is
       Socket_Type  => Inet.UDPv6_Socket_Type,
       Address_Type => Inet.UDPv6_Sockaddr_Type,
       Receive      => Inet.Receive);
+
+   package Netlink_Receiver is new Dgram_Receiver
+     (Buffer_Size  => 1024,
+      Socket_Type  => Netlink.Raw_Socket_Type,
+      Address_Type => Netlink.Netlink_Addr_Type,
+      Receive      => Netlink.Receive);
 
    Ref_Chunk : constant Ada.Streams.Stream_Element_Array
      := OS.Read_File (Filename => "data/chunk1.dat");
@@ -169,6 +176,9 @@ package body Socket_Tests is
       T.Add_Test_Routine
         (Routine => Send_Unix_Datagram'Access,
          Name    => "Send data (Unix, datagram)");
+      T.Add_Test_Routine
+        (Routine => Send_Netlink_Raw'Access,
+         Name    => "Send data (Netlink, raw)");
       T.Add_Test_Routine
         (Routine => Receive_V4_Stream'Access,
          Name    => "Receive data (IPv4, stream)");
@@ -714,6 +724,48 @@ package body Socket_Tests is
          Rcvr.Stop;
          raise;
    end Send_Multicast_V6;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_Netlink_Raw
+   is
+      use type Netlink_Receiver.Count_Type;
+
+      C    : Netlink_Receiver.Count_Type := 0;
+      Sock : aliased Netlink.Raw_Socket_Type;
+      Rcvr : Netlink_Receiver.Receiver_Type (S => Sock'Access);
+      Pid  : constant Netlink.Netlink_Addr_Type := 23499;
+   begin
+      Sock.Init;
+      Sock.Bind (Address => Pid);
+
+      Rcvr.Listen (Callback => Test_Utils.Dump'Access);
+
+      --  Precautionary delay to make sure receiver task is ready.
+
+      delay 0.2;
+
+      Sock.Send (Item => Ref_Chunk,
+                 To   => Pid);
+
+      for I in 1 .. 30 loop
+         C := Rcvr.Get_Rcv_Msg_Count;
+         exit when C > 0;
+         delay 0.1;
+      end loop;
+
+      Rcvr.Stop;
+
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
+              Message   => "Result mismatch");
+
+   exception
+      when others =>
+         Rcvr.Stop;
+         raise;
+   end Send_Netlink_Raw;
 
    -------------------------------------------------------------------------
 

@@ -54,6 +54,9 @@ package Socket_Tests is
    procedure Send_Unix_Datagram;
    --  Test sending over a datagram Unix socket.
 
+   procedure Send_Netlink_Raw;
+   --  Test sending over raw Netlink socket.
+
    procedure Receive_V4_Stream;
    --  Test data reception with IPv4 stream socket.
 
