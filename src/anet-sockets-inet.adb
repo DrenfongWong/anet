@@ -436,30 +436,33 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv4_Addr_Type;
       Dst_Port : Port_Type)
    is
+      use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
-      Result   : Boolean;
-      Len      : Ada.Streams.Stream_Element_Offset;
-      Sockaddr : constant Thin.Sockaddr_In_Type
-        := Create_Inet4 (Address => Dst_Addr,
-                         Port    => Dst_Port);
+      Res        : C.int;
+      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
+      Dst        : constant Thin.Sockaddr_In_Type := Create_Inet4
+        (Address => Dst_Addr,
+         Port    => Dst_Port);
    begin
-      Thin.Inet.Send (Socket  => Socket.Sock_FD,
-                      Data    => Item,
-                      Last    => Len,
-                      Dst     => Sockaddr,
-                      Success => Result);
+      Res := Thin.C_Sendto (S     => C.int (Socket.Sock_FD),
+                            Buf   => Item'Address,
+                            Len   => Item'Length,
+                            Flags => 0,
+                            To    => Dst'Address,
+                            Tolen => Dst'Size / 8);
 
-      if not Result then
+      if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
            & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - "
            & Get_Errno_String;
       end if;
 
-      if Len /= Item'Length then
+      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      if Sent_Bytes /= Item'Length then
          raise Socket_Error with "Incomplete send operation to "
            & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - only"
-           & Len'Img & " of" & Item'Length'Img & " bytes sent";
+           & Sent_Bytes'Img & " of" & Item'Length'Img & " bytes sent";
       end if;
    end Send;
 
@@ -471,30 +474,33 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv6_Addr_Type;
       Dst_Port : Port_Type)
    is
+      use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
-      Result   : Boolean;
-      Len      : Ada.Streams.Stream_Element_Offset;
-      Sockaddr : constant Thin.Sockaddr_In_Type
-        := Create_Inet6 (Address => Dst_Addr,
-                         Port    => Dst_Port);
+      Res        : C.int;
+      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
+      Dst        : constant Thin.Sockaddr_In_Type := Create_Inet6
+        (Address => Dst_Addr,
+         Port    => Dst_Port);
    begin
-      Thin.Inet.Send (Socket  => Socket.Sock_FD,
-                      Data    => Item,
-                      Last    => Len,
-                      Dst     => Sockaddr,
-                      Success => Result);
+      Res := Thin.C_Sendto (S     => C.int (Socket.Sock_FD),
+                            Buf   => Item'Address,
+                            Len   => Item'Length,
+                            Flags => 0,
+                            To    => Dst'Address,
+                            Tolen => Dst'Size / 8);
 
-      if not Result then
+      if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
            & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - "
            & Get_Errno_String;
       end if;
 
-      if Len /= Item'Length then
+      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      if Sent_Bytes /= Item'Length then
          raise Socket_Error with "Incomplete send operation to "
            & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - only"
-           & Len'Img & " of" & Item'Length'Img & " bytes sent";
+           & Sent_Bytes'Img & " of" & Item'Length'Img & " bytes sent";
       end if;
    end Send;
 

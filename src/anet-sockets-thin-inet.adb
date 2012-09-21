@@ -110,28 +110,4 @@ package body Anet.Sockets.Thin.Inet is
       Last       := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive;
 
-   -------------------------------------------------------------------------
-
-   procedure Send
-     (Socket  :     Integer;
-      Data    :     Ada.Streams.Stream_Element_Array;
-      Last    : out Ada.Streams.Stream_Element_Offset;
-      Dst     :     Sockaddr_In_Type;
-      Success : out Boolean)
-   is
-      use type Interfaces.C.int;
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res : C.int;
-   begin
-      Res := C_Sendto (S     => C.int (Socket),
-                       Buf   => Data'Address,
-                       Len   => Data'Length,
-                       Flags => 0,
-                       To    => Dst'Address,
-                       Tolen => Dst'Size / 8);
-      Success := Res /= C_Failure;
-      Last    := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-   end Send;
-
 end Anet.Sockets.Thin.Inet;
