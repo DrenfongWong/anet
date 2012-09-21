@@ -59,7 +59,8 @@ package Anet.Sockets.Dgram_Receiver is
    --  Error handling callback procedure. E is the exception to handle. The
    --  stop flag signals the receiver to stop listening for data and terminate.
 
-   type Receiver_Type (S : not null access Socket_Type) is limited private;
+   type Receiver_Type (S : not null access Socket_Type)
+     is tagged limited private;
    --  Listens for incoming data on the given datagram socket and processes it
    --  by calling the registered listen callback.
 
@@ -130,7 +131,9 @@ private
 
    end Receiver_Task;
 
-   type Receiver_Type (S : not null access Socket_Type) is limited record
+   type Receiver_Type
+     (S : not null access Socket_Type)
+     is tagged limited record
       Item_Count : Count_Type := 0;
       pragma Atomic (Item_Count);
 
