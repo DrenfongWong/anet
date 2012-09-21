@@ -30,13 +30,6 @@ with Anet.Types;
 
 package Anet.Sockets.Thin is
 
-   type Netdev_Request_Name is
-     (If_Addr,
-      If_Flags,
-      If_Hwaddr,
-      If_Index);
-   --  Supported netdevice requests.
-
    type Sockaddr_Type is record
       Sa_Family : Interfaces.C.unsigned_short;
       --  Address family
@@ -118,6 +111,13 @@ package Anet.Sockets.Thin is
    end record;
    pragma Convention (C, IPv6_Mreq_Type);
    --  struct ipv6_mreq (netinet/in.h).
+
+   type Netdev_Request_Name is
+     (If_Addr,
+      If_Flags,
+      If_Hwaddr,
+      If_Index);
+   --  Supported netdevice requests.
 
    type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
       Ifr_Name : Interfaces.C.char_array
@@ -238,6 +238,13 @@ package Anet.Sockets.Thin is
       Backlog : Interfaces.C.int)
       return Interfaces.C.int;
    pragma Import (C, C_Listen, "listen");
+
+   function C_Ioctl
+     (S   : Interfaces.C.int;
+      Req : Interfaces.C.int;
+      Arg : access If_Req_Type)
+      return Interfaces.C.int;
+   pragma Import (C, C_Ioctl, "ioctl");
 
    function C_Close (Fd : Interfaces.C.int) return Interfaces.C.int;
    pragma Import (C, C_Close, "close");

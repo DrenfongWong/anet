@@ -48,13 +48,6 @@ package body Anet.Sockets.Thin is
       Request : Interfaces.C.int;
       If_Req  : not null access If_Req_Type)
    is
-      function C_Ioctl
-        (S    : C.int;
-         Req  : C.int;
-         Arg  : access If_Req_Type)
-         return C.int;
-      pragma Import (C, C_Ioctl, "ioctl");
-
       Ctl_Ret : C.int;
    begin
       Ctl_Ret := C_Ioctl
