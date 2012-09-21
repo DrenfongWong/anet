@@ -160,16 +160,6 @@ package Anet.Sockets.Thin is
       Backlog : Positive := 1);
    --  Listen for specified amount of requests on given socket.
 
-   procedure Accept_Socket
-     (Socket       :     Integer;
-      Sockaddr     :     System.Address;
-      Sockaddr_Len :     Integer;
-      New_Socket   : out Integer);
-   --  Accept connection request from listening socket and return new connected
-   --  socket. The Sockaddr argument must be an address to a low-level
-   --  Sockaddr_In or Sockaddr_Un object matching the socket family.
-   --  Sockaddr_Len is the size of the low-level sockaddr object (in bytes).
-
    procedure Send_Socket
      (Socket :     Integer;
       Data   :     Ada.Streams.Stream_Element_Array;

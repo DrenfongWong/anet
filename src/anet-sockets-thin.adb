@@ -76,31 +76,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Accept_Socket
-     (Socket       :     Integer;
-      Sockaddr     :     System.Address;
-      Sockaddr_Len :     Integer;
-      New_Socket   : out Integer)
-   is
-      use type C.int;
-
-      Res : C.int;
-      Len : aliased C.int := C.int (Sockaddr_Len);
-   begin
-      Res := C_Accept (S       => C.int (Socket),
-                       Name    => Sockaddr,
-                       Namelen => Len'Access);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to accept connection on socket - "
-           & Get_Errno_String;
-      end if;
-
-      New_Socket := Integer (Res);
-   end Accept_Socket;
-
-   -------------------------------------------------------------------------
-
    procedure Create_Socket
      (Socket : out Integer;
       Family :     Family_Type := Family_Inet;

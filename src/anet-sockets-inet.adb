@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with System;
-
 with Interfaces.C;
 
 with Anet.Constants;
@@ -72,17 +70,22 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv4_Socket_Type;
       New_Socket : out TCPv4_Socket_Type)
    is
-      Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet);
-      Sock_Addr : System.Address;
-      Sock_Len  : Integer := 0;
-   begin
-      Sock_Addr := Sock_In'Address;
-      Sock_Len  := Sock_In'Size / 8;
+      use type C.int;
 
-      Thin.Accept_Socket (Socket       => Socket.Sock_FD,
-                          Sockaddr     => Sock_Addr,
-                          Sockaddr_Len => Sock_Len,
-                          New_Socket   => New_Socket.Sock_FD);
+      Res  : C.int;
+      Sock : Thin.Sockaddr_In_Type (Family => Family_Inet);
+      Len  : aliased C.int := Sock'Size / 8;
+   begin
+      Res := Thin.C_Accept (S       => C.int (Socket.Sock_FD),
+                            Name    => Sock'Address,
+                            Namelen => Len'Access);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to accept connection on TCPv4 "
+           & "socket - " & Get_Errno_String;
+      end if;
+
+      New_Socket.Sock_FD := Integer (Res);
    end Accept_Connection;
 
    -------------------------------------------------------------------------
@@ -91,17 +94,22 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv6_Socket_Type;
       New_Socket : out TCPv6_Socket_Type)
    is
-      Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet6);
-      Sock_Addr : System.Address;
-      Sock_Len  : Integer := 0;
-   begin
-      Sock_Addr := Sock_In'Address;
-      Sock_Len  := Sock_In'Size / 8;
+      use type C.int;
 
-      Thin.Accept_Socket (Socket       => Socket.Sock_FD,
-                          Sockaddr     => Sock_Addr,
-                          Sockaddr_Len => Sock_Len,
-                          New_Socket   => New_Socket.Sock_FD);
+      Res  : C.int;
+      Sock : Thin.Sockaddr_In_Type (Family => Family_Inet6);
+      Len  : aliased C.int := Sock'Size / 8;
+   begin
+      Res := Thin.C_Accept (S       => C.int (Socket.Sock_FD),
+                            Name    => Sock'Address,
+                            Namelen => Len'Access);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to accept connection on TCPv6 "
+           & "socket - " & Get_Errno_String;
+      end if;
+
+      New_Socket.Sock_FD := Integer (Res);
    end Accept_Connection;
 
    -------------------------------------------------------------------------
