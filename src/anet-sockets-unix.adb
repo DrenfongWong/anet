@@ -149,9 +149,8 @@ package body Anet.Sockets.Unix is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
    begin
-      Thin.Receive_Socket (Socket => Socket.Sock_FD,
-                           Data   => Item,
-                           Last   => Last);
+      Socket_Type (Socket).Receive (Item => Item,
+                                    Last => Last);
       Src := Types.Unix_Path_Type (Ada.Strings.Unbounded.To_String
                                    (Socket.Path));
    end Receive;

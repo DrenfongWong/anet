@@ -104,10 +104,21 @@ package body Anet.Sockets is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
+      use type C.int;
+      use type Ada.Streams.Stream_Element_Offset;
+
+      Res : C.int;
    begin
-      Thin.Receive_Socket (Socket => Socket.Sock_FD,
-                           Data   => Item,
-                           Last   => Last);
+      Res := Thin.C_Recv (S     => C.int (Socket.Sock_FD),
+                          Msg   => Item'Address,
+                          Len   => Item'Length,
+                          Flags => 0);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Error receiving data: " & Get_Errno_String;
+      end if;
+
+      Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive;
 
    -------------------------------------------------------------------------

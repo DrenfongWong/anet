@@ -146,30 +146,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Receive_Socket
-     (Socket :     Integer;
-      Data   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset)
-   is
-      use type Interfaces.C.int;
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res : C.int;
-   begin
-      Res := C_Recv (S     => C.int (Socket),
-                     Msg   => Data'Address,
-                     Len   => Data'Length,
-                     Flags => 0);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Error receiving data: " & Get_Errno_String;
-      end if;
-
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-   end Receive_Socket;
-
-   -------------------------------------------------------------------------
-
    procedure Send_Socket
      (Socket :     Integer;
       Data   :     Ada.Streams.Stream_Element_Array;

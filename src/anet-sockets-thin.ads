@@ -155,13 +155,6 @@ package Anet.Sockets.Thin is
    --  Send data on unix socket. The socket must be of type Family_Unix for
    --  this to work.
 
-   procedure Receive_Socket
-     (Socket :     Integer;
-      Data   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset);
-   --  Receive data from given socket. Last is the index value which designates
-   --  the last stream element in data.
-
    procedure Set_Socket_Option
      (Socket : Integer;
       Level  : Level_Type := Socket_Level;
