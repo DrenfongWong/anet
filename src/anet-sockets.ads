@@ -33,7 +33,10 @@ package Anet.Sockets is
    type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
    --  Address families (IPv4, IPv6, raw).
 
-   type Mode_Type is (Stream_Socket, Datagram_Socket);
+   type Mode_Type is
+     (Datagram_Socket,
+      Raw_Socket,
+      Stream_Socket);
    --  Supported socket modes.
 
    type Level_Type is (Socket_Level);
@@ -112,8 +115,9 @@ private
    --  Address family mapping.
 
    Modes : constant array (Mode_Type) of Interfaces.C.int
-     := (Stream_Socket   => Constants.Sys.SOCK_STREAM,
-         Datagram_Socket => Constants.Sys.SOCK_DGRAM);
+     := (Datagram_Socket => Constants.Sys.SOCK_DGRAM,
+         Raw_Socket      => Constants.SOCK_RAW,
+         Stream_Socket   => Constants.Sys.SOCK_STREAM);
    --  Socket mode mapping.
 
    Levels : constant array (Level_Type) of Interfaces.C.int
