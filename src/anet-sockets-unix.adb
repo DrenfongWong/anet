@@ -21,10 +21,14 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Interfaces.C;
+
 with Anet.OS;
-with Anet.Sockets.Thin.Unix;
+with Anet.Sockets.Thin;
 
 package body Anet.Sockets.Unix is
+
+   package C renames Interfaces.C;
 
    -------------------------------------------------------------------------
 
@@ -52,13 +56,21 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Types.Unix_Path_Type)
    is
-      Result : Boolean;
-   begin
-      Thin.Unix.Bind (Socket  => Socket.Sock_FD,
-                      Path    => Path,
-                      Success => Result);
+      use type C.int;
 
-      if not Result then
+      Res    : C.int;
+      C_Path : constant C.char_array := C.To_C (String (Path));
+      Value  : Thin.Sockaddr_Un_Type;
+   begin
+      OS.Delete_File (Filename => String (Path));
+
+      Value.Pathname (1 .. C_Path'Length) := C_Path;
+
+      Res := Thin.C_Bind (S       => C.int (Socket.Sock_FD),
+                          Name    => Value'Address,
+                          Namelen => Value'Size / 8);
+
+      if Res = C_Failure then
          raise Socket_Error with "Unable to bind unix socket to path "
            & String (Path) & " - " & Get_Errno_String;
       end if;
@@ -85,14 +97,19 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Types.Unix_Path_Type)
    is
-      Result : Boolean;
-   begin
-      Thin.Unix.Connect
-        (Socket  => Socket.Sock_FD,
-         Path    => Path,
-         Success => Result);
+      use type C.int;
 
-      if not Result then
+      Res    : C.int;
+      C_Path : constant C.char_array := C.To_C (String (Path));
+      Value  : Thin.Sockaddr_Un_Type;
+   begin
+      Value.Pathname (1 .. C_Path'Length) := C_Path;
+
+      Res := Thin.C_Connect (S       => C.int (Socket.Sock_FD),
+                             Name    => Value'Address,
+                             Namelen => Value'Size / 8);
+
+      if Res = C_Failure then
          raise Socket_Error with "Unable to connect unix socket to path "
            & String (Path) & " - " & Get_Errno_String;
       end if;
