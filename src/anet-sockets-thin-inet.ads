@@ -23,13 +23,6 @@
 
 package Anet.Sockets.Thin.Inet is
 
-   procedure Bind
-     (Socket  :     Integer;
-      Address :     Sockaddr_In_Type;
-      Success : out Boolean);
-   --  Bind given socket to specified sockaddr. Success is set to True if the
-   --  bind operation succeeded, False otherwise.
-
    procedure Send
      (Socket  :     Integer;
       Data    :     Ada.Streams.Stream_Element_Array;

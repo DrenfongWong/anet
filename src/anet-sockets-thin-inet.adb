@@ -39,23 +39,6 @@ package body Anet.Sockets.Thin.Inet is
 
    -------------------------------------------------------------------------
 
-   procedure Bind
-     (Socket  :     Integer;
-      Address :     Sockaddr_In_Type;
-      Success : out Boolean)
-   is
-      use type C.int;
-
-      Res : C.int;
-   begin
-      Res := C_Bind (S       => C.int (Socket),
-                     Name    => Address'Address,
-                     Namelen => Address'Size / 8);
-      Success := Res /= C_Failure;
-   end Bind;
-
-   -------------------------------------------------------------------------
-
    procedure Connect
      (Socket  :     Integer;
       Dst     :     Sockaddr_In_Type;

@@ -110,16 +110,19 @@ package body Anet.Sockets.Inet is
       Iface     :     Types.Iface_Name_Type := "";
       Success   : out Boolean)
    is
+      use type C.int;
+
+      Res : C.int;
    begin
       Thin.Set_Socket_Option
         (Socket => Socket,
          Option => Reuse_Address,
          Value  => True);
 
-      Thin.Inet.Bind (Socket  => Socket,
-                      Address => Sock_Addr,
-                      Success => Success);
-
+      Res := Thin.C_Bind (S       => C.int (Socket),
+                          Name    => Sock_Addr'Address,
+                          Namelen => Sock_Addr'Size / 8);
+      Success := Res /= C_Failure;
       if not Success then
          return;
       end if;
@@ -131,8 +134,6 @@ package body Anet.Sockets.Inet is
             Option => Bind_To_Device,
             Value  => String (Iface));
       end if;
-
-      Success := True;
    end Bind;
 
    -------------------------------------------------------------------------
