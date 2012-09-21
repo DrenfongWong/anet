@@ -25,15 +25,6 @@ package body Anet.Sockets.Thin is
 
    package C renames Interfaces.C;
 
-   Options_Bool : constant array (Option_Name_Bool) of C.int
-     := (Reuse_Address => Constants.Sys.SO_REUSEADDR,
-         Broadcast     => Constants.Sys.SO_BROADCAST);
-   --  Mapping for option names with boolean value.
-
-   Options_Str : constant array (Option_Name_Str) of C.int
-     := (Bind_To_Device => Constants.SO_BINDTODEVICE);
-   --  Mapping for option names with string value.
-
    Get_Requests : constant array (Netdev_Request_Name) of C.int
      := (If_Addr   => Constants.SIOCGIFADDR,
          If_Flags  => Constants.SIOCGIFFLAGS,
@@ -129,53 +120,5 @@ package body Anet.Sockets.Thin is
 
       return Req;
    end Query_Iface;
-
-   -------------------------------------------------------------------------
-
-   procedure Set_Socket_Option
-     (Socket : Interfaces.C.int;
-      Level  : Level_Type := Socket_Level;
-      Option : Option_Name_Bool;
-      Value  : Boolean)
-   is
-      Val : C.int := C.int (Boolean'Pos (Value));
-      Res : C.int;
-   begin
-      Res := C_Setsockopt
-        (S       => Socket,
-         Level   => Levels (Level),
-         Optname => Options_Bool (Option),
-         Optval  => Val'Address,
-         Optlen  => Val'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable set socket option " & Option'Img
-           & " to " & Value'Img & ": " & Get_Errno_String;
-      end if;
-   end Set_Socket_Option;
-
-   -------------------------------------------------------------------------
-
-   procedure Set_Socket_Option
-     (Socket : Interfaces.C.int;
-      Level  : Level_Type := Socket_Level;
-      Option : Option_Name_Str;
-      Value  : String)
-   is
-      Val : constant C.char_array := C.To_C (Value);
-      Res : C.int;
-   begin
-      Res := C_Setsockopt
-        (S       => Socket,
-         Level   => Levels (Level),
-         Optname => Options_Str (Option),
-         Optval  => Val'Address,
-         Optlen  => Val'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable set socket option " & Option'Img
-           & " to '" & Value & "': " & Get_Errno_String;
-      end if;
-   end Set_Socket_Option;
 
 end Anet.Sockets.Thin;

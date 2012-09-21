@@ -120,6 +120,15 @@ private
      := (Socket_Level => Constants.Sys.SOL_SOCKET);
    --  Protocol level mapping.
 
+   Options_Bool : constant array (Option_Name_Bool) of Interfaces.C.int
+     := (Reuse_Address => Constants.Sys.SO_REUSEADDR,
+         Broadcast     => Constants.Sys.SO_BROADCAST);
+   --  Mapping for option names with boolean value.
+
+   Options_Str : constant array (Option_Name_Str) of Interfaces.C.int
+     := (Bind_To_Device => Constants.SO_BINDTODEVICE);
+   --  Mapping for option names with string value.
+
    use type Interfaces.C.int;
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record

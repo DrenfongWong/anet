@@ -32,15 +32,6 @@ package body Anet.Sockets.Inet is
 
    package C renames Interfaces.C;
 
-   procedure Bind
-     (Socket    :     C.int;
-      Sock_Addr :     Thin.Sockaddr_In_Type;
-      Iface     :     Types.Iface_Name_Type := "";
-      Success   : out Boolean);
-   --  Bind given socket to the specified sockaddr and set reuse address flag.
-   --  If an interface name is given, the socket is bound to it. Success is set
-   --  to True if the operation was successful, False if not.
-
    procedure Receive
      (Socket :     C.int;
       Src    : out Thin.Sockaddr_In_Type;
@@ -111,57 +102,33 @@ package body Anet.Sockets.Inet is
    -------------------------------------------------------------------------
 
    procedure Bind
-     (Socket    :     C.int;
-      Sock_Addr :     Thin.Sockaddr_In_Type;
-      Iface     :     Types.Iface_Name_Type := "";
-      Success   : out Boolean)
-   is
-      Res : C.int;
-   begin
-      Thin.Set_Socket_Option
-        (Socket => Socket,
-         Option => Reuse_Address,
-         Value  => True);
-
-      Res := Thin.C_Bind (S       => Socket,
-                          Name    => Sock_Addr'Address,
-                          Namelen => Sock_Addr'Size / 8);
-      Success := Res /= C_Failure;
-      if not Success then
-         return;
-      end if;
-
-      if Iface'Length /= 0 then
-         Thin.Set_Socket_Option
-           (Socket => Socket,
-            Level  => Socket_Level,
-            Option => Bind_To_Device,
-            Value  => String (Iface));
-      end if;
-   end Bind;
-
-   -------------------------------------------------------------------------
-
-   procedure Bind
      (Socket  : in out IPv4_Socket_Type;
       Address :        IPv4_Addr_Type        := Any_Addr;
       Port    :        Port_Type;
       Iface   :        Types.Iface_Name_Type := "")
    is
-      Result   : Boolean;
+      Res      : C.int;
       Sockaddr : constant Thin.Sockaddr_In_Type
         := Create_Inet4 (Address => Address,
                          Port    => Port);
    begin
-      Bind (Socket    => Socket.Sock_FD,
-            Sock_Addr => Sockaddr,
-            Iface     => Iface,
-            Success   => Result);
+      Socket.Set_Socket_Option
+        (Option => Reuse_Address,
+         Value  => True);
 
-      if not Result then
-         raise Socket_Error with "Unable to bind socket to "
+      Res := Thin.C_Bind (S       => Socket.Sock_FD,
+                          Name    => Sockaddr'Address,
+                          Namelen => Sockaddr'Size / 8);
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to bind IPv4 socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
            & Get_Errno_String;
+      end if;
+
+      if Iface'Length /= 0 then
+         Socket.Set_Socket_Option
+           (Option => Bind_To_Device,
+            Value  => String (Iface));
       end if;
    end Bind;
 
@@ -173,20 +140,28 @@ package body Anet.Sockets.Inet is
       Port    :        Port_Type;
       Iface   :        Types.Iface_Name_Type := "")
    is
-      Result   : Boolean;
+      Res      : C.int;
       Sockaddr : constant Thin.Sockaddr_In_Type
         := Create_Inet6 (Address => Address,
                          Port    => Port);
    begin
-      Bind (Socket    => Socket.Sock_FD,
-            Sock_Addr => Sockaddr,
-            Iface     => Iface,
-            Success   => Result);
+      Socket.Set_Socket_Option
+        (Option => Reuse_Address,
+         Value  => True);
 
-      if not Result then
-         raise Socket_Error with "Unable to bind socket to "
+      Res := Thin.C_Bind (S       => Socket.Sock_FD,
+                          Name    => Sockaddr'Address,
+                          Namelen => Sockaddr'Size / 8);
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to bind IPv6 socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
            & Get_Errno_String;
+      end if;
+
+      if Iface'Length /= 0 then
+         Socket.Set_Socket_Option
+           (Option => Bind_To_Device,
+            Value  => String (Iface));
       end if;
    end Bind;
 

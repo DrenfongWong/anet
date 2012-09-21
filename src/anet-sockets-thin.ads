@@ -143,20 +143,6 @@ package Anet.Sockets.Thin is
          others   => Interfaces.C.int (-1));
    --  Currently supported netdevice ioctl set requests.
 
-   procedure Set_Socket_Option
-     (Socket : Interfaces.C.int;
-      Level  : Level_Type := Socket_Level;
-      Option : Option_Name_Bool;
-      Value  : Boolean);
-   --  Set socket option of given socket to specified boolean value.
-
-   procedure Set_Socket_Option
-     (Socket : Interfaces.C.int;
-      Level  : Level_Type := Socket_Level;
-      Option : Option_Name_Str;
-      Value  : String);
-   --  Set socket option of given socket to specified string value.
-
    function Query_Iface
      (Iface_Name : Types.Iface_Name_Type;
       Request    : Netdev_Request_Name)

@@ -150,11 +150,20 @@ package body Anet.Sockets is
       Option : Option_Name_Bool;
       Value  : Boolean)
    is
+      Val : C.int := C.int (Boolean'Pos (Value));
+      Res : C.int;
    begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Option,
-         Value  => Value);
+      Res := Thin.C_Setsockopt
+        (S       => Socket.Sock_FD,
+         Level   => Levels (Socket_Level),
+         Optname => Options_Bool (Option),
+         Optval  => Val'Address,
+         Optlen  => Val'Size / 8);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable set boolean socket option "
+           & Option'Img & " to " & Value'Img & ": " & Get_Errno_String;
+      end if;
    end Set_Socket_Option;
 
    -------------------------------------------------------------------------
@@ -164,11 +173,20 @@ package body Anet.Sockets is
       Option : Option_Name_Str;
       Value  : String)
    is
+      Val : constant C.char_array := C.To_C (Value);
+      Res : C.int;
    begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Option,
-         Value  => Value);
+      Res := Thin.C_Setsockopt
+        (S       => Socket.Sock_FD,
+         Level   => Levels (Socket_Level),
+         Optname => Options_Str (Option),
+         Optval  => Val'Address,
+         Optlen  => Val'Size / 8);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable set string socket option "
+           & Option'Img & " to '" & Value & "': " & Get_Errno_String;
+      end if;
    end Set_Socket_Option;
 
 end Anet.Sockets;
