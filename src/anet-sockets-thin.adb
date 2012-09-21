@@ -112,9 +112,6 @@ package body Anet.Sockets.Thin is
    is
       use type C.int;
 
-      function C_Close (Fd : C.int) return C.int;
-      pragma Import (C, C_Close, "close");
-
       Res : C.int;
    begin
       Res := C_Close (C.int (Socket));

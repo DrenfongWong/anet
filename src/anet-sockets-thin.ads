@@ -260,6 +260,8 @@ package Anet.Sockets.Thin is
       Optlen  : Interfaces.C.int)
       return Interfaces.C.int;
    pragma Import (C, C_Setsockopt, "setsockopt");
-   --  Set given socket option on specified protocol level.
+
+   function C_Close (Fd : C.int) return C.int;
+   pragma Import (C, C_Close, "close");
 
 end Anet.Sockets.Thin;
