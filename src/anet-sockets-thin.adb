@@ -83,13 +83,6 @@ package body Anet.Sockets.Thin is
    is
       use type Interfaces.C.int;
 
-      function C_Socket
-        (Domain   : C.int;
-         Typ      : C.int;
-         Protocol : C.int)
-         return C.int;
-      pragma Import (C, C_Socket, "socket");
-
       Res   : C.int;
       Proto : C.int := 0;
    begin

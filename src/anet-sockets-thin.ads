@@ -200,6 +200,13 @@ package Anet.Sockets.Thin is
    -- Imports --
    -------------
 
+   function C_Socket
+     (Domain   : C.int;
+      Typ      : C.int;
+      Protocol : C.int)
+      return C.int;
+   pragma Import (C, C_Socket, "socket");
+
    function C_Bind
      (S       : Interfaces.C.int;
       Name    : System.Address;
