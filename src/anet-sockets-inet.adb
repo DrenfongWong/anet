@@ -372,22 +372,27 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Src_Len : Natural;
-      Result  : Boolean;
+      use type Interfaces.C.int;
+      use type Ada.Streams.Stream_Element_Offset;
+
+      Res : C.int;
+      Len : aliased C.int := Src'Size / 8;
    begin
-      Thin.Inet.Receive (Socket     => Socket,
-                         Data       => Item,
-                         Last       => Last,
-                         Source_Len => Src_Len,
-                         Source     => Src,
-                         Success    => Result);
-      if not Result then
+      Res := Thin.C_Recvfrom (S       => C.int (Socket),
+                              Msg     => Item'Address,
+                              Len     => Item'Length,
+                              Flags   => 0,
+                              From    => Src'Address,
+                              Fromlen => Len'Access);
+
+      if Res = C_Failure then
          raise Socket_Error with "Error receiving data: " & Get_Errno_String;
       end if;
-
-      if Src_Len = 0 then
+      if Len = 0 then
          raise Socket_Error with "No address information received";
       end if;
+
+      Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive;
 
    -------------------------------------------------------------------------

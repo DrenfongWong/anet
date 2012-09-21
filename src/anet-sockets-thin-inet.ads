@@ -23,22 +23,6 @@
 
 package Anet.Sockets.Thin.Inet is
 
-   procedure Receive
-     (Socket     :     Integer;
-      Data       : out Ada.Streams.Stream_Element_Array;
-      Last       : out Ada.Streams.Stream_Element_Offset;
-      Source_Len : out Natural;
-      Source     : out Sockaddr_In_Type;
-      Success    : out Boolean);
-   --  Receive data from given socket. Last is the index value which designates
-   --  the last stream element in data.  Success is set to True if the receive
-   --  operation succeeded, False otherwise.
-   --
-   --  Source_Len indicates the size in bytes of the senders' address. A
-   --  Source_Len of zero means that the underlying protocol did not provide a
-   --  sender adresses. If an address is supplied by the underlying protocol,
-   --  it is returned in the sockaddr Source argument.
-
    procedure Join_Multicast_Group
      (Socket    :     Integer;
       Group     :     Sockaddr_In_Type;
