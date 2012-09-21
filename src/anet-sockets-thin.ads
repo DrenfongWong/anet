@@ -150,7 +150,9 @@ package Anet.Sockets.Thin is
    --  Execute netdevice ioctl request on interface with given name and request
    --  type. The specified socket must have been created beforehand.
 
-private
+   -------------
+   -- Imports --
+   -------------
 
    function C_Bind
      (S       : Interfaces.C.int;
@@ -165,6 +167,8 @@ private
       Namelen : Interfaces.C.int)
       return Interfaces.C.int;
    pragma Import (C, C_Connect, "connect");
+
+private
 
    function C_Sendto
      (S     : Interfaces.C.int;
