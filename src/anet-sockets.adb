@@ -74,9 +74,17 @@ package body Anet.Sockets is
      (Socket  : Socket_Type;
       Backlog : Positive := 1)
    is
+      use type C.int;
+
+      Res : C.int;
    begin
-      Thin.Listen_Socket (Socket  => Socket.Sock_FD,
-                          Backlog => Backlog);
+      Res := Thin.C_Listen (Socket  => C.int (Socket.Sock_FD),
+                            Backlog => C.int (Backlog));
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to listen on socket with backlog"
+           & Backlog'Img & " - " & Get_Errno_String;
+      end if;
    end Listen;
 
    -------------------------------------------------------------------------

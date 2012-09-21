@@ -162,25 +162,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Listen_Socket
-     (Socket  : Integer;
-      Backlog : Positive := 1)
-   is
-      use type Interfaces.C.int;
-
-      Res : C.int;
-   begin
-      Res := C_Listen (Socket  => C.int (Socket),
-                       Backlog => C.int (Backlog));
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to listen on socket with backlog"
-           & Backlog'Img & " - " & Get_Errno_String;
-      end if;
-   end Listen_Socket;
-
-   -------------------------------------------------------------------------
-
    function Query_Iface
      (Iface_Name : Types.Iface_Name_Type;
       Request    : Netdev_Request_Name)

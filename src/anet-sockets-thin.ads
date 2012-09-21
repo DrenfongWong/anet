@@ -155,11 +155,6 @@ package Anet.Sockets.Thin is
       Mode   :     Mode_Type   := Datagram_Socket);
    --  Create a new communication socket with specified family and mode.
 
-   procedure Listen_Socket
-     (Socket  : Integer;
-      Backlog : Positive := 1);
-   --  Listen for specified amount of requests on given socket.
-
    procedure Send_Socket
      (Socket :     Integer;
       Data   :     Ada.Streams.Stream_Element_Array;
