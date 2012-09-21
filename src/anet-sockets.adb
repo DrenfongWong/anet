@@ -127,18 +127,27 @@ package body Anet.Sockets is
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array)
    is
+      use type C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
-      Len : Ada.Streams.Stream_Element_Offset;
+      Res        : C.int;
+      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
    begin
-      Thin.Send_Socket
-        (Socket => Socket.Sock_FD,
-         Data   => Item,
-         Last   => Len);
+      Res := Thin.C_Send (S     => C.int (Socket.Sock_FD),
+                          Buf   => Item'Address,
+                          Len   => Item'Length,
+                          Flags => 0);
 
-      if Len /= Item'Length then
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to send data on socket - "
+           & Get_Errno_String;
+      end if;
+
+      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+
+      if Sent_Bytes /= Item'Length then
          raise Socket_Error with "Incomplete send operation on socket"
-         & ", only" & Len'Img & " of" & Item'Length'Img & " bytes sent";
+         & ", only" & Sent_Bytes'Img & " of" & Item'Length'Img & " bytes sent";
       end if;
    end Send;
 

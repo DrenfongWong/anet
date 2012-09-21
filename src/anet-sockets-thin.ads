@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
-
 with System;
 
 with Interfaces.C;
@@ -147,13 +145,6 @@ package Anet.Sockets.Thin is
      := (If_Flags => Constants.SIOCSIFFLAGS,
          others   => Interfaces.C.int (-1));
    --  Currently supported netdevice ioctl set requests.
-
-   procedure Send_Socket
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset);
-   --  Send data on unix socket. The socket must be of type Family_Unix for
-   --  this to work.
 
    procedure Set_Socket_Option
      (Socket : Integer;

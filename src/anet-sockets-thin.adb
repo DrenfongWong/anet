@@ -138,31 +138,6 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Send_Socket
-     (Socket :     Integer;
-      Data   :     Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset)
-   is
-      use type C.int;
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res : C.int;
-   begin
-      Res := C_Send (S     => C.int (Socket),
-                     Buf   => Data'Address,
-                     Len   => Data'Length,
-                     Flags => 0);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to send data on unix socket"
-           & " - " & Get_Errno_String;
-      end if;
-
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-   end Send_Socket;
-
-   -------------------------------------------------------------------------
-
    procedure Set_Socket_Option
      (Socket : Integer;
       Level  : Level_Type := Socket_Level;
