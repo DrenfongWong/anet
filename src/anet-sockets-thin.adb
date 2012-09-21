@@ -84,13 +84,6 @@ package body Anet.Sockets.Thin is
    is
       use type C.int;
 
-      function C_Accept
-        (S       : C.int;
-         Name    : System.Address;
-         Namelen : not null access C.int)
-         return C.int;
-      pragma Import (C, C_Accept, "accept");
-
       Res : C.int;
       Len : aliased C.int := C.int (Sockaddr_Len);
    begin

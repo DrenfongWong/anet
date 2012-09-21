@@ -258,6 +258,13 @@ package Anet.Sockets.Thin is
       return Interfaces.C.int;
    pragma Import (C, C_Setsockopt, "setsockopt");
 
+   function C_Accept
+     (S       : C.int;
+      Name    : System.Address;
+      Namelen : not null access C.int)
+      return C.int;
+   pragma Import (C, C_Accept, "accept");
+
    function C_Close (Fd : C.int) return C.int;
    pragma Import (C, C_Close, "close");
 
