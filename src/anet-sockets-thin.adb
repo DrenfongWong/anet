@@ -46,7 +46,7 @@ package body Anet.Sockets.Thin is
    --  Currently supported netdevice ioctl get requests.
 
    function Ioctl_Get
-     (Socket     : Integer;
+     (Socket     : C.int;
       Request    : Netdev_Request_Name;
       Iface_Name : Types.Iface_Name_Type)
       return If_Req_Type;
@@ -57,12 +57,10 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Ioctl
-     (Socket  : Integer;
-      Request : C.int;
+     (Socket  : Interfaces.C.int;
+      Request : Interfaces.C.int;
       If_Req  : not null access If_Req_Type)
    is
-      use type C.int;
-
       function C_Ioctl
         (S    : C.int;
          Req  : C.int;
@@ -73,7 +71,7 @@ package body Anet.Sockets.Thin is
       Ctl_Ret : C.int;
    begin
       Ctl_Ret := C_Ioctl
-        (S   => C.int (Socket),
+        (S   => Socket,
          Req => Request,
          Arg => If_Req);
 
@@ -87,7 +85,7 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    function Ioctl_Get
-     (Socket     : Integer;
+     (Socket     : C.int;
       Request    : Netdev_Request_Name;
       Iface_Name : Types.Iface_Name_Type)
       return If_Req_Type
@@ -122,7 +120,7 @@ package body Anet.Sockets.Thin is
                         Protocol => 0);
 
       begin
-         Req := Ioctl_Get (Socket     => Integer (Sock),
+         Req := Ioctl_Get (Socket     => Sock,
                            Request    => Request,
                            Iface_Name => Iface_Name);
 
@@ -139,18 +137,16 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Set_Socket_Option
-     (Socket : Integer;
+     (Socket : Interfaces.C.int;
       Level  : Level_Type := Socket_Level;
       Option : Option_Name_Bool;
       Value  : Boolean)
    is
-      use type Interfaces.C.int;
-
       Val : C.int := C.int (Boolean'Pos (Value));
       Res : C.int;
    begin
       Res := C_Setsockopt
-        (S       => C.int (Socket),
+        (S       => Socket,
          Level   => Levels (Level),
          Optname => Options_Bool (Option),
          Optval  => Val'Address,
@@ -165,18 +161,16 @@ package body Anet.Sockets.Thin is
    -------------------------------------------------------------------------
 
    procedure Set_Socket_Option
-     (Socket : Integer;
+     (Socket : Interfaces.C.int;
       Level  : Level_Type := Socket_Level;
       Option : Option_Name_Str;
       Value  : String)
    is
-      use type Interfaces.C.int;
-
       Val : constant C.char_array := C.To_C (Value);
       Res : C.int;
    begin
       Res := C_Setsockopt
-        (S       => C.int (Socket),
+        (S       => Socket,
          Level   => Levels (Level),
          Optname => Options_Str (Option),
          Optval  => Val'Address,

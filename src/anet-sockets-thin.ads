@@ -147,14 +147,14 @@ package Anet.Sockets.Thin is
    --  Currently supported netdevice ioctl set requests.
 
    procedure Set_Socket_Option
-     (Socket : Integer;
+     (Socket : Interfaces.C.int;
       Level  : Level_Type := Socket_Level;
       Option : Option_Name_Bool;
       Value  : Boolean);
    --  Set socket option of given socket to specified boolean value.
 
    procedure Set_Socket_Option
-     (Socket : Integer;
+     (Socket : Interfaces.C.int;
       Level  : Level_Type := Socket_Level;
       Option : Option_Name_Str;
       Value  : String);
@@ -167,7 +167,7 @@ package Anet.Sockets.Thin is
    --  Query interface with given request.
 
    procedure Ioctl
-     (Socket  : Integer;
+     (Socket  : Interfaces.C.int;
       Request : Interfaces.C.int;
       If_Req  : not null access If_Req_Type);
    --  Execute netdevice ioctl request on interface with given name and request

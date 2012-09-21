@@ -31,12 +31,10 @@ package body Anet.Sockets is
 
    procedure Close (Socket : in out Socket_Type)
    is
-      use type C.int;
-
       Res : C.int;
    begin
       if Socket.Sock_FD /= -1 then
-         Res := Thin.C_Close (C.int (Socket.Sock_FD));
+         Res := Thin.C_Close (Socket.Sock_FD);
          if Res = C_Failure then
             raise Socket_Error with "Unable to close socket: "
               & Get_Errno_String;
@@ -61,8 +59,6 @@ package body Anet.Sockets is
       Mode     :        Mode_Type;
       Protocol :        Natural := 0)
    is
-      use type C.int;
-
       Res : C.int;
    begin
       Res := Thin.C_Socket (Domain   => Families (Family),
@@ -75,7 +71,7 @@ package body Anet.Sockets is
            & Get_Errno_String;
       end if;
 
-      Socket.Sock_FD := Integer (Res);
+      Socket.Sock_FD := Res;
    end Init;
 
    -------------------------------------------------------------------------
@@ -84,11 +80,9 @@ package body Anet.Sockets is
      (Socket  : Socket_Type;
       Backlog : Positive := 1)
    is
-      use type C.int;
-
       Res : C.int;
    begin
-      Res := Thin.C_Listen (Socket  => C.int (Socket.Sock_FD),
+      Res := Thin.C_Listen (Socket  => Socket.Sock_FD,
                             Backlog => C.int (Backlog));
 
       if Res = C_Failure then
@@ -104,12 +98,11 @@ package body Anet.Sockets is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      use type C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.int;
    begin
-      Res := Thin.C_Recv (S     => C.int (Socket.Sock_FD),
+      Res := Thin.C_Recv (S     => Socket.Sock_FD,
                           Msg   => Item'Address,
                           Len   => Item'Length,
                           Flags => 0);
@@ -127,13 +120,12 @@ package body Anet.Sockets is
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array)
    is
-      use type C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res        : C.int;
       Sent_Bytes : Ada.Streams.Stream_Element_Offset;
    begin
-      Res := Thin.C_Send (S     => C.int (Socket.Sock_FD),
+      Res := Thin.C_Send (S     => Socket.Sock_FD,
                           Buf   => Item'Address,
                           Len   => Item'Length,
                           Flags => 0);

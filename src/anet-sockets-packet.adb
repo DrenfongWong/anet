@@ -38,8 +38,6 @@ package body Anet.Sockets.Packet is
      (Socket : in out Packet_Socket_Type;
       Iface  :        Types.Iface_Name_Type)
    is
-      use type C.int;
-
       Res   : C.int;
       Value : Thin.Sockaddr_Ll_Type;
    begin
@@ -48,7 +46,7 @@ package body Anet.Sockets.Packet is
            (Input => Double_Byte (Constants.ETH_P_IP)));
       Value.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index (Name => Iface));
 
-      Res := Thin.C_Bind (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Bind (S       => Socket.Sock_FD,
                           Name    => Value'Address,
                           Namelen => Value'Size / 8);
 
@@ -78,14 +76,13 @@ package body Anet.Sockets.Packet is
       Data   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res   : C.int;
       Saddr : Thin.Sockaddr_Ll_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
-      Res := Thin.C_Recvfrom (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Recvfrom (S       => Socket.Sock_FD,
                               Msg     => Data'Address,
                               Len     => Data'Length,
                               Flags   => 0,
@@ -109,7 +106,6 @@ package body Anet.Sockets.Packet is
       To     : Hardware_Addr_Type;
       Iface  : Types.Iface_Name_Type)
    is
-      use type C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res        : C.int;
@@ -125,7 +121,7 @@ package body Anet.Sockets.Packet is
 
       Ll_Dest.Sa_Addr (1 .. To'Length) := To;
 
-      Res := Thin.C_Sendto (S     => C.int (Socket.Sock_FD),
+      Res := Thin.C_Sendto (S     => Socket.Sock_FD,
                             Buf   => Item'Address,
                             Len   => Item'Length,
                             Flags => 0,

@@ -125,7 +125,7 @@ package body Anet.Net_Ifaces is
             Req.Ifr_Flags := 0;
          end if;
 
-         Ioctl (Socket  => Integer (Sock),
+         Ioctl (Socket  => Sock,
                 Request => Set_Requests (If_Flags),
                 If_Req  => Req'Access);
 

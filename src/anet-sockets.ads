@@ -113,8 +113,10 @@ private
          Datagram_Socket => Constants.Sys.SOCK_DGRAM);
    --  Socket mode mapping.
 
+   use type Interfaces.C.int;
+
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
-      Sock_FD : Integer := -1;
+      Sock_FD : Interfaces.C.int := -1;
    end record;
 
    overriding

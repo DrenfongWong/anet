@@ -33,7 +33,7 @@ package body Anet.Sockets.Inet is
    package C renames Interfaces.C;
 
    procedure Bind
-     (Socket    :     Integer;
+     (Socket    :     C.int;
       Sock_Addr :     Thin.Sockaddr_In_Type;
       Iface     :     Types.Iface_Name_Type := "";
       Success   : out Boolean);
@@ -42,7 +42,7 @@ package body Anet.Sockets.Inet is
    --  to True if the operation was successful, False if not.
 
    procedure Receive
-     (Socket :     Integer;
+     (Socket :     C.int;
       Src    : out Thin.Sockaddr_In_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
@@ -70,13 +70,11 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv4_Socket_Type;
       New_Socket : out TCPv4_Socket_Type)
    is
-      use type C.int;
-
       Res  : C.int;
       Sock : Thin.Sockaddr_In_Type (Family => Family_Inet);
       Len  : aliased C.int := Sock'Size / 8;
    begin
-      Res := Thin.C_Accept (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
                             Namelen => Len'Access);
 
@@ -85,7 +83,7 @@ package body Anet.Sockets.Inet is
            & "socket - " & Get_Errno_String;
       end if;
 
-      New_Socket.Sock_FD := Integer (Res);
+      New_Socket.Sock_FD := Res;
    end Accept_Connection;
 
    -------------------------------------------------------------------------
@@ -94,13 +92,11 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv6_Socket_Type;
       New_Socket : out TCPv6_Socket_Type)
    is
-      use type C.int;
-
       Res  : C.int;
       Sock : Thin.Sockaddr_In_Type (Family => Family_Inet6);
       Len  : aliased C.int := Sock'Size / 8;
    begin
-      Res := Thin.C_Accept (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
                             Namelen => Len'Access);
 
@@ -109,19 +105,17 @@ package body Anet.Sockets.Inet is
            & "socket - " & Get_Errno_String;
       end if;
 
-      New_Socket.Sock_FD := Integer (Res);
+      New_Socket.Sock_FD := Res;
    end Accept_Connection;
 
    -------------------------------------------------------------------------
 
    procedure Bind
-     (Socket    :     Integer;
+     (Socket    :     C.int;
       Sock_Addr :     Thin.Sockaddr_In_Type;
       Iface     :     Types.Iface_Name_Type := "";
       Success   : out Boolean)
    is
-      use type C.int;
-
       Res : C.int;
    begin
       Thin.Set_Socket_Option
@@ -129,7 +123,7 @@ package body Anet.Sockets.Inet is
          Option => Reuse_Address,
          Value  => True);
 
-      Res := Thin.C_Bind (S       => C.int (Socket),
+      Res := Thin.C_Bind (S       => Socket,
                           Name    => Sock_Addr'Address,
                           Namelen => Sock_Addr'Size / 8);
       Success := Res /= C_Failure;
@@ -203,14 +197,12 @@ package body Anet.Sockets.Inet is
       Address :        IPv4_Addr_Type;
       Port    :        Port_Type)
    is
-      use type C.int;
-
       Res : C.int;
       Dst : constant Thin.Sockaddr_In_Type := Create_Inet4
         (Address => Address,
          Port    => Port);
    begin
-      Res := Thin.C_Connect (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Connect (S       => Socket.Sock_FD,
                              Name    => Dst'Address,
                              Namelen => Dst'Size / 8);
 
@@ -228,14 +220,12 @@ package body Anet.Sockets.Inet is
       Address :        IPv6_Addr_Type;
       Port    :        Port_Type)
    is
-      use type C.int;
-
       Res : C.int;
       Dst : constant Thin.Sockaddr_In_Type := Create_Inet6
         (Address => Address,
          Port    => Port);
    begin
-      Res := Thin.C_Connect (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Connect (S       => Socket.Sock_FD,
                              Name    => Dst'Address,
                              Namelen => Dst'Size / 8);
 
@@ -325,7 +315,6 @@ package body Anet.Sockets.Inet is
       Group  : IPv4_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      use type C.int;
       use type C.unsigned_short;
 
       Mreq      : Thin.IPv4_Mreq_Type;
@@ -340,7 +329,7 @@ package body Anet.Sockets.Inet is
       Mreq.Imr_Interface := C.unsigned (Iface_Idx);
 
       Res := Thin.C_Setsockopt
-        (S       => C.int (Socket.Sock_FD),
+        (S       => Socket.Sock_FD,
          Level   => Constants.Sys.IPPROTO_IP,
          Optname => Constants.Sys.IP_ADD_MEMBERSHIP,
          Optval  => Mreq'Address,
@@ -359,7 +348,6 @@ package body Anet.Sockets.Inet is
       Group  : IPv6_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      use type C.int;
       use type C.unsigned_short;
 
       Mreq6     : Thin.IPv6_Mreq_Type;
@@ -374,7 +362,7 @@ package body Anet.Sockets.Inet is
       Mreq6.IPv6mr_Interface := C.unsigned (Iface_Idx);
 
       Res := Thin.C_Setsockopt
-        (S       => C.int (Socket.Sock_FD),
+        (S       => Socket.Sock_FD,
          Level   => Constants.IPPROTO_IPV6,
          Optname => Constants.IPV6_ADD_MEMBERSHIP,
          Optval  => Mreq6'Address,
@@ -389,18 +377,17 @@ package body Anet.Sockets.Inet is
    -------------------------------------------------------------------------
 
    procedure Receive
-     (Socket :     Integer;
+     (Socket :     C.int;
       Src    : out Thin.Sockaddr_In_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.int;
       Len : aliased C.int := Src'Size / 8;
    begin
-      Res := Thin.C_Recvfrom (S       => C.int (Socket),
+      Res := Thin.C_Recvfrom (S       => Socket,
                               Msg     => Item'Address,
                               Len     => Item'Length,
                               Flags   => 0,
@@ -463,7 +450,6 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv4_Addr_Type;
       Dst_Port : Port_Type)
    is
-      use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res        : C.int;
@@ -472,7 +458,7 @@ package body Anet.Sockets.Inet is
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
-      Res := Thin.C_Sendto (S     => C.int (Socket.Sock_FD),
+      Res := Thin.C_Sendto (S     => Socket.Sock_FD,
                             Buf   => Item'Address,
                             Len   => Item'Length,
                             Flags => 0,
@@ -501,7 +487,6 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv6_Addr_Type;
       Dst_Port : Port_Type)
    is
-      use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
       Res        : C.int;
@@ -510,7 +495,7 @@ package body Anet.Sockets.Inet is
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
-      Res := Thin.C_Sendto (S     => C.int (Socket.Sock_FD),
+      Res := Thin.C_Sendto (S     => Socket.Sock_FD,
                             Buf   => Item'Address,
                             Len   => Item'Length,
                             Flags => 0,

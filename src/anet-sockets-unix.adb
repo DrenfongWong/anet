@@ -36,13 +36,11 @@ package body Anet.Sockets.Unix is
      (Socket     :     TCP_Socket_Type;
       New_Socket : out TCP_Socket_Type)
    is
-      use type C.int;
-
       Res  : C.int;
       Sock : Thin.Sockaddr_Un_Type;
       Len  : aliased C.int := Sock'Size / 8;
    begin
-      Res := Thin.C_Accept (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
                             Namelen => Len'Access);
 
@@ -51,7 +49,7 @@ package body Anet.Sockets.Unix is
            & "socket - " & Get_Errno_String;
       end if;
 
-      New_Socket.Sock_FD := Integer (Res);
+      New_Socket.Sock_FD := Res;
       New_Socket.Path    := Socket.Path;
    end Accept_Connection;
 
@@ -61,8 +59,6 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Types.Unix_Path_Type)
    is
-      use type C.int;
-
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Sockaddr_Un_Type;
@@ -71,7 +67,7 @@ package body Anet.Sockets.Unix is
 
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
-      Res := Thin.C_Bind (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Bind (S       => Socket.Sock_FD,
                           Name    => Value'Address,
                           Namelen => Value'Size / 8);
 
@@ -102,15 +98,13 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Types.Unix_Path_Type)
    is
-      use type C.int;
-
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Sockaddr_Un_Type;
    begin
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
-      Res := Thin.C_Connect (S       => C.int (Socket.Sock_FD),
+      Res := Thin.C_Connect (S       => Socket.Sock_FD,
                              Name    => Value'Address,
                              Namelen => Value'Size / 8);
 
