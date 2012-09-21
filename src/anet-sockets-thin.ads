@@ -97,6 +97,19 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_Ll_Type);
    --  Device independent physical layer address
 
+   type Sockaddr_Nl_Type is record
+      Nl_Family : Interfaces.C.unsigned_short := Constants.AF_NETLINK;
+      --  Address family (always AF_NETLINK)
+      Nl_Pad    : Interfaces.C.unsigned_short := 0;
+      --  Zero
+      Nl_Pid    : Interfaces.Unsigned_32      := 0;
+      --  Port PID
+      Nl_Groups : Interfaces.Unsigned_32      := 0;
+      --  Multicast groups mask
+   end record;
+   pragma Convention (C, Sockaddr_Nl_Type);
+   --  Netlink address
+
    type IPv4_Mreq_Type is record
       Imr_Multiaddr : IPv4_Addr_Type;
       Imr_Interface : Interfaces.C.unsigned;
