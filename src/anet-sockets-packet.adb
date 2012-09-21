@@ -41,7 +41,7 @@ package body Anet.Sockets.Packet is
       use type C.int;
 
       Res   : C.int;
-      Value : Thin.Sockaddr_LL_Type;
+      Value : Thin.Sockaddr_Ll_Type;
    begin
       Value.Sa_Protocol := C.unsigned_short
         (Byte_Swapping.Host_To_Network
@@ -80,7 +80,7 @@ package body Anet.Sockets.Packet is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res   : C.int;
-      Saddr : Thin.Sockaddr_LL_Type;
+      Saddr : Thin.Sockaddr_Ll_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
       Res := Thin.C_Recvfrom (S       => C.int (Socket.Sock_FD),
@@ -111,24 +111,24 @@ package body Anet.Sockets.Packet is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res        : C.int;
-      LL_Dest    : Thin.Sockaddr_LL_Type;
+      Ll_Dest    : Thin.Sockaddr_Ll_Type;
       Sent_Bytes : Ada.Streams.Stream_Element_Offset;
    begin
-      LL_Dest.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index
+      Ll_Dest.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index
                                     (Name => Iface));
-      LL_Dest.Sa_Halen    := To'Length;
-      LL_Dest.Sa_Protocol := C.unsigned_short
+      Ll_Dest.Sa_Halen    := To'Length;
+      Ll_Dest.Sa_Protocol := C.unsigned_short
         (Byte_Swapping.Host_To_Network
            (Input => Double_Byte (Constants.ETH_P_IP)));
 
-      LL_Dest.Sa_Addr (1 .. To'Length) := To;
+      Ll_Dest.Sa_Addr (1 .. To'Length) := To;
 
       Res := Thin.C_Sendto (S     => C.int (Socket.Sock_FD),
                             Buf   => Item'Address,
                             Len   => Item'Length,
                             Flags => 0,
-                            To    => LL_Dest'Address,
-                            Tolen => LL_Dest'Size / 8);
+                            To    => Ll_Dest'Address,
+                            Tolen => Ll_Dest'Size / 8);
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to send packet data on interface "

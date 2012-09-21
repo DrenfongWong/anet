@@ -92,7 +92,7 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_Un_Type);
    --  Low-level UNIX socket address type (struct sockaddr_un).
 
-   type Sockaddr_LL_Type is record
+   type Sockaddr_Ll_Type is record
       Sa_Family   : C.unsigned_short            := Constants.AF_PACKET;
       --  Address family (always AF_PACKET)
       Sa_Protocol : C.unsigned_short            := 0;
@@ -108,7 +108,7 @@ package Anet.Sockets.Thin is
       Sa_Addr     : Hardware_Addr_Type (1 .. 8) := (others => 0);
       --  Physical layer address
    end record;
-   pragma Convention (C, Sockaddr_LL_Type);
+   pragma Convention (C, Sockaddr_Ll_Type);
    --  Device independent physical layer address
 
    type IPv4_Mreq_Type is record
