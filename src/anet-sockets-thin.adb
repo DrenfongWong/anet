@@ -43,41 +43,25 @@ package body Anet.Sockets.Thin is
 
    -------------------------------------------------------------------------
 
-   procedure Ioctl
-     (Socket  : Interfaces.C.int;
-      Request : Interfaces.C.int;
-      If_Req  : not null access If_Req_Type)
-   is
-      Ctl_Ret : C.int;
-   begin
-      Ctl_Ret := C_Ioctl
-        (S   => Socket,
-         Req => Request,
-         Arg => If_Req);
-
-      if Ctl_Ret = C_Failure then
-         raise Socket_Error with "Ioctl (" & Request'Img
-           & ") failed on interface '" & C.To_Ada (If_Req.Ifr_Name) & "': "
-           & Get_Errno_String;
-      end if;
-   end Ioctl;
-
-   -------------------------------------------------------------------------
-
    function Ioctl_Get
      (Socket     : C.int;
       Request    : Netdev_Request_Name;
       Iface_Name : Types.Iface_Name_Type)
       return If_Req_Type
    is
-      C_Name  : constant C.char_array := C.To_C (String (Iface_Name));
-      If_Req  : aliased If_Req_Type (Name => Request);
+      Res    : C.int;
+      C_Name : constant C.char_array := C.To_C (String (Iface_Name));
+      If_Req : aliased If_Req_Type (Name => Request);
    begin
       If_Req.Ifr_Name (1 .. C_Name'Length) := C_Name;
-
-      Ioctl (Socket  => Socket,
-             Request => Get_Requests (Request),
-             If_Req  => If_Req'Access);
+      Res := C_Ioctl (S   => Socket,
+                      Req => Get_Requests (Request),
+                      Arg => If_Req'Access);
+      if Res = C_Failure then
+         raise Socket_Error with "Ioctl (" & Request'Img
+           & ") failed on interface '" & String (Iface_Name) & "': "
+           & Get_Errno_String;
+      end if;
 
       return If_Req;
    end Ioctl_Get;

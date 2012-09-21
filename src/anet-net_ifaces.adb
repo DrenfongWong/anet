@@ -105,9 +105,9 @@ package body Anet.Net_Ifaces is
      (Name  : Types.Iface_Name_Type;
       State : Boolean)
    is
+      use type C.int;
+
       Res, Sock : C.int;
-      pragma Unreferenced (Res);
-      --  Ignore socket close errors.
    begin
       Sock := C_Socket (Domain   => Constants.Sys.AF_INET,
                         Typ      => Constants.Sys.SOCK_DGRAM,
@@ -125,9 +125,14 @@ package body Anet.Net_Ifaces is
             Req.Ifr_Flags := 0;
          end if;
 
-         Ioctl (Socket  => Sock,
-                Request => Set_Requests (If_Flags),
-                If_Req  => Req'Access);
+         Res := C_Ioctl (S   => Sock,
+                         Req => Set_Requests (If_Flags),
+                         Arg => Req'Access);
+         if Res = C_Failure then
+            raise Sockets.Socket_Error with "Ioctl (" & If_Flags'Img
+              & ") failed on interface '" & String (Name) & "': "
+              & Get_Errno_String;
+         end if;
 
       exception
          when Sockets.Socket_Error =>
@@ -135,6 +140,7 @@ package body Anet.Net_Ifaces is
             raise;
       end;
       Res := C_Close (Fd => Sock);
+      pragma Unreferenced (Res);
    end Set_Iface_State;
 
 end Anet.Net_Ifaces;

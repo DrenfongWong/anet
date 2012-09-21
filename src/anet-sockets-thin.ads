@@ -149,13 +149,6 @@ package Anet.Sockets.Thin is
       return If_Req_Type;
    --  Query interface with given request.
 
-   procedure Ioctl
-     (Socket  : Interfaces.C.int;
-      Request : Interfaces.C.int;
-      If_Req  : not null access If_Req_Type);
-   --  Execute netdevice ioctl request on interface with given name and request
-   --  type. The specified socket must have been created beforehand.
-
    -------------
    -- Imports --
    -------------
