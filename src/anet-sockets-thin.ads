@@ -214,6 +214,14 @@ package Anet.Sockets.Thin is
       return Interfaces.C.int;
    pragma Import (C, C_Connect, "connect");
 
+   function C_Recv
+     (S     : Interfaces.C.int;
+      Msg   : System.Address;
+      Len   : Interfaces.C.int;
+      Flags : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Recv, "recv");
+
    function C_Recvfrom
      (S       : Interfaces.C.int;
       Msg     : System.Address;

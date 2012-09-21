@@ -154,14 +154,6 @@ package body Anet.Sockets.Thin is
       use type Interfaces.C.int;
       use type Ada.Streams.Stream_Element_Offset;
 
-      function C_Recv
-        (S       : C.int;
-         Msg     : System.Address;
-         Len     : C.int;
-         Flags   : C.int)
-         return C.int;
-      pragma Import (C, C_Recv, "recv");
-
       Res : C.int;
    begin
       Res := C_Recv (S     => C.int (Socket),
