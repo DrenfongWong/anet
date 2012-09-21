@@ -34,6 +34,7 @@ package Anet.Constants is
    --------------
 
    AF_UNIX             : constant := 1;        --  Unix domain family
+   AF_NETLINK          : constant := 16;       --  Netlink family
    AF_PACKET           : constant := 17;       --  Packet family
 
    ------------------

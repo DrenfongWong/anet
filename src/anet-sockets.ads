@@ -30,8 +30,13 @@ with Anet.Constants;
 
 package Anet.Sockets is
 
-   type Family_Type is (Family_Inet, Family_Inet6, Family_Packet, Family_Unix);
-   --  Address families (IPv4, IPv6, raw).
+   type Family_Type is
+     (Family_Inet,
+      Family_Inet6,
+      Family_Netlink,
+      Family_Packet,
+      Family_Unix);
+   --  Address families.
 
    type Mode_Type is
      (Datagram_Socket,
@@ -108,10 +113,11 @@ package Anet.Sockets is
 private
 
    Families : constant array (Family_Type) of Interfaces.C.int
-     := (Family_Inet   => Constants.Sys.AF_INET,
-         Family_Inet6  => Constants.Sys.AF_INET6,
-         Family_Packet => Constants.AF_PACKET,
-         Family_Unix   => Constants.AF_UNIX);
+     := (Family_Inet    => Constants.Sys.AF_INET,
+         Family_Inet6   => Constants.Sys.AF_INET6,
+         Family_Netlink => Constants.AF_NETLINK,
+         Family_Packet  => Constants.AF_PACKET,
+         Family_Unix    => Constants.AF_UNIX);
    --  Address family mapping.
 
    Modes : constant array (Mode_Type) of Interfaces.C.int
