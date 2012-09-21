@@ -25,6 +25,8 @@ with Anet.Byte_Swapping;
 
 package body Anet.Sockets.Thin is
 
+   package C renames Interfaces.C;
+
    Families : constant array (Family_Type) of C.int
      := (Family_Inet   => Constants.Sys.AF_INET,
          Family_Inet6  => Constants.Sys.AF_INET6,

@@ -32,8 +32,6 @@ with Anet.Types;
 
 package Anet.Sockets.Thin is
 
-   package C renames Interfaces.C;
-
    type Level_Type is (Socket_Level);
    --  Protocol level type.
 
@@ -45,9 +43,10 @@ package Anet.Sockets.Thin is
    --  Supported netdevice requests.
 
    type Sockaddr_Type is record
-      Sa_Family : C.unsigned_short;
+      Sa_Family : Interfaces.C.unsigned_short;
       --  Address family
-      Sa_Data   : C.char_array (1 .. 14) := (others => C.nul);
+      Sa_Data   : Interfaces.C.char_array (1 .. 14)
+        := (others => Interfaces.C.nul);
       --  Family-specific data
    end record;
    pragma Convention (C, Sockaddr_Type);
@@ -93,17 +92,17 @@ package Anet.Sockets.Thin is
    --  Low-level UNIX socket address type (struct sockaddr_un).
 
    type Sockaddr_Ll_Type is record
-      Sa_Family   : C.unsigned_short            := Constants.AF_PACKET;
+      Sa_Family   : Interfaces.C.unsigned_short := Constants.AF_PACKET;
       --  Address family (always AF_PACKET)
-      Sa_Protocol : C.unsigned_short            := 0;
+      Sa_Protocol : Interfaces.C.unsigned_short := 0;
       --  Physical layer protocol
-      Sa_Ifindex  : C.int                       := 0;
+      Sa_Ifindex  : Interfaces.C.int            := 0;
       --  Interface number
-      Sa_Hatype   : C.unsigned_short            := 0;
+      Sa_Hatype   : Interfaces.C.unsigned_short := 0;
       --  Header type
-      Sa_Pkttype  : C.unsigned_char             := 0;
+      Sa_Pkttype  : Interfaces.C.unsigned_char  := 0;
       --  Packet type
-      Sa_Halen    : C.unsigned_char             := 0;
+      Sa_Halen    : Interfaces.C.unsigned_char  := 0;
       --  Length of address
       Sa_Addr     : Hardware_Addr_Type (1 .. 8) := (others => 0);
       --  Physical layer address
@@ -113,21 +112,21 @@ package Anet.Sockets.Thin is
 
    type IPv4_Mreq_Type is record
       Imr_Multiaddr : IPv4_Addr_Type;
-      Imr_Interface : C.unsigned;
+      Imr_Interface : Interfaces.C.unsigned;
    end record;
    pragma Convention (C, IPv4_Mreq_Type);
    --  struct ip_mreq (netinet/in.h).
 
    type IPv6_Mreq_Type is record
       IPv6mr_Multiaddr : IPv6_Addr_Type;
-      IPv6mr_Interface : C.unsigned;
+      IPv6mr_Interface : Interfaces.C.unsigned;
    end record;
    pragma Convention (C, IPv6_Mreq_Type);
    --  struct ipv6_mreq (netinet/in.h).
 
    type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
       Ifr_Name : Interfaces.C.char_array
-        (1 .. Constants.IFNAMSIZ) := (others => C.nul);
+        (1 .. Constants.IFNAMSIZ) := (others => Interfaces.C.nul);
 
       case Name is
          when If_Addr   =>
@@ -135,18 +134,18 @@ package Anet.Sockets.Thin is
          when If_Hwaddr =>
             Ifr_Hwaddr  : Sockaddr_Type;
          when If_Index  =>
-            Ifr_Ifindex : C.int   := 0;
+            Ifr_Ifindex : Interfaces.C.int   := 0;
          when If_Flags  =>
-            Ifr_Flags   : C.short := 0;
+            Ifr_Flags   : Interfaces.C.short := 0;
       end case;
    end record;
    pragma Unchecked_Union (If_Req_Type);
    pragma Convention (C, If_Req_Type);
    --  Interface request structure (struct ifreq).
 
-   Set_Requests : constant array (Netdev_Request_Name) of C.int
+   Set_Requests : constant array (Netdev_Request_Name) of Interfaces.C.int
      := (If_Flags => Constants.SIOCSIFFLAGS,
-         others   => C.int (-1));
+         others   => Interfaces.C.int (-1));
    --  Currently supported netdevice ioctl set requests.
 
    procedure Create_Socket
@@ -191,7 +190,7 @@ package Anet.Sockets.Thin is
 
    procedure Ioctl
      (Socket  : Integer;
-      Request : C.int;
+      Request : Interfaces.C.int;
       If_Req  : not null access If_Req_Type);
    --  Execute netdevice ioctl request on interface with given name and request
    --  type. The specified socket must have been created beforehand.
@@ -201,10 +200,10 @@ package Anet.Sockets.Thin is
    -------------
 
    function C_Socket
-     (Domain   : C.int;
-      Typ      : C.int;
-      Protocol : C.int)
-      return C.int;
+     (Domain   : Interfaces.C.int;
+      Typ      : Interfaces.C.int;
+      Protocol : Interfaces.C.int)
+      return Interfaces.C.int;
    pragma Import (C, C_Socket, "socket");
 
    function C_Bind
@@ -251,19 +250,19 @@ package Anet.Sockets.Thin is
    pragma Import (C, C_Setsockopt, "setsockopt");
 
    function C_Accept
-     (S       : C.int;
+     (S       : Interfaces.C.int;
       Name    : System.Address;
-      Namelen : not null access C.int)
-      return C.int;
+      Namelen : not null access Interfaces.C.int)
+      return Interfaces.C.int;
    pragma Import (C, C_Accept, "accept");
 
    function C_Listen
-     (Socket  : C.int;
-      Backlog : C.int)
-      return C.int;
+     (Socket  : Interfaces.C.int;
+      Backlog : Interfaces.C.int)
+      return Interfaces.C.int;
    pragma Import (C, C_Listen, "listen");
 
-   function C_Close (Fd : C.int) return C.int;
+   function C_Close (Fd : Interfaces.C.int) return Interfaces.C.int;
    pragma Import (C, C_Close, "close");
 
 end Anet.Sockets.Thin;
