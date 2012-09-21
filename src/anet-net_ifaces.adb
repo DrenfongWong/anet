@@ -32,6 +32,21 @@ package body Anet.Net_Ifaces is
 
    package C renames Interfaces.C;
 
+   function Ioctl_Get
+     (Socket     : C.int;
+      Request    : Netdev_Request_Name;
+      Iface_Name : Types.Iface_Name_Type)
+      return If_Req_Type;
+   --  Execute netdevice ioctl get request on interface with given name. The
+   --  specified socket must have been created beforehand. The procedure
+   --  returns the resulting interface request record to the caller.
+
+   function Query_Iface
+     (Iface_Name : Types.Iface_Name_Type;
+      Request    : Netdev_Request_Name)
+      return If_Req_Type;
+   --  Query interface with given request.
+
    -------------------------------------------------------------------------
 
    function Get_Iface_Index (Name : Types.Iface_Name_Type) return Positive
@@ -88,6 +103,33 @@ package body Anet.Net_Ifaces is
 
    -------------------------------------------------------------------------
 
+   function Ioctl_Get
+     (Socket     : C.int;
+      Request    : Netdev_Request_Name;
+      Iface_Name : Types.Iface_Name_Type)
+      return If_Req_Type
+   is
+      use type C.int;
+
+      Res    : C.int;
+      C_Name : constant C.char_array := C.To_C (String (Iface_Name));
+      If_Req : aliased If_Req_Type (Name => Request);
+   begin
+      If_Req.Ifr_Name (1 .. C_Name'Length) := C_Name;
+      Res := C_Ioctl (S   => Socket,
+                      Req => Get_Requests (Request),
+                      Arg => If_Req'Access);
+      if Res = C_Failure then
+         raise Sockets.Socket_Error with "Ioctl (" & Request'Img
+           & ") failed on interface '" & String (Iface_Name) & "': "
+           & Get_Errno_String;
+      end if;
+
+      return If_Req;
+   end Ioctl_Get;
+
+   -------------------------------------------------------------------------
+
    function Is_Iface_Up (Name : Types.Iface_Name_Type) return Boolean
    is
       use type Interfaces.C.short;
@@ -98,6 +140,38 @@ package body Anet.Net_Ifaces is
    begin
       return (Req.Ifr_Flags mod 2) = Constants.IFF_UP;
    end Is_Iface_Up;
+
+   -------------------------------------------------------------------------
+
+   function Query_Iface
+     (Iface_Name : Types.Iface_Name_Type;
+      Request    : Netdev_Request_Name)
+      return If_Req_Type
+   is
+      Req  : If_Req_Type;
+      Sock : C.int;
+      Res  : C.int;
+      pragma Unreferenced (Res);
+      --  Ignore socket close errors.
+   begin
+      Sock := C_Socket (Domain   => Constants.Sys.AF_INET,
+                        Typ      => Constants.Sys.SOCK_DGRAM,
+                        Protocol => 0);
+
+      begin
+         Req := Ioctl_Get (Socket     => Sock,
+                           Request    => Request,
+                           Iface_Name => Iface_Name);
+
+      exception
+         when Sockets.Socket_Error =>
+            Res := C_Close (Fd => Sock);
+            raise;
+      end;
+      Res := C_Close (Fd => Sock);
+
+      return Req;
+   end Query_Iface;
 
    -------------------------------------------------------------------------
 

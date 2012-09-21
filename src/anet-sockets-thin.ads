@@ -26,7 +26,6 @@ with System;
 with Interfaces.C;
 
 with Anet.Constants;
-with Anet.Types;
 
 package Anet.Sockets.Thin is
 
@@ -149,12 +148,6 @@ package Anet.Sockets.Thin is
      := (If_Flags => Constants.SIOCSIFFLAGS,
          others   => Interfaces.C.int (-1));
    --  Currently supported netdevice ioctl set requests.
-
-   function Query_Iface
-     (Iface_Name : Types.Iface_Name_Type;
-      Request    : Netdev_Request_Name)
-      return If_Req_Type;
-   --  Query interface with given request.
 
    -------------
    -- Imports --
