@@ -109,6 +109,20 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_LL_Type);
    --  Device independent physical layer address
 
+   type IPv4_Mreq_Type is record
+      Imr_Multiaddr : IPv4_Addr_Type;
+      Imr_Interface : C.unsigned;
+   end record;
+   pragma Convention (C, IPv4_Mreq_Type);
+   --  struct ip_mreq (netinet/in.h).
+
+   type IPv6_Mreq_Type is record
+      IPv6mr_Multiaddr : IPv6_Addr_Type;
+      IPv6mr_Interface : C.unsigned;
+   end record;
+   pragma Convention (C, IPv6_Mreq_Type);
+   --  struct ipv6_mreq (netinet/in.h).
+
    type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
       Ifr_Name : Interfaces.C.char_array
         (1 .. Constants.IFNAMSIZ) := (others => C.nul);

@@ -23,20 +23,6 @@
 
 package body Anet.Sockets.Thin.Inet is
 
-   type IPv4_Mreq_Type is record
-      Imr_Multiaddr : IPv4_Addr_Type;
-      Imr_Interface : C.unsigned;
-   end record;
-   pragma Convention (C, IPv4_Mreq_Type);
-   --  struct ip_mreq (netinet/in.h).
-
-   type IPv6_Mreq_Type is record
-      IPv6mr_Multiaddr : IPv6_Addr_Type;
-      IPv6mr_Interface : C.unsigned;
-   end record;
-   pragma Convention (C, IPv6_Mreq_Type);
-   --  struct ipv6_mreq (netinet/in.h).
-
    -------------------------------------------------------------------------
 
    procedure Join_Multicast_Group
