@@ -168,12 +168,6 @@ package body Anet.Sockets.Thin is
    is
       use type Interfaces.C.int;
 
-      function C_Listen
-        (Socket  : C.int;
-         Backlog : C.int)
-         return C.int;
-      pragma Import (C, C_Listen, "listen");
-
       Res : C.int;
    begin
       Res := C_Listen (Socket  => C.int (Socket),

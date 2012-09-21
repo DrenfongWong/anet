@@ -255,6 +255,12 @@ package Anet.Sockets.Thin is
       return C.int;
    pragma Import (C, C_Accept, "accept");
 
+   function C_Listen
+     (Socket  : C.int;
+      Backlog : C.int)
+      return C.int;
+   pragma Import (C, C_Listen, "listen");
+
    function C_Close (Fd : C.int) return C.int;
    pragma Import (C, C_Close, "close");
 
