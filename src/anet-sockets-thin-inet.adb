@@ -39,23 +39,6 @@ package body Anet.Sockets.Thin.Inet is
 
    -------------------------------------------------------------------------
 
-   procedure Connect
-     (Socket  :     Integer;
-      Dst     :     Sockaddr_In_Type;
-      Success : out Boolean)
-   is
-      use type C.int;
-
-      Res : C.int;
-   begin
-      Res := C_Connect (S       => C.int (Socket),
-                        Name    => Dst'Address,
-                        Namelen => Dst'Size / 8);
-      Success := Res /= C_Failure;
-   end Connect;
-
-   -------------------------------------------------------------------------
-
    procedure Join_Multicast_Group
      (Socket    :     Integer;
       Group     :     Sockaddr_In_Type;

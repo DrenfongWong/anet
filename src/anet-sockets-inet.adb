@@ -193,16 +193,18 @@ package body Anet.Sockets.Inet is
       Address :        IPv4_Addr_Type;
       Port    :        Port_Type)
    is
-      Result : Boolean;
-      Sin    : constant Thin.Sockaddr_In_Type
-        := Create_Inet4 (Address => Address,
-                         Port    => Port);
-   begin
-      Thin.Inet.Connect (Socket  => Socket.Sock_FD,
-                         Dst     => Sin,
-                         Success => Result);
+      use type C.int;
 
-      if not Result then
+      Res : C.int;
+      Dst : constant Thin.Sockaddr_In_Type := Create_Inet4
+        (Address => Address,
+         Port    => Port);
+   begin
+      Res := Thin.C_Connect (S       => C.int (Socket.Sock_FD),
+                             Name    => Dst'Address,
+                             Namelen => Dst'Size / 8);
+
+      if Res = C_Failure then
          raise Socket_Error with "Unable to connect socket to address "
            & To_String (Address => Address) & " (" & Port'Img & " ) - "
            & Get_Errno_String;
@@ -216,16 +218,18 @@ package body Anet.Sockets.Inet is
       Address :        IPv6_Addr_Type;
       Port    :        Port_Type)
    is
-      Result : Boolean;
-      Sin    : constant Thin.Sockaddr_In_Type
-        := Create_Inet6 (Address => Address,
-                         Port    => Port);
-   begin
-      Thin.Inet.Connect (Socket  => Socket.Sock_FD,
-                         Dst     => Sin,
-                         Success => Result);
+      use type C.int;
 
-      if not Result then
+      Res : C.int;
+      Dst : constant Thin.Sockaddr_In_Type := Create_Inet6
+        (Address => Address,
+         Port    => Port);
+   begin
+      Res := Thin.C_Connect (S       => C.int (Socket.Sock_FD),
+                             Name    => Dst'Address,
+                             Namelen => Dst'Size / 8);
+
+      if Res = C_Failure then
          raise Socket_Error with "Unable to connect socket to address "
            & To_String (Address => Address) & " (" & Port'Img & " ) - "
            & Get_Errno_String;

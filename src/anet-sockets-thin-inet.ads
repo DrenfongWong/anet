@@ -49,13 +49,6 @@ package Anet.Sockets.Thin.Inet is
    --  sender adresses. If an address is supplied by the underlying protocol,
    --  it is returned in the sockaddr Source argument.
 
-   procedure Connect
-     (Socket  :     Integer;
-      Dst     :     Sockaddr_In_Type;
-      Success : out Boolean);
-   --  Connect given socket to specified destination address. Success is set to
-   --  True if the connect operation succeeded, False otherwise.
-
    procedure Join_Multicast_Group
      (Socket    :     Integer;
       Group     :     Sockaddr_In_Type;
