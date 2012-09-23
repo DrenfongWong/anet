@@ -26,6 +26,18 @@ package Anet.Sockets.Netlink is
    subtype Netlink_Addr_Type is Natural;
    --  Netlink address.
 
+   type Protocol_Type is
+     (Proto_Netlink_Route,
+      Proto_Netlink_Firewall,
+      Proto_Netlink_Inet_Diag,
+      Proto_Netlink_Nflog,
+      Proto_Netlink_Xfrm,
+      Proto_Netlink_Selinux,
+      Proto_Netlink_Audit,
+      Proto_Netlink_Netfilter,
+      Proto_Netlink_Crypto);
+   --  Netlink protocols.
+
    type Netlink_Socket_Type is abstract new Socket_Type with private;
    --  Netlink socket.
 
@@ -58,8 +70,10 @@ package Anet.Sockets.Netlink is
    --  like a datagram socket from an interface perspective. This allows to use
    --  the Raw/Netlink socket with a datagram receiver instance.
 
-   procedure Init (Socket : in out Raw_Socket_Type);
-   --  Initialize given Raw/Netlink socket.
+   procedure Init
+     (Socket   : in out Raw_Socket_Type;
+      Protocol :        Protocol_Type);
+   --  Initialize Raw/Netlink socket using the specified protocol.
 
 private
 

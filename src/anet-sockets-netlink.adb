@@ -29,6 +29,18 @@ package body Anet.Sockets.Netlink is
 
    package C renames Interfaces.C;
 
+   Protocols : constant array (Protocol_Type) of Integer
+     := (Proto_Netlink_Route     => Constants.NETLINK_ROUTE,
+         Proto_Netlink_Firewall  => Constants.NETLINK_FIREWALL,
+         Proto_Netlink_Inet_Diag => Constants.NETLINK_INET_DIAG,
+         Proto_Netlink_Nflog     => Constants.NETLINK_NFLOG,
+         Proto_Netlink_Xfrm      => Constants.NETLINK_XFRM,
+         Proto_Netlink_Selinux   => Constants.NETLINK_SELINUX,
+         Proto_Netlink_Audit     => Constants.NETLINK_AUDIT,
+         Proto_Netlink_Netfilter => Constants.NETLINK_NETFILTER,
+         Proto_Netlink_Crypto    => Constants.NETLINK_CRYPTO);
+   --  Netlink protocol mapping.
+
    -------------------------------------------------------------------------
 
    procedure Bind
@@ -52,12 +64,15 @@ package body Anet.Sockets.Netlink is
 
    -------------------------------------------------------------------------
 
-   procedure Init (Socket : in out Raw_Socket_Type)
+   procedure Init
+     (Socket   : in out Raw_Socket_Type;
+      Protocol :        Protocol_Type)
    is
    begin
-      Init (Socket => Socket,
-            Family => Family_Netlink,
-            Mode   => Raw_Socket);
+      Init (Socket   => Socket,
+            Family   => Family_Netlink,
+            Mode     => Raw_Socket,
+            Protocol => Protocols (Protocol));
    end Init;
 
    -------------------------------------------------------------------------

@@ -736,7 +736,7 @@ package body Socket_Tests is
       Rcvr : Netlink_Receiver.Receiver_Type (S => Sock'Access);
       Pid  : constant Netlink.Netlink_Addr_Type := 23499;
    begin
-      Sock.Init;
+      Sock.Init (Protocol => Netlink.Proto_Netlink_Xfrm);
       Sock.Bind (Address => Pid);
 
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
