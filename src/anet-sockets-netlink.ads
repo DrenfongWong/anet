@@ -38,14 +38,28 @@ package Anet.Sockets.Netlink is
       Proto_Netlink_Crypto);
    --  Netlink protocols.
 
+   type Group_Type is
+     (Group_Xfrm_None,
+      Group_Xfrm_Acquire,
+      Group_Xfrm_Expire,
+      Group_Xfrm_Sa,
+      Group_Xfrm_Policy,
+      Group_Xfrm_Aevents,
+      Group_Xfrm_Report,
+      Group_Xfrm_Migrate,
+      Group_Xfrm_Mapping);
+   --  Supported Netlink multicast groups.
+
    type Netlink_Socket_Type is abstract new Socket_Type with private;
    --  Netlink socket.
 
    procedure Bind
      (Socket  : in out Netlink_Socket_Type;
-      Address :        Netlink_Addr_Type);
+      Address :        Netlink_Addr_Type;
+      Group   :        Group_Type := Group_Xfrm_None);
    --  Bind given Netlink socket to the specified Netlink address (which is
-   --  normally the pid of the application).
+   --  normally the pid of the application) and an optional Netlink multicast
+   --  group.
 
    procedure Send
      (Socket : Netlink_Socket_Type;

@@ -45,13 +45,23 @@ package body Anet.Sockets.Netlink is
 
    procedure Bind
      (Socket  : in out Netlink_Socket_Type;
-      Address :        Netlink_Addr_Type)
+      Address :        Netlink_Addr_Type;
+      Group   :        Group_Type := Group_Xfrm_None)
    is
+      use type Interfaces.Unsigned_32;
+
       Res   : C.int;
       Value : Thin.Sockaddr_Nl_Type
-        := (Nl_Pid => Interfaces.Unsigned_32 (Address),
-            others => <>);
+        := (Nl_Pid    => Interfaces.Unsigned_32 (Address),
+            Nl_Groups => Interfaces.Unsigned_32 (Group_Type'Pos (Group)),
+            others    => <>);
    begin
+      if Value.Nl_Groups /= 0 then
+         Value.Nl_Groups := Interfaces.Shift_Left
+           (Value  => 1,
+            Amount => Natural (Value.Nl_Groups - 1));
+      end if;
+
       Res := Thin.C_Bind (S       => Socket.Sock_FD,
                           Name    => Value'Address,
                           Namelen => Value'Size / 8);
