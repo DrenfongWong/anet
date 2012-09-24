@@ -50,16 +50,21 @@ package Anet.Sockets.Netlink is
       Group_Xfrm_Mapping);
    --  Supported Netlink multicast groups.
 
+   type Group_Array is array (Positive range <>) of Group_Type;
+   --  Array of Netlink multicast groups.
+
+   No_Groups : constant Group_Array;
+
    type Netlink_Socket_Type is abstract new Socket_Type with private;
    --  Netlink socket.
 
    procedure Bind
      (Socket  : in out Netlink_Socket_Type;
       Address :        Netlink_Addr_Type;
-      Group   :        Group_Type := Group_Xfrm_None);
+      Groups  :        Group_Array := No_Groups);
    --  Bind given Netlink socket to the specified Netlink address (which is
-   --  normally the pid of the application) and an optional Netlink multicast
-   --  group.
+   --  normally the pid of the application) and optional Netlink multicast
+   --  groups (requires root permissions).
 
    procedure Send
      (Socket : Netlink_Socket_Type;
@@ -90,6 +95,8 @@ package Anet.Sockets.Netlink is
    --  Initialize Raw/Netlink socket using the specified protocol.
 
 private
+
+   No_Groups : constant Group_Array (1 .. 1) := (1 => Group_Xfrm_None);
 
    type Netlink_Socket_Type is abstract new Socket_Type with null record;
 

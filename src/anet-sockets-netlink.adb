@@ -46,20 +46,22 @@ package body Anet.Sockets.Netlink is
    procedure Bind
      (Socket  : in out Netlink_Socket_Type;
       Address :        Netlink_Addr_Type;
-      Group   :        Group_Type := Group_Xfrm_None)
+      Groups  :        Group_Array := No_Groups)
    is
       use type Interfaces.Unsigned_32;
 
       Res   : C.int;
       Value : Thin.Sockaddr_Nl_Type
-        := (Nl_Pid    => Interfaces.Unsigned_32 (Address),
-            Nl_Groups => Interfaces.Unsigned_32 (Group_Type'Pos (Group)),
-            others    => <>);
+        := (Nl_Pid => Interfaces.Unsigned_32 (Address),
+            others => <>);
    begin
-      if Value.Nl_Groups /= 0 then
-         Value.Nl_Groups := Interfaces.Shift_Left
-           (Value  => 1,
-            Amount => Natural (Value.Nl_Groups - 1));
+      if Groups /= No_Groups then
+         for G in Groups'Range loop
+            Value.Nl_Groups := Value.Nl_Groups
+              or Interfaces.Shift_Left
+                (Value  => 1,
+                 Amount => Natural (Group_Type'Pos (Groups (G)) - 1));
+         end loop;
       end if;
 
       Res := Thin.C_Bind (S       => Socket.Sock_FD,
