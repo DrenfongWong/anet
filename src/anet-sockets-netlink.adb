@@ -122,7 +122,7 @@ package body Anet.Sockets.Netlink is
    procedure Send
      (Socket : Netlink_Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;
-      To     : Netlink_Addr_Type := 0)
+      To     : Netlink_Addr_Type)
    is
       use type Ada.Streams.Stream_Element_Offset;
 

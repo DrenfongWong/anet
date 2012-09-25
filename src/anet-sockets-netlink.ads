@@ -69,9 +69,8 @@ package Anet.Sockets.Netlink is
    procedure Send
      (Socket : Netlink_Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array;
-      To     : Netlink_Addr_Type := 0);
-   --  Send data over a Netlink socket to the given Netlink address. The
-   --  default Netlink address destination is 0 (the Kernel).
+      To     : Netlink_Addr_Type);
+   --  Send data over a Netlink socket to the given Netlink address.
 
    procedure Receive
      (Socket :     Netlink_Socket_Type;
