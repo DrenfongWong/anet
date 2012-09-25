@@ -48,6 +48,7 @@ package Anet.Constants is
    ---------------------
 
    IPPROTO_IPV6        : constant := 41;       --  IPv6
+   IPPROTO_ESP         : constant := 50;       --  ESP
 
    -----------------------
    -- Netlink protocols --
