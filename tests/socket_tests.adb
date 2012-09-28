@@ -31,13 +31,13 @@ with Anet.Types;
 with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Netlink;
-with Anet.Sockets.Dgram_Receiver;
+with Anet.Receivers.Datagram;
 with Anet.Util;
 
 with Test_Utils;
 
 pragma Elaborate_All (Anet.OS);
-pragma Elaborate_All (Anet.Sockets.Dgram_Receiver);
+pragma Elaborate_All (Anet.Receivers.Datagram);
 
 package body Socket_Tests is
 
@@ -46,19 +46,19 @@ package body Socket_Tests is
    use Anet.Sockets;
    use type Ada.Streams.Stream_Element_Array;
 
-   package UDPv4_Receiver is new Dgram_Receiver
+   package UDPv4_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Inet.UDPv4_Socket_Type,
       Address_Type => Inet.UDPv4_Sockaddr_Type,
       Receive      => Inet.Receive);
 
-   package UDPv6_Receiver is new Dgram_Receiver
+   package UDPv6_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Inet.UDPv6_Socket_Type,
       Address_Type => Inet.UDPv6_Sockaddr_Type,
       Receive      => Inet.Receive);
 
-   package Netlink_Receiver is new Dgram_Receiver
+   package Netlink_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Netlink.Raw_Socket_Type,
       Address_Type => Netlink.Netlink_Addr_Type,

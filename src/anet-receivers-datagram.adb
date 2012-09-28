@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-package body Anet.Sockets.Dgram_Receiver is
+package body Anet.Receivers.Datagram is
 
    procedure Empty_Cb
      (Item : Ada.Streams.Stream_Element_Array;
@@ -199,4 +199,4 @@ package body Anet.Sockets.Dgram_Receiver is
 
    end Trigger_Type;
 
-end Anet.Sockets.Dgram_Receiver;
+end Anet.Receivers.Datagram;

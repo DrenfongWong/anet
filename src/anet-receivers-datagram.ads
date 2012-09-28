@@ -25,12 +25,14 @@ with Ada.Exceptions;
 
 with System;
 
+with Anet.Sockets;
+
 generic
 
    Buffer_Size : Ada.Streams.Stream_Element_Offset := 2048;
    --  Receive buffer size.
 
-   type Socket_Type is new Dgram_Socket_Type with private;
+   type Socket_Type is new Sockets.Dgram_Socket_Type with private;
    --  Associated datagram socket.
 
    type Address_Type is private;
@@ -43,7 +45,7 @@ generic
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Socket receive procedure.
 
-package Anet.Sockets.Dgram_Receiver is
+package Anet.Receivers.Datagram is
 
    type Count_Type is mod System.Max_Binary_Modulus;
 
@@ -141,4 +143,4 @@ private
       R_Task  : Receiver_Task (Parent => Receiver_Type'Access);
    end record;
 
-end Anet.Sockets.Dgram_Receiver;
+end Anet.Receivers.Datagram;
