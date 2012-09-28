@@ -74,6 +74,18 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
+   procedure Echo
+     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+      Send_Data : out Ada.Streams.Stream_Element_Array;
+      Send_Last : out Ada.Streams.Stream_Element_Offset)
+   is
+   begin
+      Send_Data (Send_Data'First .. Recv_Data'Length) := Recv_Data;
+      Send_Last := Recv_Data'Length;
+   end Echo;
+
+   -------------------------------------------------------------------------
+
    function Equal_Files
      (Filename1 : String;
       Filename2 : String)

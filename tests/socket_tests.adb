@@ -23,7 +23,6 @@
 
 with Ada.Streams;
 with Ada.Exceptions;
-with Ada.Strings.Fixed;
 with Ada.Directories;
 
 with Anet.OS;
@@ -32,12 +31,14 @@ with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Netlink;
 with Anet.Receivers.Datagram;
+with Anet.Receivers.Stream;
 with Anet.Util;
 
 with Test_Utils;
 
 pragma Elaborate_All (Anet.OS);
 pragma Elaborate_All (Anet.Receivers.Datagram);
+pragma Elaborate_All (Anet.Receivers.Stream);
 
 package body Socket_Tests is
 
@@ -57,6 +58,18 @@ package body Socket_Tests is
       Socket_Type  => Inet.UDPv6_Socket_Type,
       Address_Type => Inet.UDPv6_Sockaddr_Type,
       Receive      => Inet.Receive);
+
+   package TCPv4_Receiver is new Receivers.Stream
+     (Buffer_Size  => 1024,
+      Socket_Type  => Inet.TCPv4_Socket_Type);
+
+   package TCPv6_Receiver is new Receivers.Stream
+     (Buffer_Size  => 1024,
+      Socket_Type  => Inet.TCPv6_Socket_Type);
+
+   package Unix_TCP_Receiver is new Receivers.Stream
+     (Buffer_Size  => 1024,
+      Socket_Type  => Unix.TCP_Socket_Type);
 
    package Netlink_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
@@ -812,41 +825,50 @@ package body Socket_Tests is
 
    procedure Send_Unix_Stream
    is
-      Path : constant String         := "/tmp/mysock-"
-        & Util.Random_String (Len => 8);
-      Dump : constant String         := Path & ".dump";
-      Cmd  : aliased constant String := "socat UNIX-LISTEN:" & Path & " "
-        & Dump;
-      Sock : Unix.TCP_Socket_Type;
+      use type Receivers.Count_Type;
 
-      Receiver : Command_Task (Command => Cmd'Access);
+      Path         : constant String      := "/tmp/mysock-"
+        & Util.Random_String (Len => 8);
+      C            : Receivers.Count_Type := 0;
+      S_Srv, S_Cli : aliased Unix.TCP_Socket_Type;
+      Rcvr         : Unix_TCP_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
-      Sock.Init;
+      S_Srv.Init;
+      S_Srv.Bind (Path => Types.Unix_Path_Type (Path));
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Connect (Path => Types.Unix_Path_Type (Path));
-      Sock.Send (Item => Ref_Chunk);
+      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
 
-      select
-         delay 3.0;
-      then abort
-         Receiver.Wait;
-      end select;
+      S_Cli.Init;
+      S_Cli.Connect (Path => Types.Unix_Path_Type (Path));
+      S_Cli.Send (Item => Ref_Chunk);
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Dump),
-              Message   => "Result mismatch");
+      for I in 1 .. 30 loop
+         C := Rcvr.Get_Rcv_Msg_Count;
+         exit when C > 0;
+         delay 0.1;
+      end loop;
 
-      OS.Delete_File (Filename => Dump);
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+
+      declare
+         Buffer : Ada.Streams.Stream_Element_Array
+           (1 .. Unix_TCP_Receiver.Buffsize);
+         Last   : Ada.Streams.Stream_Element_Offset;
+      begin
+         S_Cli.Receive (Item => Buffer,
+                        Last => Last);
+         Rcvr.Stop;
+
+         Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
+                 Message   => "Response mismatch");
+      end;
 
    exception
       when others =>
-         if not Receiver'Terminated then
-            abort Receiver;
-         end if;
-         OS.Delete_File (Filename => Dump);
+         Rcvr.Stop;
          raise;
    end Send_Unix_Stream;
 
@@ -897,45 +919,54 @@ package body Socket_Tests is
 
    procedure Send_V4_Stream
    is
-      Dump : constant String         := "/tmp/dump-"
-        & Util.Random_String (Len => 8);
-      Cmd  : aliased constant String := "socat TCP-LISTEN:"
-        & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
-                                  Side   => Ada.Strings.Left)
-        & ",reuseaddr " & Dump;
-      Sock : Inet.TCPv4_Socket_Type;
+      use type Receivers.Count_Type;
 
-      Receiver : Command_Task (Command => Cmd'Access);
+      C            : Receivers.Count_Type := 0;
+      S_Srv, S_Cli : aliased Inet.TCPv4_Socket_Type;
+      Rcvr         : TCPv4_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
-      Sock.Init;
+      S_Srv.Init;
+      S_Srv.Bind (Address => Loopback_Addr_V4,
+                  Port    => Test_Utils.Listen_Port);
 
-      --  Give receiver/socat enough time to create socket
+      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
 
-      delay 0.1;
+      --  Precautionary delay to make sure receiver task is ready.
 
-      Sock.Connect (Address => Loopback_Addr_V4,
-                    Port    => Test_Utils.Listen_Port);
-      Sock.Send (Item => Ref_Chunk);
+      delay 0.2;
 
-      select
-         delay 3.0;
-      then abort
-         Receiver.Wait;
-      end select;
+      S_Cli.Init;
+      S_Cli.Bind (Address => Loopback_Addr_V4,
+                  Port    => Test_Utils.Listen_Port + 1);
+      S_Cli.Connect (Address => Loopback_Addr_V4,
+                     Port    => Test_Utils.Listen_Port);
+      S_Cli.Send (Item => Ref_Chunk);
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Dump),
-              Message   => "Result mismatch");
+      for I in 1 .. 30 loop
+         C := Rcvr.Get_Rcv_Msg_Count;
+         exit when C > 0;
+         delay 0.1;
+      end loop;
 
-      OS.Delete_File (Filename => Dump);
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+
+      declare
+         Buffer : Ada.Streams.Stream_Element_Array
+           (1 .. TCPv4_Receiver.Buffsize);
+         Last   : Ada.Streams.Stream_Element_Offset;
+      begin
+         S_Cli.Receive (Item => Buffer,
+                        Last => Last);
+         Rcvr.Stop;
+
+         Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
+                 Message   => "Response mismatch");
+      end;
 
    exception
       when others =>
-         if not Receiver'Terminated then
-            abort Receiver;
-         end if;
-         OS.Delete_File (Filename => Dump);
+         Rcvr.Stop;
          raise;
    end Send_V4_Stream;
 
@@ -986,45 +1017,54 @@ package body Socket_Tests is
 
    procedure Send_V6_Stream
    is
-      Dump : constant String         := "/tmp/dump-"
-        & Util.Random_String (Len => 8);
-      Cmd  : aliased constant String := "socat TCP6-LISTEN:"
-        & Ada.Strings.Fixed.Trim (Source => Test_Utils.Listen_Port'Img,
-                                  Side   => Ada.Strings.Left)
-        & ",reuseaddr " & Dump;
-      Sock : Inet.TCPv6_Socket_Type;
+      use type Receivers.Count_Type;
 
-      Receiver : Command_Task (Command => Cmd'Access);
+      C            : Receivers.Count_Type := 0;
+      S_Srv, S_Cli : aliased Inet.TCPv6_Socket_Type;
+      Rcvr         : TCPv6_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
-      Sock.Init;
+      S_Srv.Init;
+      S_Srv.Bind (Address => Loopback_Addr_V6,
+                  Port    => Test_Utils.Listen_Port);
 
-      --  Give receiver/socat enough time to create socket
+      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
 
-      delay 0.1;
+      --  Precautionary delay to make sure receiver task is ready.
 
-      Sock.Connect (Address => Loopback_Addr_V6,
-                    Port    => Test_Utils.Listen_Port);
-      Sock.Send (Item => Ref_Chunk);
+      delay 0.2;
 
-      select
-         delay 3.0;
-      then abort
-         Receiver.Wait;
-      end select;
+      S_Cli.Init;
+      S_Cli.Bind (Address => Loopback_Addr_V6,
+                  Port    => Test_Utils.Listen_Port + 1);
+      S_Cli.Connect (Address => Loopback_Addr_V6,
+                     Port    => Test_Utils.Listen_Port);
+      S_Cli.Send (Item => Ref_Chunk);
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Dump),
-              Message   => "Result mismatch");
+      for I in 1 .. 30 loop
+         C := Rcvr.Get_Rcv_Msg_Count;
+         exit when C > 0;
+         delay 0.1;
+      end loop;
 
-      OS.Delete_File (Filename => Dump);
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+
+      declare
+         Buffer : Ada.Streams.Stream_Element_Array
+           (1 .. TCPv4_Receiver.Buffsize);
+         Last   : Ada.Streams.Stream_Element_Offset;
+      begin
+         S_Cli.Receive (Item => Buffer,
+                        Last => Last);
+         Rcvr.Stop;
+
+         Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
+                 Message   => "Response mismatch");
+      end;
 
    exception
       when others =>
-         if not Receiver'Terminated then
-            abort Receiver;
-         end if;
-         OS.Delete_File (Filename => Dump);
+         Rcvr.Stop;
          raise;
    end Send_V6_Stream;
 

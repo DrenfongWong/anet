@@ -118,6 +118,12 @@ package Test_Utils is
    function Get_Dump return Ada.Streams.Stream_Element_Array;
    --  Return last dumped buffer.
 
+   procedure Echo
+     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+      Send_Data : out Ada.Streams.Stream_Element_Array;
+      Send_Last : out Ada.Streams.Stream_Element_Offset);
+   --  Echo the received data back to the sender.
+
    procedure Raise_Error
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Inet.UDPv4_Sockaddr_Type);
