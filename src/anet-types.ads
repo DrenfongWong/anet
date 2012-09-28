@@ -31,6 +31,9 @@ package Anet.Types is
    type Unix_Path_Type is array (Unix_Path_Range range <>) of Character;
    --  Unix path type.
 
+   subtype Unix_Full_Path_Type is Unix_Path_Type (Unix_Path_Range);
+   --  Unix path with max. possible size.
+
    function Is_Valid_Unix (Path : String) return Boolean;
    --  Returns true if the given path is a valid unix path.
 
