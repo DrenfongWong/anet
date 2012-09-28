@@ -43,6 +43,9 @@ generic
 
 package Anet.Receivers.Datagram is
 
+   Buffsize : constant Ada.Streams.Stream_Element_Offset;
+   --  Buffer size used.
+
    type Rcv_Item_Callback is not null access procedure
      (Item : Ada.Streams.Stream_Element_Array;
       Src  : Address_Type);
@@ -79,6 +82,8 @@ package Anet.Receivers.Datagram is
    --  Returns True if the receiver is currently listening for data.
 
 private
+
+   Buffsize : constant Ada.Streams.Stream_Element_Offset := Buffer_Size;
 
    task type Receiver_Task (Parent : not null access Receiver_Type) is
 
