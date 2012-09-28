@@ -165,8 +165,12 @@ package body Test_Utils is
 
    function Get_Dump return Ada.Streams.Stream_Element_Array
    is
+      Result : constant Ada.Streams.Stream_Element_Array := Buffer
+        (Buffer'First .. Last);
    begin
-      return Buffer (Buffer'First .. Last);
+      Buffer := (others => 0);
+      Last   := Ada.Streams.Stream_Element_Offset'First;
+      return Result;
    end Get_Dump;
 
    -------------------------------------------------------------------------

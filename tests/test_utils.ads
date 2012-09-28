@@ -123,7 +123,8 @@ package Test_Utils is
    --  Get_Dump function to retrieve the content of the buffer.
 
    function Get_Dump return Ada.Streams.Stream_Element_Array;
-   --  Return last dumped buffer.
+   --  Return last dumped buffer. The internal buffer is cleared after a call
+   --  to this function.
 
    procedure Echo
      (Recv_Data :     Ada.Streams.Stream_Element_Array;
