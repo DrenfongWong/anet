@@ -21,6 +21,22 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Exceptions;
+
 package Anet.Receivers is
+
+   type Error_Handler_Callback is not null access procedure
+     (E         :        Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : in out Boolean);
+   --  Error handling callback procedure. E is the exception to handle. The
+   --  stop flag signals the receiver to stop listening for data and terminate.
+
+private
+
+   procedure No_Op_Cb
+     (E         :        Ada.Exceptions.Exception_Occurrence;
+      Stop_Flag : in out Boolean) is null;
+   --  This placeholder callback is needed for initialization of error handling
+   --  callbacks.
 
 end Anet.Receivers;

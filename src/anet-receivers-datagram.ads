@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Exceptions;
-
 with System;
 
 with Anet.Sockets;
@@ -54,12 +52,6 @@ package Anet.Receivers.Datagram is
       Src  : Address_Type);
    --  Data reception callback procedure. The Item argument contains the
    --  received data, the Src argument identifies the sender of the data.
-
-   type Error_Handler_Callback is not null access procedure
-     (E         :        Ada.Exceptions.Exception_Occurrence;
-      Stop_Flag : in out Boolean);
-   --  Error handling callback procedure. E is the exception to handle. The
-   --  stop flag signals the receiver to stop listening for data and terminate.
 
    type Receiver_Type (S : not null access Socket_Type)
      is tagged limited private;

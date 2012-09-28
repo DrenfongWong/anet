@@ -29,12 +29,6 @@ package body Anet.Receivers.Datagram is
    --  This placeholder callback is needed for initialization of data reception
    --  callbacks.
 
-   procedure No_Op_Cb
-     (E         :        Ada.Exceptions.Exception_Occurrence;
-      Stop_Flag : in out Boolean) is null;
-   --  This placeholder callback is needed for initialization of error handling
-   --  callbacks.
-
    -------------------------------------------------------------------------
 
    function Get_Rcv_Msg_Count (Receiver : Receiver_Type) return Count_Type
