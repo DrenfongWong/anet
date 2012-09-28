@@ -77,6 +77,19 @@ package Anet.Sockets is
    type Stream_Socket_Type is limited interface;
    --  Stream socket.
 
+   procedure Send
+     (Socket : Stream_Socket_Type;
+      Item   : Ada.Streams.Stream_Element_Array) is abstract;
+   --  Send data on socket to connected endpoint.
+
+   procedure Receive
+     (Socket :     Stream_Socket_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset) is abstract;
+   --  Receive data from given socket. This procedure blocks until data has
+   --  been received. Last is the index value such that Item (Last) is the last
+   --  character assigned. An exception is raised if a socket error occurs.
+
    procedure Listen
      (Socket  : Stream_Socket_Type;
       Backlog : Positive := 1) is abstract;
