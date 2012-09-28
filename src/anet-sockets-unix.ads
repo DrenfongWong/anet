@@ -53,7 +53,7 @@ package Anet.Sockets.Unix is
 
    procedure Receive
      (Socket :     UDP_Socket_Type;
-      Src    : out Types.Unix_Path_Type;
+      Src    : out Types.Unix_Full_Path_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given Unix/UDP socket. This procedure blocks until

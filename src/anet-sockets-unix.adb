@@ -138,15 +138,15 @@ package body Anet.Sockets.Unix is
 
    procedure Receive
      (Socket :     UDP_Socket_Type;
-      Src    : out Types.Unix_Path_Type;
+      Src    : out Types.Unix_Full_Path_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
+      Path : constant String := Ada.Strings.Unbounded.To_String (Socket.Path);
    begin
       Socket_Type (Socket).Receive (Item => Item,
                                     Last => Last);
-      Src := Types.Unix_Path_Type (Ada.Strings.Unbounded.To_String
-                                   (Socket.Path));
+      Src (Src'First .. Path'Length) := Types.Unix_Path_Type (Path);
    end Receive;
 
 end Anet.Sockets.Unix;
