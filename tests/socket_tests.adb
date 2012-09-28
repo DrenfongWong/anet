@@ -218,9 +218,9 @@ package body Socket_Tests is
 
    procedure Listen_Callbacks
    is
-      use type UDPv4_Receiver.Count_Type;
+      use type Receivers.Count_Type;
 
-      C    : UDPv4_Receiver.Count_Type := 0;
+      C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv4_Socket_Type;
       Rcvr : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
@@ -637,9 +637,9 @@ package body Socket_Tests is
 
    procedure Send_Multicast_V4
    is
-      use type UDPv4_Receiver.Count_Type;
+      use type Receivers.Count_Type;
 
-      C    : UDPv4_Receiver.Count_Type := 0;
+      C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv4_Socket_Type;
       Rcvr : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv4_Addr_Type
@@ -683,9 +683,9 @@ package body Socket_Tests is
 
    procedure Send_Multicast_V6
    is
-      use type UDPv6_Receiver.Count_Type;
+      use type Receivers.Count_Type;
 
-      C    : UDPv6_Receiver.Count_Type := 0;
+      C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv6_Socket_Type;
       Rcvr : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
       Grp  : constant IPv6_Addr_Type
@@ -729,9 +729,9 @@ package body Socket_Tests is
 
    procedure Send_Netlink_Raw
    is
-      use type Netlink_Receiver.Count_Type;
+      use type Receivers.Count_Type;
 
-      C    : Netlink_Receiver.Count_Type := 0;
+      C    : Receivers.Count_Type := 0;
       Sock : aliased Netlink.Raw_Socket_Type;
       Rcvr : Netlink_Receiver.Receiver_Type (S => Sock'Access);
       Pid  : constant Netlink.Netlink_Addr_Type := 23499;
@@ -854,9 +854,9 @@ package body Socket_Tests is
 
    procedure Send_V4_Datagram
    is
-      use type UDPv4_Receiver.Count_Type;
+      use type Receivers.Count_Type;
 
-      C    : UDPv4_Receiver.Count_Type := 0;
+      C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv4_Socket_Type;
       Rcvr : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
    begin
@@ -943,9 +943,9 @@ package body Socket_Tests is
 
    procedure Send_V6_Datagram
    is
-      use type UDPv6_Receiver.Count_Type;
+      use type Receivers.Count_Type;
 
-      C    : UDPv6_Receiver.Count_Type := 0;
+      C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv6_Socket_Type;
       Rcvr : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
    begin

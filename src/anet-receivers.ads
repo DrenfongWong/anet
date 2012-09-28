@@ -23,7 +23,11 @@
 
 with Ada.Exceptions;
 
+with System;
+
 package Anet.Receivers is
+
+   type Count_Type is mod System.Max_Binary_Modulus;
 
    type Error_Handler_Callback is not null access procedure
      (E         :        Ada.Exceptions.Exception_Occurrence;

@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with System;
-
 with Anet.Sockets;
 
 generic
@@ -44,8 +42,6 @@ generic
    --  Socket receive procedure.
 
 package Anet.Receivers.Datagram is
-
-   type Count_Type is mod System.Max_Binary_Modulus;
 
    type Rcv_Item_Callback is not null access procedure
      (Item : Ada.Streams.Stream_Element_Array;
