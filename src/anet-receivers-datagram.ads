@@ -80,33 +80,6 @@ package Anet.Receivers.Datagram is
 
 private
 
-   protected type Trigger_Type is
-
-      procedure Activate;
-      --  Activate trigger.
-
-      procedure Shutdown;
-      --  Signal shutdown to all tasks waiting on the Stop entry.
-
-      entry Stop;
-      --  Entry used for listener ATC.
-
-      procedure Signal_Termination;
-      --  Signal termination to all tasks waiting on the Wait_For_Termination
-      --  entry.
-
-      entry Wait_For_Termination;
-      --  Wait until termination is signaled.
-
-      function Is_Listening return Boolean;
-      --  Returns true if the receiver task is currently listening for data.
-
-   private
-      Shutdown_Requested : Boolean := False;
-      Is_Terminated      : Boolean := True;
-   end Trigger_Type;
-   --  This trigger is used to terminate the receiver task by means of ATC.
-
    task type Receiver_Task (Parent : not null access Receiver_Type) is
 
       entry Listen (Cb : Rcv_Item_Callback);

@@ -43,4 +43,31 @@ private
    --  This placeholder callback is needed for initialization of error handling
    --  callbacks.
 
+   protected type Trigger_Type is
+
+      procedure Activate;
+      --  Activate trigger.
+
+      procedure Shutdown;
+      --  Signal shutdown to all tasks waiting on the Stop entry.
+
+      entry Stop;
+      --  Entry used for listener ATC.
+
+      procedure Signal_Termination;
+      --  Signal termination to all tasks waiting on the Wait_For_Termination
+      --  entry.
+
+      entry Wait_For_Termination;
+      --  Wait until termination is signaled.
+
+      function Is_Listening return Boolean;
+      --  Returns true if the receiver task is currently listening for data.
+
+   private
+      Shutdown_Requested : Boolean := False;
+      Is_Terminated      : Boolean := True;
+   end Trigger_Type;
+   --  This trigger is used to terminate receiver tasks by means of ATC.
+
 end Anet.Receivers;
