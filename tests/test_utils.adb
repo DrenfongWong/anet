@@ -22,12 +22,8 @@
 --
 
 with Ada.Direct_IO;
-with Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;
 
 with Anet;
-
-with Anet.OS;
 
 package body Test_Utils is
 
@@ -182,48 +178,5 @@ package body Test_Utils is
    begin
       raise Constraint_Error with "DO NOT PANIC: Explicit raise";
    end Raise_Error;
-
-   -------------------------------------------------------------------------
-
-   procedure Send_Data_V4
-     (Dst_Addr : Anet.IPv4_Addr_Type := Anet.Loopback_Addr_V4;
-      Dst_Port : Anet.Port_Type      := Listen_Port;
-      Mode     : String              := "UDP-DATAGRAM";
-      Filename : String)
-   is
-      use Ada.Strings.Unbounded;
-
-      IP_Str   : constant Unbounded_String
-        := To_Unbounded_String (Anet.To_String (Address => Dst_Addr));
-      Port_Str : constant Unbounded_String
-        := To_Unbounded_String
-          (Source => Ada.Strings.Fixed.Trim (Source => Dst_Port'Img,
-                                             Side   => Ada.Strings.Left));
-   begin
-      Anet.OS.Execute (Command => "socat " & Filename & " " & Mode & ":"
-                       & To_String (IP_Str) & ":" & To_String (Port_Str));
-   end Send_Data_V4;
-
-   -------------------------------------------------------------------------
-
-   procedure Send_Data_V6
-     (Dst_Addr : Anet.IPv6_Addr_Type := Anet.Loopback_Addr_V6;
-      Dst_Port : Anet.Port_Type      := Listen_Port;
-      Mode     : String              := "UDP-DATAGRAM";
-      Filename : String)
-   is
-      use Ada.Strings.Unbounded;
-
-      IP_Str   : constant Unbounded_String
-        := To_Unbounded_String
-          ("[" & Anet.To_String (Address => Dst_Addr) & "]");
-      Port_Str : constant Unbounded_String
-        := To_Unbounded_String
-          (Source => Ada.Strings.Fixed.Trim (Source => Dst_Port'Img,
-                                             Side   => Ada.Strings.Left));
-   begin
-      Anet.OS.Execute (Command => "socat " & Filename & " " & Mode & ":"
-                       & To_String (IP_Str) & ":" & To_String (Port_Str));
-   end Send_Data_V6;
 
 end Test_Utils;

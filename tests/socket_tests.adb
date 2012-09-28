@@ -107,7 +107,9 @@ package body Socket_Tests is
       begin
          Rcvr.Listen (Callback => Test_Utils.Raise_Error'Access);
 
-         Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat");
+         Sock.Send (Item     => Ref_Chunk,
+                    Dst_Addr => Loopback_Addr_V4,
+                    Dst_Port => Test_Utils.Listen_Port);
 
          --  By default all errors should be ignored
 
@@ -128,7 +130,14 @@ package body Socket_Tests is
          Rcvr.Register_Error_Handler (Callback => Error_Handler'Access);
          Rcvr.Listen (Callback => Test_Utils.Raise_Error'Access);
 
-         Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat");
+         Sock.Send (Item     => Ref_Chunk,
+                    Dst_Addr => Loopback_Addr_V4,
+                    Dst_Port => Test_Utils.Listen_Port);
+
+         for I in 1 .. 30 loop
+            exit when not Rcvr.Is_Listening;
+            delay 0.1;
+         end loop;
 
          Assert (Condition => not Rcvr.Is_Listening,
                  Message   => "Receiver still listening");
@@ -213,7 +222,9 @@ package body Socket_Tests is
       Assert (Condition => Rcvr.Is_Listening,
               Message   => "Receiver not listening");
 
-      Test_Utils.Send_Data_V4 (Filename => "data/chunk1.dat");
+      Sock.Send (Item     => Ref_Chunk,
+                 Dst_Addr => Loopback_Addr_V4,
+                 Dst_Port => Test_Utils.Listen_Port);
 
       for I in 1 .. 30 loop
          C := Rcvr.Get_Rcv_Msg_Count;
