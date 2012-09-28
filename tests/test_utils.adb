@@ -74,6 +74,18 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
+   procedure Dump
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Types.Unix_Full_Path_Type)
+   is
+      pragma Unreferenced (Src);
+   begin
+      Buffer (Buffer'First .. Data'Length) := Data;
+      Last                                 := Data'Length;
+   end Dump;
+
+   -------------------------------------------------------------------------
+
    procedure Echo
      (Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;

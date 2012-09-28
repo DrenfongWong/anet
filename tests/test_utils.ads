@@ -23,6 +23,7 @@
 
 with Ada.Streams;
 
+with Anet.Types;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Netlink;
 
@@ -112,6 +113,12 @@ package Test_Utils is
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Netlink.Netlink_Addr_Type);
+   --  This procedure dumps the given data to an internal buffer. Use the
+   --  Get_Dump function to retrieve the content of the buffer.
+
+   procedure Dump
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Types.Unix_Full_Path_Type);
    --  This procedure dumps the given data to an internal buffer. Use the
    --  Get_Dump function to retrieve the content of the buffer.
 

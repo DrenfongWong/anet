@@ -59,6 +59,12 @@ package body Socket_Tests is
       Address_Type => Inet.UDPv6_Sockaddr_Type,
       Receive      => Inet.Receive);
 
+   package Unix_UDP_Receiver is new Receivers.Datagram
+     (Buffer_Size  => 1024,
+      Socket_Type  => Unix.UDP_Socket_Type,
+      Address_Type => Types.Unix_Full_Path_Type,
+      Receive      => Unix.Receive);
+
    package TCPv4_Receiver is new Receivers.Stream
      (Buffer_Size  => 1024,
       Socket_Type  => Inet.TCPv4_Socket_Type);
@@ -85,20 +91,6 @@ package body Socket_Tests is
       Stop_Flag : in out Boolean);
    --  Receiver error handler callback for testing purposes. It ignores the
    --  exception and tells the receiver to terminate by setting the stop flag.
-
-   task type Command_Task (Command : access constant String) is
-      entry Wait;
-   end Command_Task;
-   --  Command task. Executes given command and Waits for rendezvous.
-
-   -------------------------------------------------------------------------
-
-   task body Command_Task
-   is
-   begin
-      OS.Execute (Command => Command.all);
-      accept Wait;
-   end Command_Task;
 
    -------------------------------------------------------------------------
 
@@ -383,40 +375,41 @@ package body Socket_Tests is
 
    procedure Send_Unix_Datagram
    is
-      Path : constant String         := "/tmp/mysock-"
-        & Util.Random_String (Len => 8);
-      Dump : constant String         := Path & ".dump";
-      Cmd  : aliased constant String := "socat UNIX-RECV:" & Path & " " & Dump;
-      Sock : Unix.UDP_Socket_Type;
+      use type Receivers.Count_Type;
 
-      Receiver : Command_Task (Command => Cmd'Access);
+      C            : Receivers.Count_Type := 0;
+      Path         : constant String      := "/tmp/mysock-"
+        & Util.Random_String (Len => 8);
+      S_Srv, S_Cli : aliased Unix.UDP_Socket_Type;
+      Rcvr         : Unix_UDP_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
-      Sock.Init;
+      S_Srv.Init;
+      S_Srv.Bind (Path => Types.Unix_Path_Type (Path));
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Sock.Connect (Path => Types.Unix_Path_Type (Path));
-      Sock.Send (Item => Ref_Chunk);
+      Rcvr.Listen (Callback => Test_Utils.Dump'Access);
 
-      select
-         delay 3.0;
-      then abort
-         Receiver.Wait;
-      end select;
+      S_Cli.Init;
+      S_Cli.Connect (Path => Types.Unix_Path_Type (Path));
+      S_Cli.Send (Item => Ref_Chunk);
 
-      Assert (Condition => Test_Utils.Equal_Files
-              (Filename1 => "data/chunk1.dat",
-               Filename2 => Dump),
+      for I in 1 .. 30 loop
+         C := Rcvr.Get_Rcv_Msg_Count;
+         exit when C > 0;
+         delay 0.1;
+      end loop;
+
+      Rcvr.Stop;
+
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
-
-      OS.Delete_File (Filename => Dump);
 
    exception
       when others =>
-         if not Receiver'Terminated then
-            abort Receiver;
-         end if;
-         OS.Delete_File (Filename => Dump);
+         Rcvr.Stop;
          raise;
    end Send_Unix_Datagram;
 
@@ -426,9 +419,9 @@ package body Socket_Tests is
    is
       use type Receivers.Count_Type;
 
+      C            : Receivers.Count_Type := 0;
       Path         : constant String      := "/tmp/mysock-"
         & Util.Random_String (Len => 8);
-      C            : Receivers.Count_Type := 0;
       S_Srv, S_Cli : aliased Unix.TCP_Socket_Type;
       Rcvr         : Unix_TCP_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
