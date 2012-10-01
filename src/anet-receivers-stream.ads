@@ -28,7 +28,7 @@ generic
    Buffer_Size : Ada.Streams.Stream_Element_Offset := 2048;
    --  Size of receive/send buffers.
 
-   type Socket_Type is new Sockets.Stream_Socket_Type with private;
+   type Socket_Type is limited new Sockets.Stream_Socket_Type with private;
    --  Associated stream socket.
 
 package Anet.Receivers.Stream is

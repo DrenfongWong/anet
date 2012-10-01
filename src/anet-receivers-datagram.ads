@@ -28,7 +28,7 @@ generic
    Buffer_Size : Ada.Streams.Stream_Element_Offset := 2048;
    --  Receive buffer size.
 
-   type Socket_Type is new Sockets.Dgram_Socket_Type with private;
+   type Socket_Type is limited new Sockets.Dgram_Socket_Type with private;
    --  Associated datagram socket.
 
    type Address_Type is private;
