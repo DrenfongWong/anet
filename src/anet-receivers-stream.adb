@@ -114,12 +114,19 @@ package body Anet.Receivers.Stream is
             Processing_Loop :
             loop
                declare
+                  use type Ada.Streams.Stream_Element_Offset;
+
                   R_Buffer, S_Buffer : Ada.Streams.Stream_Element_Array
                     (1 .. Buffer_Size);
                   R_Last, S_Last     : Ada.Streams.Stream_Element_Offset;
                begin
                   Parent.S_Comm.Receive (Item => R_Buffer,
                                          Last => R_Last);
+
+                  --  Exit processing loop on connection close.
+
+                  exit Processing_Loop when R_Last = 0;
+
                   Parent.Rcv_Count := Parent.Rcv_Count + 1;
 
                   Data_Callback
