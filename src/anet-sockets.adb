@@ -139,7 +139,8 @@ package body Anet.Sockets is
 
       if Sent_Bytes /= Item'Length then
          raise Socket_Error with "Incomplete send operation on socket"
-         & ", only" & Sent_Bytes'Img & " of" & Item'Length'Img & " bytes sent";
+           & ", only" & Sent_Bytes'Img & " of" & Item'Length'Img
+           & " bytes sent";
       end if;
    end Send;
 
