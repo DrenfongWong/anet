@@ -57,6 +57,9 @@ package Socket_Tests is
    procedure Send_Netlink_Raw;
    --  Test sending over raw Netlink socket.
 
+   procedure Send_Various_Buffers;
+   --  Test sending of buffers with various ranges.
+
    procedure Unix_Delete_Socket;
    --  Test socket path cleanup of UNIX domain socket.
 

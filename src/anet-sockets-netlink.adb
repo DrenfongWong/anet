@@ -124,11 +124,8 @@ package body Anet.Sockets.Netlink is
       Item   : Ada.Streams.Stream_Element_Array;
       To     : Netlink_Addr_Type)
    is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res        : C.int;
-      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
-      Dst        : Thin.Sockaddr_Nl_Type
+      Res : C.int;
+      Dst : Thin.Sockaddr_Nl_Type
         := (Nl_Pid => Interfaces.Unsigned_32 (To),
             others => <>);
    begin
@@ -144,11 +141,10 @@ package body Anet.Sockets.Netlink is
            & Get_Errno_String;
       end if;
 
-      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-      if Sent_Bytes /= Item'Length then
-         raise Socket_Error with "Incomplete Netlink send operation, only"
-           & Sent_Bytes'Img & " of" & Item'Length'Img & " bytes sent";
-      end if;
+      Check_Complete_Send
+        (Item      => Item,
+         Result    => Res,
+         Error_Msg => "Incomplete Netlink send operation");
    end Send;
 
 end Anet.Sockets.Netlink;

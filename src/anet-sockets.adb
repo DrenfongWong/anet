@@ -29,6 +29,24 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
+   procedure Check_Complete_Send
+     (Item      : Ada.Streams.Stream_Element_Array;
+      Result    : Interfaces.C.int;
+      Error_Msg : String)
+   is
+      use Ada.Streams;
+
+      Sent_Bytes : constant Stream_Element_Offset
+        := Item'First + (Stream_Element_Offset (Result) - Item'First);
+   begin
+      if Sent_Bytes /= Item'Length then
+         raise Socket_Error with Error_Msg & ", only" & Sent_Bytes'Img & " of"
+           & Item'Length'Img & " bytes sent";
+      end if;
+   end Check_Complete_Send;
+
+   -------------------------------------------------------------------------
+
    procedure Close (Socket : in out Socket_Type)
    is
       Res : C.int;
@@ -120,10 +138,7 @@ package body Anet.Sockets is
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array)
    is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res        : C.int;
-      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
+      Res : C.int;
    begin
       Res := Thin.C_Send (S     => Socket.Sock_FD,
                           Buf   => Item'Address,
@@ -135,13 +150,10 @@ package body Anet.Sockets is
            & Get_Errno_String;
       end if;
 
-      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-
-      if Sent_Bytes /= Item'Length then
-         raise Socket_Error with "Incomplete send operation on socket"
-           & ", only" & Sent_Bytes'Img & " of" & Item'Length'Img
-           & " bytes sent";
-      end if;
+      Check_Complete_Send
+        (Item      => Item,
+         Result    => Res,
+         Error_Msg => "Incomplete send operation on socket");
    end Send;
 
    -------------------------------------------------------------------------

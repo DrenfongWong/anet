@@ -169,4 +169,13 @@ private
       Protocol :        Natural := 0);
    --  Initialize given socket with specified family, mode and protocol.
 
+   procedure Check_Complete_Send
+     (Item      : Ada.Streams.Stream_Element_Array;
+      Result    : Interfaces.C.int;
+      Error_Msg : String);
+   --  Verify that a Send operation was able to transmit all bytes of given
+   --  buffer by calculating the actual number of bytes sent from the buffer
+   --  range and the send(2)/sendto(2) result specified. The procedure raises
+   --  an exception starting with the given error message if the check fails.
+
 end Anet.Sockets;

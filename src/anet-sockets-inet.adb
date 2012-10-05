@@ -425,11 +425,8 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv4_Addr_Type;
       Dst_Port : Port_Type)
    is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res        : C.int;
-      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
-      Dst        : constant Thin.Sockaddr_In_Type := Create_Inet4
+      Res : C.int;
+      Dst : constant Thin.Sockaddr_In_Type := Create_Inet4
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
@@ -446,12 +443,11 @@ package body Anet.Sockets.Inet is
            & Get_Errno_String;
       end if;
 
-      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-      if Sent_Bytes /= Item'Length then
-         raise Socket_Error with "Incomplete send operation to "
-           & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - only"
-           & Sent_Bytes'Img & " of" & Item'Length'Img & " bytes sent";
-      end if;
+      Check_Complete_Send
+        (Item      => Item,
+         Result    => Res,
+         Error_Msg => "Incomplete send operation to "
+         & To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
    end Send;
 
    -------------------------------------------------------------------------
@@ -462,11 +458,8 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv6_Addr_Type;
       Dst_Port : Port_Type)
    is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res        : C.int;
-      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
-      Dst        : constant Thin.Sockaddr_In_Type := Create_Inet6
+      Res : C.int;
+      Dst : constant Thin.Sockaddr_In_Type := Create_Inet6
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
@@ -483,12 +476,11 @@ package body Anet.Sockets.Inet is
            & Get_Errno_String;
       end if;
 
-      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-      if Sent_Bytes /= Item'Length then
-         raise Socket_Error with "Incomplete send operation to "
-           & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - only"
-           & Sent_Bytes'Img & " of" & Item'Length'Img & " bytes sent";
-      end if;
+      Check_Complete_Send
+        (Item      => Item,
+         Result    => Res,
+         Error_Msg => "Incomplete send operation to "
+         & To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
    end Send;
 
 end Anet.Sockets.Inet;

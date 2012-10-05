@@ -106,11 +106,8 @@ package body Anet.Sockets.Packet is
       To     : Hardware_Addr_Type;
       Iface  : Types.Iface_Name_Type)
    is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Res        : C.int;
-      Ll_Dest    : Thin.Sockaddr_Ll_Type;
-      Sent_Bytes : Ada.Streams.Stream_Element_Offset;
+      Res     : C.int;
+      Ll_Dest : Thin.Sockaddr_Ll_Type;
    begin
       Ll_Dest.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index
                                     (Name => Iface));
@@ -134,12 +131,11 @@ package body Anet.Sockets.Packet is
            & " - " & Get_Errno_String;
       end if;
 
-      Sent_Bytes := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
-      if Sent_Bytes /= Item'Length then
-         raise Socket_Error with "Incomplete packet send operation to "
-           & To_String (Address => To) & ", only" & Sent_Bytes'Img & " of"
-           & Item'Length'Img & " bytes sent";
-      end if;
+      Check_Complete_Send
+        (Item      => Item,
+         Result    => Res,
+         Error_Msg => "Incomplete packet send operation to "
+         & To_String (Address => To));
    end Send;
 
 end Anet.Sockets.Packet;

@@ -194,6 +194,9 @@ package body Socket_Tests is
         (Routine => Send_Netlink_Raw'Access,
          Name    => "Send data (Netlink, raw)");
       T.Add_Test_Routine
+        (Routine => Send_Various_Buffers'Access,
+         Name    => "Send data (various buffer ranges)");
+      T.Add_Test_Routine
         (Routine => Unix_Delete_Socket'Access,
          Name    => "Unix socket removal");
       T.Add_Test_Routine
@@ -673,6 +676,111 @@ package body Socket_Tests is
          Rcvr.Stop;
          raise;
    end Send_V6_Stream;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_Various_Buffers
+   is
+      use Ada.Streams;
+
+      Last  : Stream_Element_Offset;
+      R     : Stream_Element_Array (1 .. 10);
+      S_Cli : aliased Unix.UDP_Socket_Type;
+      Path  : constant String := "/tmp/mysock-" & Util.Random_String
+        (Len => 8);
+
+      task Receiver is
+         entry Ready;
+      end Receiver;
+
+      task body Receiver is
+         S_Srv : aliased Unix.UDP_Socket_Type;
+      begin
+         S_Srv.Init;
+         S_Srv.Bind (Path => Unix.Path_Type (Path));
+         loop
+            S_Srv.Receive (Item => R,
+                           Last => Last);
+            accept Ready;
+         end loop;
+      end Receiver;
+   begin
+      Util.Wait_For_File (Path     => Path,
+                          Timespan => 2.0);
+
+      S_Cli.Init;
+      S_Cli.Connect (Path => Unix.Path_Type (Path));
+
+      declare
+         B : constant Stream_Element_Array (1 .. 10) := (others => 12);
+      begin
+         S_Cli.Send (Item => B);
+         select
+            delay 2.0;
+         then abort
+            Receiver.Ready;
+         end select;
+         Assert (Condition => B = R,
+                 Message   => "Result mismatch (1 .. 10)");
+         Assert (Condition => Last = 10,
+                 Message   => "Last mismatch (1 .. 10)");
+         R := (others => 0);
+      end;
+
+      declare
+         B : constant Stream_Element_Array (0 .. 9) := (others => 12);
+      begin
+         S_Cli.Send (Item => B);
+         select
+            delay 2.0;
+         then abort
+            Receiver.Ready;
+         end select;
+         Assert (Condition => B = R,
+                 Message   => "Result mismatch (0 .. 9)");
+         Assert (Condition => Last = 10,
+                 Message   => "Last mismatch (0 .. 9)");
+         R := (others => 0);
+      end;
+
+      declare
+         B : constant Stream_Element_Array (5 .. 14) := (others => 12);
+      begin
+         S_Cli.Send (Item => B);
+         select
+            delay 2.0;
+         then abort
+            Receiver.Ready;
+         end select;
+         Assert (Condition => B = R,
+                 Message   => "Result mismatch (5 .. 14)");
+         Assert (Condition => Last = 10,
+                 Message   => "Last mismatch (5 .. 14)");
+         R := (others => 0);
+      end;
+
+      declare
+         Empty : constant Stream_Element_Array (1 .. 0) := (others => 0);
+      begin
+         S_Cli.Send (Item => Empty);
+         select
+            delay 2.0;
+         then abort
+            Receiver.Ready;
+         end select;
+         Assert (Condition => Last = 0,
+                 Message   => "Last mismatch (1 .. 0)");
+      end;
+
+      abort Receiver;
+
+   exception
+      when others =>
+         if not Receiver'Terminated then
+            abort Receiver;
+         end if;
+         raise;
+   end Send_Various_Buffers;
 
    -------------------------------------------------------------------------
 
