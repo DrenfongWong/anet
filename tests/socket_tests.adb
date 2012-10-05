@@ -62,7 +62,7 @@ package body Socket_Tests is
    package Unix_UDP_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Unix.UDP_Socket_Type,
-      Address_Type => Unix.Unix_Full_Path_Type,
+      Address_Type => Unix.Full_Path_Type,
       Receive      => Unix.Receive);
 
    package TCPv4_Receiver is new Receivers.Stream
@@ -398,14 +398,14 @@ package body Socket_Tests is
       Rcvr         : Unix_UDP_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
       S_Srv.Init;
-      S_Srv.Bind (Path => Unix.Unix_Path_Type (Path));
+      S_Srv.Bind (Path => Unix.Path_Type (Path));
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
 
       S_Cli.Init;
-      S_Cli.Connect (Path => Unix.Unix_Path_Type (Path));
+      S_Cli.Connect (Path => Unix.Path_Type (Path));
       S_Cli.Send (Item => Ref_Chunk);
 
       for I in 1 .. 30 loop
@@ -440,14 +440,14 @@ package body Socket_Tests is
       Rcvr         : Unix_TCP_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
       S_Srv.Init;
-      S_Srv.Bind (Path => Unix.Unix_Path_Type (Path));
+      S_Srv.Bind (Path => Unix.Path_Type (Path));
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
       Rcvr.Listen (Callback => Test_Utils.Echo'Access);
 
       S_Cli.Init;
-      S_Cli.Connect (Path => Unix.Unix_Path_Type (Path));
+      S_Cli.Connect (Path => Unix.Path_Type (Path));
       S_Cli.Send (Item => Ref_Chunk);
 
       for I in 1 .. 30 loop
@@ -684,7 +684,7 @@ package body Socket_Tests is
          Sock : Unix.UDP_Socket_Type;
       begin
          Sock.Init;
-         Sock.Bind (Path => Unix.Unix_Path_Type (Path));
+         Sock.Bind (Path => Unix.Path_Type (Path));
          Assert (Condition => Ada.Directories.Exists (Name => Path),
                  Message   => "Path not found");
       end;
@@ -699,11 +699,11 @@ package body Socket_Tests is
       Too_Long : constant String :=
         (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
    begin
-      Assert (Condition => Unix.Is_Valid_Unix (Path => "/tmp/foopath"),
+      Assert (Condition => Unix.Is_Valid (Path => "/tmp/foopath"),
               Message   => "Invalid path '/tmp/foopath'");
-      Assert (Condition => not Unix.Is_Valid_Unix (Path => ""),
+      Assert (Condition => not Unix.Is_Valid (Path => ""),
               Message   => "Valid empty path");
-      Assert (Condition => not Unix.Is_Valid_Unix (Path => Too_Long),
+      Assert (Condition => not Unix.Is_Valid (Path => Too_Long),
               Message   => "Valid Path '" & Too_Long & "'");
    end Valid_Unix_Paths;
 

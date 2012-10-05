@@ -100,7 +100,7 @@ package Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Unix.Unix_Full_Path_Type);
+      Src  : Anet.Sockets.Unix.Full_Path_Type);
    --  This procedure dumps the given data to an internal buffer. Use the
    --  Get_Dump function to retrieve the content of the buffer.
 

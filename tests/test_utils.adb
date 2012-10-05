@@ -72,7 +72,7 @@ package body Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Unix.Unix_Full_Path_Type)
+      Src  : Anet.Sockets.Unix.Full_Path_Type)
    is
       pragma Unreferenced (Src);
    begin
