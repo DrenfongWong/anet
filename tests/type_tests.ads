@@ -57,9 +57,6 @@ package Type_Tests is
    procedure Stream_To_Hex;
    --  Verify stream element array to hex string conversion function.
 
-   procedure Valid_Unix_Paths;
-   --  Test unix path validation.
-
    procedure Valid_Iface_Names;
    --  Test interface name validation.
 

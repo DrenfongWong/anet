@@ -25,7 +25,6 @@ with Ada.Streams;
 with Ada.Strings.Unbounded;
 
 with Anet.Streams;
-with Anet.Types;
 with Anet.Sockets.Unix;
 
 package body Stream_Tests is
@@ -116,7 +115,7 @@ package body Stream_Tests is
          S1     : aliased Streams.Memory_Stream_Type (Max_Elements => 64);
       begin
          Server.Init;
-         Server.Bind (Path => Types.Unix_Path_Type (Path));
+         Server.Bind (Path => Unix.Unix_Path_Type (Path));
          accept Ready;
 
          Server.Receive (Item => Buffer,
@@ -133,7 +132,7 @@ package body Stream_Tests is
       Client.Init;
       Receiver.Ready;
 
-      Client.Connect (Path => Types.Unix_Path_Type (Path));
+      Client.Connect (Path => Unix.Unix_Path_Type (Path));
 
       Test_Record'Write (S2'Access, Here);
       Client.Send (Item => S2.Get_Buffer);

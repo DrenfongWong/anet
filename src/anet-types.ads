@@ -25,18 +25,6 @@ with Anet.Constants;
 
 package Anet.Types is
 
-   subtype Unix_Path_Range is Positive range 1 .. Constants.UNIX_PATH_MAX - 1;
-   --  Range of unix paths.
-
-   type Unix_Path_Type is array (Unix_Path_Range range <>) of Character;
-   --  Unix path type.
-
-   subtype Unix_Full_Path_Type is Unix_Path_Type (Unix_Path_Range);
-   --  Unix path with max. possible size.
-
-   function Is_Valid_Unix (Path : String) return Boolean;
-   --  Returns true if the given path is a valid unix path.
-
    subtype Iface_Name_Range is Positive range 1 .. Constants.IFNAMSIZ - 1;
    --  Range of interface name.
 

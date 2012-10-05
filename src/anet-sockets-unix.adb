@@ -57,7 +57,7 @@ package body Anet.Sockets.Unix is
 
    procedure Bind
      (Socket : in out Unix_Socket_Type;
-      Path   :        Types.Unix_Path_Type)
+      Path   :        Unix_Path_Type)
    is
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
@@ -96,7 +96,7 @@ package body Anet.Sockets.Unix is
 
    procedure Connect
      (Socket : in out Unix_Socket_Type;
-      Path   :        Types.Unix_Path_Type)
+      Path   :        Unix_Path_Type)
    is
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
@@ -136,9 +136,17 @@ package body Anet.Sockets.Unix is
 
    -------------------------------------------------------------------------
 
+   function Is_Valid_Unix (Path : String) return Boolean
+   is
+   begin
+      return Path'Length in Unix_Path_Range;
+   end Is_Valid_Unix;
+
+   -------------------------------------------------------------------------
+
    procedure Receive
      (Socket :     UDP_Socket_Type;
-      Src    : out Types.Unix_Full_Path_Type;
+      Src    : out Unix_Full_Path_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
@@ -146,7 +154,7 @@ package body Anet.Sockets.Unix is
    begin
       Socket_Type (Socket).Receive (Item => Item,
                                     Last => Last);
-      Src (Src'First .. Path'Length) := Types.Unix_Path_Type (Path);
+      Src (Src'First .. Path'Length) := Unix_Path_Type (Path);
    end Receive;
 
 end Anet.Sockets.Unix;

@@ -31,12 +31,4 @@ package body Anet.Types is
       return Name'Length in Iface_Name_Range;
    end Is_Valid_Iface;
 
-   -------------------------------------------------------------------------
-
-   function Is_Valid_Unix (Path : String) return Boolean
-   is
-   begin
-      return Path'Length in Types.Unix_Path_Range;
-   end Is_Valid_Unix;
-
 end Anet.Types;

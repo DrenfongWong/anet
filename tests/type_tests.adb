@@ -107,9 +107,6 @@ package body Type_Tests is
         (Routine => Stream_To_Hex'Access,
          Name    => "Stream to hex string conversion");
       T.Add_Test_Routine
-        (Routine => Valid_Unix_Paths'Access,
-         Name    => "Unix path validation");
-      T.Add_Test_Routine
         (Routine => Valid_Iface_Names'Access,
          Name    => "Interface name validation");
    end Initialize;
@@ -321,20 +318,5 @@ package body Type_Tests is
       Assert (Condition => not Types.Is_Valid_Iface (Name => Too_Long),
               Message   => "Valid interface name '" & Too_Long & "'");
    end Valid_Iface_Names;
-
-   -------------------------------------------------------------------------
-
-   procedure Valid_Unix_Paths
-   is
-      Too_Long : constant String :=
-        (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
-   begin
-      Assert (Condition => Types.Is_Valid_Unix (Path => "/tmp/foopath"),
-              Message   => "Invalid path '/tmp/foopath'");
-      Assert (Condition => not Types.Is_Valid_Unix (Path => ""),
-              Message   => "Valid empty path");
-      Assert (Condition => not Types.Is_Valid_Unix (Path => Too_Long),
-              Message   => "Valid Path '" & Too_Long & "'");
-   end Valid_Unix_Paths;
 
 end Type_Tests;

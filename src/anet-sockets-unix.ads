@@ -23,9 +23,19 @@
 
 with Ada.Strings.Unbounded;
 
-with Anet.Types;
-
 package Anet.Sockets.Unix is
+
+   subtype Unix_Path_Range is Positive range 1 .. Constants.UNIX_PATH_MAX - 1;
+   --  Range of unix paths.
+
+   type Unix_Path_Type is array (Unix_Path_Range range <>) of Character;
+   --  Unix path type.
+
+   subtype Unix_Full_Path_Type is Unix_Path_Type (Unix_Path_Range);
+   --  Unix path with max. possible size.
+
+   function Is_Valid_Unix (Path : String) return Boolean;
+   --  Returns true if the given path is a valid unix path.
 
    type Unix_Socket_Type is abstract new Socket_Type with private;
    --  UNIX domain socket.
@@ -36,12 +46,12 @@ package Anet.Sockets.Unix is
 
    procedure Bind
      (Socket : in out Unix_Socket_Type;
-      Path   :        Types.Unix_Path_Type);
+      Path   :        Unix_Path_Type);
    --  Bind given UNIX domain socket to path.
 
    procedure Connect
      (Socket : in out Unix_Socket_Type;
-      Path   :        Types.Unix_Path_Type);
+      Path   :        Unix_Path_Type);
    --  Connect given UNIX domain socket to path.
 
    type UDP_Socket_Type is new Unix_Socket_Type
@@ -53,7 +63,7 @@ package Anet.Sockets.Unix is
 
    procedure Receive
      (Socket :     UDP_Socket_Type;
-      Src    : out Types.Unix_Full_Path_Type;
+      Src    : out Unix_Full_Path_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given Unix/UDP socket. This procedure blocks until

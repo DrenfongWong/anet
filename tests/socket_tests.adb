@@ -26,7 +26,7 @@ with Ada.Exceptions;
 with Ada.Directories;
 
 with Anet.OS;
-with Anet.Types;
+with Anet.Constants;
 with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Netlink;
@@ -62,7 +62,7 @@ package body Socket_Tests is
    package Unix_UDP_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Unix.UDP_Socket_Type,
-      Address_Type => Types.Unix_Full_Path_Type,
+      Address_Type => Unix.Unix_Full_Path_Type,
       Receive      => Unix.Receive);
 
    package TCPv4_Receiver is new Receivers.Stream
@@ -202,6 +202,9 @@ package body Socket_Tests is
       T.Add_Test_Routine
         (Routine => Error_Callbacks'Access,
          Name    => "Error callback handling");
+      T.Add_Test_Routine
+        (Routine => Valid_Unix_Paths'Access,
+         Name    => "Unix path validation");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -395,14 +398,14 @@ package body Socket_Tests is
       Rcvr         : Unix_UDP_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
       S_Srv.Init;
-      S_Srv.Bind (Path => Types.Unix_Path_Type (Path));
+      S_Srv.Bind (Path => Unix.Unix_Path_Type (Path));
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
 
       S_Cli.Init;
-      S_Cli.Connect (Path => Types.Unix_Path_Type (Path));
+      S_Cli.Connect (Path => Unix.Unix_Path_Type (Path));
       S_Cli.Send (Item => Ref_Chunk);
 
       for I in 1 .. 30 loop
@@ -437,14 +440,14 @@ package body Socket_Tests is
       Rcvr         : Unix_TCP_Receiver.Receiver_Type (S => S_Srv'Access);
    begin
       S_Srv.Init;
-      S_Srv.Bind (Path => Types.Unix_Path_Type (Path));
+      S_Srv.Bind (Path => Unix.Unix_Path_Type (Path));
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
       Rcvr.Listen (Callback => Test_Utils.Echo'Access);
 
       S_Cli.Init;
-      S_Cli.Connect (Path => Types.Unix_Path_Type (Path));
+      S_Cli.Connect (Path => Unix.Unix_Path_Type (Path));
       S_Cli.Send (Item => Ref_Chunk);
 
       for I in 1 .. 30 loop
@@ -681,12 +684,27 @@ package body Socket_Tests is
          Sock : Unix.UDP_Socket_Type;
       begin
          Sock.Init;
-         Sock.Bind (Path => Types.Unix_Path_Type (Path));
+         Sock.Bind (Path => Unix.Unix_Path_Type (Path));
          Assert (Condition => Ada.Directories.Exists (Name => Path),
                  Message   => "Path not found");
       end;
       Assert (Condition => not Ada.Directories.Exists (Name => Path),
               Message   => "Socket path still there");
    end Unix_Delete_Socket;
+
+   -------------------------------------------------------------------------
+
+   procedure Valid_Unix_Paths
+   is
+      Too_Long : constant String :=
+        (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
+   begin
+      Assert (Condition => Unix.Is_Valid_Unix (Path => "/tmp/foopath"),
+              Message   => "Invalid path '/tmp/foopath'");
+      Assert (Condition => not Unix.Is_Valid_Unix (Path => ""),
+              Message   => "Valid empty path");
+      Assert (Condition => not Unix.Is_Valid_Unix (Path => Too_Long),
+              Message   => "Valid Path '" & Too_Long & "'");
+   end Valid_Unix_Paths;
 
 end Socket_Tests;

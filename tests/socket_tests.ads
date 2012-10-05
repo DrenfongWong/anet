@@ -66,4 +66,7 @@ package Socket_Tests is
    procedure Error_Callbacks;
    --  Test error callback handling.
 
+   procedure Valid_Unix_Paths;
+   --  Test unix path validation.
+
 end Socket_Tests;
