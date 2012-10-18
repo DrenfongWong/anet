@@ -92,7 +92,7 @@ package body Anet.Sockets.Netlink is
    procedure Receive
      (Socket :     Netlink_Socket_Type;
       Src    : out Netlink_Addr_Type;
-      Data   : out Ada.Streams.Stream_Element_Array;
+      Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
       use type Ada.Streams.Stream_Element_Offset;
@@ -102,8 +102,8 @@ package body Anet.Sockets.Netlink is
       Len   : aliased C.int := Saddr'Size / 8;
    begin
       Res := Thin.C_Recvfrom (S       => Socket.Sock_FD,
-                              Msg     => Data'Address,
-                              Len     => Data'Length,
+                              Msg     => Item'Address,
+                              Len     => Item'Length,
                               Flags   => 0,
                               From    => Saddr'Address,
                               Fromlen => Len'Access);
@@ -114,7 +114,7 @@ package body Anet.Sockets.Netlink is
       end if;
 
       Src  := Netlink_Addr_Type (Saddr.Nl_Pid);
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive;
 
    -------------------------------------------------------------------------

@@ -75,7 +75,7 @@ package Anet.Sockets.Netlink is
    procedure Receive
      (Socket :     Netlink_Socket_Type;
       Src    : out Netlink_Addr_Type;
-      Data   : out Ada.Streams.Stream_Element_Array;
+      Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given Netlink socket. Last is the index value which
    --  designates the last stream element in data. The source Netlink address

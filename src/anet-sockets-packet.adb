@@ -73,7 +73,7 @@ package body Anet.Sockets.Packet is
    procedure Receive
      (Socket :     Packet_Socket_Type;
       Src    : out Hardware_Addr_Type;
-      Data   : out Ada.Streams.Stream_Element_Array;
+      Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
       use type Ada.Streams.Stream_Element_Offset;
@@ -83,8 +83,8 @@ package body Anet.Sockets.Packet is
       Len   : aliased C.int := Saddr'Size / 8;
    begin
       Res := Thin.C_Recvfrom (S       => Socket.Sock_FD,
-                              Msg     => Data'Address,
-                              Len     => Data'Length,
+                              Msg     => Item'Address,
+                              Len     => Item'Length,
                               Flags   => 0,
                               From    => Saddr'Address,
                               Fromlen => Len'Access);
@@ -95,7 +95,7 @@ package body Anet.Sockets.Packet is
       end if;
 
       Src  := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src'Length);
-      Last := Data'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
    end Receive;
 
    -------------------------------------------------------------------------

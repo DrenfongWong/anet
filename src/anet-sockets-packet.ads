@@ -44,7 +44,7 @@ package Anet.Sockets.Packet is
    procedure Receive
      (Socket :     Packet_Socket_Type;
       Src    : out Hardware_Addr_Type;
-      Data   : out Ada.Streams.Stream_Element_Array;
+      Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given packet socket. Last is the index value which
    --  designates the last stream element in data. The source hardware address
