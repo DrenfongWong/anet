@@ -42,6 +42,9 @@ cov:
 	@lcov -e $(COVDIR)/cov.info "$(PWD)/src/*.adb" -o $(COVDIR)/cov.info
 	@genhtml --no-branch-coverage $(COVDIR)/cov.info -o $(COVDIR)
 
+examples:
+	@gnatmake $(GMAKE_OPTS) -Panet_examples
+
 install: install_lib install_$(LIBRARY_KIND)
 
 install_lib: build_lib
@@ -76,5 +79,4 @@ dist:
 	@echo "Creating release tarball $(TARBALL) ... "
 	@git archive --format=tar HEAD --prefix $(ANET)/ | bzip2 > $(TARBALL)
 
-.PHONY: build_all build_lib build_tests clean dist doc install \
-        install_dynamic install_lib install_static install_tests tests
+.PHONY: doc examples tests
