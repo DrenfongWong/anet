@@ -15,7 +15,7 @@ all: $(DESTDIR)/asciidoc.css $(DESTDIR)/index.html
 $(DESTDIR)/asciidoc.css: asciidoc.css
 	cp $< $@
 
-$(DESTDIR)/index.html: ../README page.conf
+$(DESTDIR)/index.html: index page.conf ../README
 	asciidoc $(ASCIIDOC_OPTS) $< > $@
 
 clean:
