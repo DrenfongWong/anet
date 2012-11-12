@@ -50,6 +50,9 @@ package Anet.Sockets.Filters is
    -- Filters --
    -------------
 
+   Filter_Discard_All : constant Sock_Filter_Array;
+   --  Filter: discard all packets.
+
    Filter_UDP_Port_Bootpc : constant Sock_Filter_Array;
    --  Filter: udp and dst port 68.
 
@@ -57,6 +60,10 @@ package Anet.Sockets.Filters is
    --  Filter: udp and dst port 67.
 
 private
+
+   Filter_Discard_All : constant Sock_Filter_Array (1 .. 1)
+     := (1 => (16#06#, 0, 0, 16#00000000#));
+   --  Compiled LPF filter, discard all packets.
 
    Filter_UDP_Port_Bootpc : constant Sock_Filter_Array (1 .. 9)
      := ((16#30#, 0, 0, 16#00000009#),
