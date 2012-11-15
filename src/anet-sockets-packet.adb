@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
-
 with Anet.Net_Ifaces;
 with Anet.Sockets.Thin;
 with Anet.Constants;

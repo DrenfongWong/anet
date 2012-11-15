@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
-
 package Anet.OS is
 
    procedure Execute (Command : String);

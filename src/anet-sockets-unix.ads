@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Strings.Unbounded;
+private with Ada.Strings.Unbounded;
 
 package Anet.Sockets.Unix is
 

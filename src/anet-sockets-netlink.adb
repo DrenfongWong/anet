@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
-
 with Anet.Sockets.Thin;
 
 package body Anet.Sockets.Netlink is

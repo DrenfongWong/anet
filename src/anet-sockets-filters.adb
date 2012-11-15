@@ -23,8 +23,6 @@
 
 with System;
 
-with Interfaces.C;
-
 with Anet.Constants;
 with Anet.Sockets.Thin;
 

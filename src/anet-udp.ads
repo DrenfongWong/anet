@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
-
 package Anet.UDP is
 
    UDP_Header_Length : constant := 8;

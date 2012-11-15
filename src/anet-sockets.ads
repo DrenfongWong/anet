@@ -21,7 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
 private with Ada.Finalization;
 
 with Interfaces.C;

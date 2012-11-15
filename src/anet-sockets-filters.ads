@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces;
-
 package Anet.Sockets.Filters is
 
    type Sock_Filter_Type is record

@@ -23,10 +23,6 @@
 
 with System;
 
-with Interfaces.C;
-
-with Anet.Constants;
-
 package Anet.Sockets.Thin is
 
    type Sockaddr_Type is record
