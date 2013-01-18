@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011 secunet Security Networks AG
---  Copyright (C) 2011 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -35,8 +35,13 @@ with IP_Tests;
 with Stream_Tests;
 with Net_Ifaces_Tests;
 
+with Test_Utils;
+
 procedure Test_Runner is
    use Ahven.Framework;
+
+   function C_Getuid return Integer;
+   pragma Import (C, C_Getuid, "getuid");
 
    Name : constant String := "Anet tests";
    S    : constant Test_Suite_Access := Create_Suite (Suite_Name => Name);
@@ -57,6 +62,10 @@ begin
              T     => new Stream_Tests.Testcase);
    Add_Test (Suite => S.all,
              T     => new Net_Ifaces_Tests.Testcase);
+
+   if C_Getuid = 0 then
+      Test_Utils.Has_Root_Perms := True;
+   end if;
 
    Ada.Text_IO.Put_Line ("Running " & Name & " ... please wait");
 

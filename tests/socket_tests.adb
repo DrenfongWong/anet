@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -357,6 +357,10 @@ package body Socket_Tests is
       Rcvr : Netlink_Receiver.Receiver_Type (S => Sock'Access);
       Pid  : constant Netlink.Netlink_Addr_Type := 23499;
    begin
+      if not Test_Utils.Has_Root_Perms then
+         Skip (Message => "Run as root");
+      end if;
+
       Sock.Init (Protocol => Netlink.Proto_Netlink_Xfrm);
       Sock.Bind (Address => Pid);
 

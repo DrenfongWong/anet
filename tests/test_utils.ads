@@ -31,6 +31,8 @@ package Test_Utils is
 
    Listen_Port : constant := 32101;
 
+   Has_Root_Perms : Boolean := False;
+
    DHCP_Ack : constant Ada.Streams.Stream_Element_Array
      := (16#02#, 16#13#, 16#06#, 16#0c#, 16#9e#, 16#eb#, 16#b7#, 16#66#,
          16#ca#, 16#fe#, 16#80#, 16#00#, 16#0a#, 16#38#, 16#15#, 16#f2#,
