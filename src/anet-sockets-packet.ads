@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012 secunet Security Networks AG
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012-2013 secunet Security Networks AG
+--  Copyright (C) 2012-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -24,6 +24,9 @@
 with Anet.Types;
 
 package Anet.Sockets.Packet is
+
+   subtype Ether_Addr_Type is Hardware_Addr_Type (1 .. 6);
+   --  Ethernet address.
 
    type Packet_Socket_Type is abstract new Socket_Type with private;
    --  Packet socket.

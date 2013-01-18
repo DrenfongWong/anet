@@ -30,6 +30,7 @@ with Anet.Constants;
 with Anet.Sockets.Unix;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Netlink;
+with Anet.Sockets.Packet;
 with Anet.Receivers.Datagram;
 with Anet.Receivers.Stream;
 with Anet.Util;
@@ -82,6 +83,12 @@ package body Socket_Tests is
       Socket_Type  => Netlink.Raw_Socket_Type,
       Address_Type => Netlink.Netlink_Addr_Type,
       Receive      => Netlink.Receive);
+
+   package Packet_Receiver is new Receivers.Datagram
+     (Buffer_Size  => 1024,
+      Socket_Type  => Packet.UDP_Socket_Type,
+      Address_Type => Packet.Ether_Addr_Type,
+      Receive      => Packet.Receive);
 
    Ref_Chunk : constant Ada.Streams.Stream_Element_Array
      := OS.Read_File (Filename => "data/chunk1.dat");
@@ -193,6 +200,9 @@ package body Socket_Tests is
       T.Add_Test_Routine
         (Routine => Send_Netlink_Raw'Access,
          Name    => "Send data (Netlink, raw)");
+      T.Add_Test_Routine
+        (Routine => Send_Packet_Datagram'Access,
+         Name    => "Send data (Packet, datagram)");
       T.Add_Test_Routine
         (Routine => Send_Various_Buffers'Access,
          Name    => "Send data (various buffer ranges)");
@@ -391,6 +401,52 @@ package body Socket_Tests is
          Rcvr.Stop;
          raise;
    end Send_Netlink_Raw;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_Packet_Datagram
+   is
+      use type Receivers.Count_Type;
+
+      C    : Receivers.Count_Type := 0;
+      Sock : aliased Packet.UDP_Socket_Type;
+      Rcvr : Packet_Receiver.Receiver_Type (S => Sock'Access);
+   begin
+      if not Test_Utils.Has_Root_Perms then
+         Skip (Message => "Run as root");
+      end if;
+
+      Sock.Init;
+      Sock.Bind (Iface => "lo");
+
+      Rcvr.Listen (Callback => Test_Utils.Dump'Access);
+
+      --  Precautionary delay to make sure receiver task is ready.
+
+      delay 0.2;
+
+      Sock.Send (Item  => Ref_Chunk,
+                 To    => Bcast_HW_Addr,
+                 Iface => "lo");
+
+      for I in 1 .. 30 loop
+         C := Rcvr.Get_Rcv_Msg_Count;
+         exit when C > 0;
+         delay 0.1;
+      end loop;
+
+      Rcvr.Stop;
+
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
+              Message   => "Result mismatch");
+
+   exception
+      when others =>
+         Rcvr.Stop;
+         raise;
+   end Send_Packet_Datagram;
 
    -------------------------------------------------------------------------
 
@@ -808,8 +864,7 @@ package body Socket_Tests is
 
    procedure Valid_Unix_Paths
    is
-      Too_Long : constant String :=
-        (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
+      Too_Long : constant String := (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
    begin
       Assert (Condition => Unix.Is_Valid (Path => "/tmp/foopath"),
               Message   => "Invalid path '/tmp/foopath'");

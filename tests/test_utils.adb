@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -73,6 +73,18 @@ package body Test_Utils is
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Unix.Full_Path_Type)
+   is
+      pragma Unreferenced (Src);
+   begin
+      Buffer (Buffer'First .. Data'Length) := Data;
+      Last                                 := Data'Length;
+   end Dump;
+
+   -------------------------------------------------------------------------
+
+   procedure Dump
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Sockets.Packet.Ether_Addr_Type)
    is
       pragma Unreferenced (Src);
    begin

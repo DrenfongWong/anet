@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -26,6 +26,7 @@ with Ada.Streams;
 with Anet.Sockets.Inet;
 with Anet.Sockets.Netlink;
 with Anet.Sockets.Unix;
+with Anet.Sockets.Packet;
 
 package Test_Utils is
 
@@ -103,6 +104,12 @@ package Test_Utils is
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Unix.Full_Path_Type);
+   --  This procedure dumps the given data to an internal buffer. Use the
+   --  Get_Dump function to retrieve the content of the buffer.
+
+   procedure Dump
+     (Data : Ada.Streams.Stream_Element_Array;
+      Src  : Anet.Sockets.Packet.Ether_Addr_Type);
    --  This procedure dumps the given data to an internal buffer. Use the
    --  Get_Dump function to retrieve the content of the buffer.
 
