@@ -103,52 +103,58 @@ package body Anet.Receivers.Stream is
          end select;
       end loop Setup_Loop;
 
-      select
-         Parent.Trigger.Stop;
-      then abort
-         Main_Loop :
-         loop
+      Main_Loop :
+      loop
+         select
+            Parent.Trigger.Stop;
+            exit Main_Loop;
+         then abort
             Parent.S.all.Accept_Connection
               (New_Socket => Parent.S_Comm);
+         end select;
 
-            Processing_Loop :
-            loop
-               declare
-                  use type Ada.Streams.Stream_Element_Offset;
+         Processing_Loop :
+         loop
+            declare
+               use type Ada.Streams.Stream_Element_Offset;
 
-                  R_Buffer, S_Buffer : Ada.Streams.Stream_Element_Array
-                    (1 .. Buffer_Size);
-                  R_Last, S_Last     : Ada.Streams.Stream_Element_Offset;
-               begin
+               R_Buffer, S_Buffer : Ada.Streams.Stream_Element_Array
+                 (1 .. Buffer_Size);
+               R_Last, S_Last     : Ada.Streams.Stream_Element_Offset;
+            begin
+               select
+                  Parent.Trigger.Stop;
+                  exit Main_Loop;
+               then abort
                   Parent.S_Comm.Receive (Item => R_Buffer,
                                          Last => R_Last);
+               end select;
 
-                  --  Exit processing loop on connection close.
+               --  Exit processing loop on connection close.
 
-                  exit Processing_Loop when R_Last = 0;
+               exit Processing_Loop when R_Last = 0;
 
-                  Parent.Rcv_Count := Parent.Rcv_Count + 1;
+               Parent.Rcv_Count := Parent.Rcv_Count + 1;
 
-                  Data_Callback
-                    (Recv_Data => R_Buffer (R_Buffer'First .. R_Last),
-                     Send_Data => S_Buffer,
-                     Send_Last => S_Last);
+               Data_Callback
+                 (Recv_Data => R_Buffer (R_Buffer'First .. R_Last),
+                  Send_Data => S_Buffer,
+                  Send_Last => S_Last);
 
-                  Parent.S_Comm.Send
-                    (Item => S_Buffer
-                       (S_Buffer'First .. S_Last));
+               Parent.S_Comm.Send
+                 (Item => S_Buffer
+                    (S_Buffer'First .. S_Last));
 
-               exception
-                  when Ex : others =>
-                     Error_Callback (E         => Ex,
-                                     Stop_Flag => Stop);
-                     if Stop then
-                        exit Main_Loop;
-                     end if;
-               end;
-            end loop Processing_Loop;
-         end loop Main_Loop;
-      end select;
+            exception
+               when Ex : others =>
+                  Error_Callback (E         => Ex,
+                                  Stop_Flag => Stop);
+                  if Stop then
+                     exit Main_Loop;
+                  end if;
+            end;
+         end loop Processing_Loop;
+      end loop Main_Loop;
       Parent.Trigger.Signal_Termination;
    end Receiver_Task;
 

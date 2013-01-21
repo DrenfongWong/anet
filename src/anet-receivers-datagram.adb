@@ -105,36 +105,37 @@ package body Anet.Receivers.Datagram is
          end select;
       end loop Setup_Loop;
 
-      select
-         Parent.Trigger.Stop;
-      then abort
-         Reception_Loop :
-         loop
-            declare
-               Sender : Address_Type;
-               Buffer : Ada.Streams.Stream_Element_Array (1 .. Buffer_Size);
-               Last   : Ada.Streams.Stream_Element_Offset;
-            begin
+      Reception_Loop :
+      loop
+         declare
+            Sender : Address_Type;
+            Buffer : Ada.Streams.Stream_Element_Array (1 .. Buffer_Size);
+            Last   : Ada.Streams.Stream_Element_Offset;
+         begin
+            select
+               Parent.Trigger.Stop;
+               exit Reception_Loop;
+            then abort
                Receive
                  (Socket => Parent.S.all,
                   Src    => Sender,
                   Item   => Buffer,
                   Last   => Last);
+            end select;
 
-               Data_Callback (Item => Buffer (Buffer'First .. Last),
-                              Src  => Sender);
-               Parent.Item_Count := Parent.Item_Count + 1;
+            Data_Callback (Item => Buffer (Buffer'First .. Last),
+                           Src  => Sender);
+            Parent.Item_Count := Parent.Item_Count + 1;
 
-            exception
-               when Ex : others =>
-                  Error_Callback (E         => Ex,
-                                  Stop_Flag => Stop);
-                  if Stop then
-                     exit Reception_Loop;
-                  end if;
-            end;
-         end loop Reception_Loop;
-      end select;
+         exception
+            when Ex : others =>
+               Error_Callback (E         => Ex,
+                               Stop_Flag => Stop);
+               if Stop then
+                  exit Reception_Loop;
+               end if;
+         end;
+      end loop Reception_Loop;
       Parent.Trigger.Signal_Termination;
    end Receiver_Task;
 
