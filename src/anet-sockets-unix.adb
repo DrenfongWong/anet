@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012 secunet Security Networks AG
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012-2013 secunet Security Networks AG
+--  Copyright (C) 2012-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -38,17 +38,22 @@ package body Anet.Sockets.Unix is
       Sock : Thin.Sockaddr_Un_Type;
       Len  : aliased C.int := Sock'Size / 8;
    begin
+      New_Socket.Sock_FD := -1;
+
       Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
                             Namelen => Len'Access);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to accept connection on UNIX/TCP "
-           & "socket - " & Get_Errno_String;
-      end if;
-
-      New_Socket.Sock_FD := Res;
-      New_Socket.Path    := Socket.Path;
+      case Check_Accept (Result => Res)
+      is
+         when Accept_Op_Aborted => return;
+         when Accept_Op_Error =>
+            raise Socket_Error with "Unable to accept connection on UNIX/TCP "
+              & "socket - " & Get_Errno_String;
+         when Accept_Op_Ok =>
+            New_Socket.Sock_FD := Res;
+            New_Socket.Path    := Socket.Path;
+      end case;
    end Accept_Connection;
 
    -------------------------------------------------------------------------

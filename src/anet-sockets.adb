@@ -31,6 +31,27 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
+   function Check_Accept (Result : Interfaces.C.int) return Accept_Result_Type
+   is
+   begin
+      if Result = C_Failure then
+         if GNAT.OS_Lib.Errno = Constants.Sys.EINTR then
+
+            --  Aborted, most probably via an ATC in the receiver task.
+
+            return Accept_Op_Aborted;
+         end if;
+
+         --  Some other error occurred.
+
+         return Accept_Op_Error;
+      end if;
+
+      return Accept_Op_Ok;
+   end Check_Accept;
+
+   -------------------------------------------------------------------------
+
    procedure Check_Complete_Send
      (Item      : Ada.Streams.Stream_Element_Array;
       Result    : Interfaces.C.int;

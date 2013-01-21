@@ -63,16 +63,21 @@ package body Anet.Sockets.Inet is
       Sock : Thin.Sockaddr_In_Type (Family => Family_Inet);
       Len  : aliased C.int := Sock'Size / 8;
    begin
+      New_Socket.Sock_FD := -1;
+
       Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
                             Namelen => Len'Access);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to accept connection on TCPv4 "
-           & "socket - " & Get_Errno_String;
-      end if;
-
-      New_Socket.Sock_FD := Res;
+      case Check_Accept (Result => Res)
+      is
+         when Accept_Op_Aborted => return;
+         when Accept_Op_Error =>
+            raise Socket_Error with "Unable to accept connection on TCPv4 "
+              & "socket - " & Get_Errno_String;
+         when Accept_Op_Ok =>
+            New_Socket.Sock_FD := Res;
+      end case;
    end Accept_Connection;
 
    -------------------------------------------------------------------------
@@ -85,16 +90,21 @@ package body Anet.Sockets.Inet is
       Sock : Thin.Sockaddr_In_Type (Family => Family_Inet6);
       Len  : aliased C.int := Sock'Size / 8;
    begin
+      New_Socket.Sock_FD := -1;
+
       Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
                             Namelen => Len'Access);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to accept connection on TCPv6 "
-           & "socket - " & Get_Errno_String;
-      end if;
-
-      New_Socket.Sock_FD := Res;
+      case Check_Accept (Result => Res)
+      is
+         when Accept_Op_Aborted => return;
+         when Accept_Op_Error =>
+            raise Socket_Error with "Unable to accept connection on TCPv6 "
+              & "socket - " & Get_Errno_String;
+         when Accept_Op_Ok =>
+            New_Socket.Sock_FD := Res;
+      end case;
    end Accept_Connection;
 
    -------------------------------------------------------------------------

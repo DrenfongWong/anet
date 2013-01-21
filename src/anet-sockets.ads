@@ -187,4 +187,13 @@ private
    function Check_Receive (Result : Interfaces.C.int) return Recv_Result_Type;
    --  Determine the result of a receive operation.
 
+   type Accept_Result_Type is
+     (Accept_Op_Ok,
+      Accept_Op_Aborted,
+      Accept_Op_Error);
+   --  Accept operation result status.
+
+   function Check_Accept (Result : Interfaces.C.int) return Accept_Result_Type;
+   --  Determine the result of an accept operation.
+
 end Anet.Sockets;
