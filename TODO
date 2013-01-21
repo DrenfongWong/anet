@@ -1,10 +1,3 @@
 IPv6
 ----
 - Support IPv6 shortform addrs
-
-Sockets
--------
-- Revisit receiver task ATC
-- Review reception error handling
-  - e.g. Res = 0
-  - SIGABRT

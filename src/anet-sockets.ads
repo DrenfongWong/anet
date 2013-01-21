@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -176,5 +176,15 @@ private
    --  buffer by calculating the actual number of bytes sent from the buffer
    --  range and the send(2)/sendto(2) result specified. The procedure raises
    --  an exception starting with the given error message if the check fails.
+
+   type Recv_Result_Type is
+     (Recv_Op_Ok,
+      Recv_Op_Aborted,
+      Recv_Op_Error,
+      Recv_Op_Orderly_Shutdown);
+   --  Receive operation result status.
+
+   function Check_Receive (Result : Interfaces.C.int) return Recv_Result_Type;
+   --  Determine the result of a receive operation.
 
 end Anet.Sockets;

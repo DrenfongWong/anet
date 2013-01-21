@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012 secunet Security Networks AG
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012-2013 secunet Security Networks AG
+--  Copyright (C) 2012-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -80,6 +80,9 @@ package body Anet.Sockets.Packet is
       Saddr : Thin.Sockaddr_Ll_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
+      Src  := (others => 0);
+      Last := 0;
+
       Res := Thin.C_Recvfrom (S       => Socket.Sock_FD,
                               Msg     => Item'Address,
                               Len     => Item'Length,
@@ -87,13 +90,16 @@ package body Anet.Sockets.Packet is
                               From    => Saddr'Address,
                               Fromlen => Len'Access);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Error receiving packet data: "
-           & Get_Errno_String;
-      end if;
-
-      Src  := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src'Length);
-      Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      case Check_Receive (Result => Res)
+      is
+         when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
+         when Recv_Op_Error =>
+            raise Socket_Error with "Error receiving packet data: "
+              & Get_Errno_String;
+         when Recv_Op_Ok =>
+            Src  := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src'Length);
+            Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      end case;
    end Receive;
 
    -------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -20,6 +20,8 @@
 --  exception does  not  however  invalidate  any  other reasons why  the
 --  executable file might be covered by the GNU Public License.
 --
+
+with GNAT.OS_Lib;
 
 with Anet.Sockets.Thin;
 
@@ -44,6 +46,34 @@ package body Anet.Sockets is
            & Item'Length'Img & " bytes sent";
       end if;
    end Check_Complete_Send;
+
+   -------------------------------------------------------------------------
+
+   function Check_Receive (Result : Interfaces.C.int) return Recv_Result_Type
+   is
+   begin
+      if Result = 0 then
+
+         --  The peer performed an orderly shutdown.
+
+         return Recv_Op_Orderly_Shutdown;
+      end if;
+
+      if Result = C_Failure then
+         if GNAT.OS_Lib.Errno = Constants.Sys.EINTR then
+
+            --  Aborted, most probably via an ATC in the receiver task.
+
+            return Recv_Op_Aborted;
+         end if;
+
+         --  Some other error occurred.
+
+         return Recv_Op_Error;
+      end if;
+
+      return Recv_Op_Ok;
+   end Check_Receive;
 
    -------------------------------------------------------------------------
 
@@ -120,16 +150,22 @@ package body Anet.Sockets is
 
       Res : C.int;
    begin
+      Last := 0;
+
       Res := Thin.C_Recv (S     => Socket.Sock_FD,
                           Msg   => Item'Address,
                           Len   => Item'Length,
                           Flags => 0);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Error receiving data: " & Get_Errno_String;
-      end if;
-
-      Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      case Check_Receive (Result => Res)
+      is
+         when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
+         when Recv_Op_Error =>
+            raise Socket_Error with "Error receiving data from socket: "
+              & Get_Errno_String;
+         when Recv_Op_Ok =>
+            Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      end case;
    end Receive;
 
    -------------------------------------------------------------------------
