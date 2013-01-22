@@ -65,7 +65,7 @@ install_dynamic:
 install_tests: build_tests
 	install -v -d $(PREFIX)/$(TESTDIR)
 	install -m 755 $(OBJDIR)/$(TESTDIR)/test_runner $(PREFIX)/$(TESTDIR)
-	@cp -vr data $(PREFIX)/$(TESTDIR)
+	cp -r data $(PREFIX)/$(TESTDIR)
 
 doc:
 	@$(MAKE) -C doc
