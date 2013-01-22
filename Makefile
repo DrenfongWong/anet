@@ -6,11 +6,12 @@ LIBDIR    = lib
 SRCDIR    = src
 GPR_FILES = gnat/*.gpr
 
-MAJOR   = 0
-MINOR   = 2
-VERSION = $(MAJOR).$(MINOR)
-ANET    = libanet-$(VERSION)
-TARBALL = $(ANET).tar.bz2
+MAJOR    = 0
+MINOR    = 2
+REVISION = 1
+VERSION  = $(MAJOR).$(MINOR).$(REVISION)
+ANET     = libanet-$(VERSION)
+TARBALL  = $(ANET).tar.bz2
 
 SO_LIBRARY   = libanet.so.$(VERSION)
 LIBRARY_KIND = dynamic
