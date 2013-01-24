@@ -39,9 +39,7 @@ package body Anet.Sockets.Packet is
       Res   : C.int;
       Value : Thin.Sockaddr_Ll_Type;
    begin
-      Value.Sa_Protocol := C.unsigned_short
-        (Byte_Swapping.Host_To_Network
-           (Input => Double_Byte (Constants.ETH_P_IP)));
+      Value.Sa_Protocol := C.unsigned_short (Socket.Protocol);
       Value.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index (Name => Iface));
 
       Res := Thin.C_Bind (S       => Socket.Sock_FD,
@@ -62,8 +60,8 @@ package body Anet.Sockets.Packet is
       Init (Socket   => Socket,
             Family   => Family_Packet,
             Mode     => Datagram_Socket,
-            Protocol => Integer (Byte_Swapping.Host_To_Network
-              (Input => Double_Byte (Constants.ETH_P_IP))));
+            Protocol => Byte_Swapping.Host_To_Network
+              (Input => Constants.ETH_P_IP));
    end Init;
 
    -------------------------------------------------------------------------
@@ -116,9 +114,7 @@ package body Anet.Sockets.Packet is
       Ll_Dest.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index
                                     (Name => Iface));
       Ll_Dest.Sa_Halen    := To'Length;
-      Ll_Dest.Sa_Protocol := C.unsigned_short
-        (Byte_Swapping.Host_To_Network
-           (Input => Double_Byte (Constants.ETH_P_IP)));
+      Ll_Dest.Sa_Protocol := C.unsigned_short (Socket.Protocol);
 
       Ll_Dest.Sa_Addr (1 .. To'Length) := To;
 

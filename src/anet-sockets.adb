@@ -108,7 +108,8 @@ package body Anet.Sockets is
             raise Socket_Error with "Unable to close socket: "
               & Get_Errno_String;
          end if;
-         Socket.Sock_FD := -1;
+         Socket.Sock_FD  := -1;
+         Socket.Protocol := 0;
       end if;
    end Close;
 
@@ -126,7 +127,7 @@ package body Anet.Sockets is
      (Socket   : in out Socket_Type;
       Family   :        Family_Type;
       Mode     :        Mode_Type;
-      Protocol :        Natural := 0)
+      Protocol :        Double_Byte := 0)
    is
       Res : C.int;
    begin
@@ -140,7 +141,8 @@ package body Anet.Sockets is
            & Get_Errno_String;
       end if;
 
-      Socket.Sock_FD := Res;
+      Socket.Sock_FD  := Res;
+      Socket.Protocol := Protocol;
    end Init;
 
    -------------------------------------------------------------------------

@@ -154,7 +154,8 @@ private
    use type Interfaces.C.int;
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
-      Sock_FD : Interfaces.C.int := -1;
+      Sock_FD  : Interfaces.C.int := -1;
+      Protocol : Double_Byte      := 0;
    end record;
 
    overriding
@@ -165,7 +166,7 @@ private
      (Socket   : in out Socket_Type;
       Family   :        Family_Type;
       Mode     :        Mode_Type;
-      Protocol :        Natural := 0);
+      Protocol :        Double_Byte := 0);
    --  Initialize given socket with specified family, mode and protocol.
 
    procedure Check_Complete_Send

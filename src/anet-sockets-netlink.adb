@@ -27,7 +27,7 @@ package body Anet.Sockets.Netlink is
 
    package C renames Interfaces.C;
 
-   Protocols : constant array (Protocol_Type) of Integer
+   Protocols : constant array (Protocol_Type) of Double_Byte
      := (Proto_Netlink_Route     => Constants.NETLINK_ROUTE,
          Proto_Netlink_Firewall  => Constants.NETLINK_FIREWALL,
          Proto_Netlink_Inet_Diag => Constants.NETLINK_INET_DIAG,
