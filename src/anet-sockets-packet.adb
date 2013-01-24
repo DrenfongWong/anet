@@ -30,6 +30,11 @@ package body Anet.Sockets.Packet is
 
    package C renames Interfaces.C;
 
+   Protocols : constant array (Protocol_Type) of Double_Byte
+     := (Proto_Packet_Ip  => Constants.ETH_P_IP,
+         Proto_Packet_All => Constants.ETH_P_ALL);
+   --  Packet protocol mapping.
+
    -------------------------------------------------------------------------
 
    procedure Bind
@@ -54,14 +59,16 @@ package body Anet.Sockets.Packet is
 
    -------------------------------------------------------------------------
 
-   procedure Init (Socket : in out UDP_Socket_Type)
+   procedure Init
+     (Socket   : in out UDP_Socket_Type;
+      Protocol :        Protocol_Type := Proto_Packet_Ip)
    is
    begin
       Init (Socket   => Socket,
             Family   => Family_Packet,
             Mode     => Datagram_Socket,
             Protocol => Byte_Swapping.Host_To_Network
-              (Input => Constants.ETH_P_IP));
+              (Input => Protocols (Protocol)));
    end Init;
 
    -------------------------------------------------------------------------

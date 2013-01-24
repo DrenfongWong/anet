@@ -28,6 +28,11 @@ package Anet.Sockets.Packet is
    subtype Ether_Addr_Type is Hardware_Addr_Type (1 .. 6);
    --  Ethernet address.
 
+   type Protocol_Type is
+     (Proto_Packet_Ip,
+      Proto_Packet_All);
+   --  Packet protocols.
+
    type Packet_Socket_Type is abstract new Socket_Type with private;
    --  Packet socket.
 
@@ -57,7 +62,9 @@ package Anet.Sockets.Packet is
      and Dgram_Socket_Type with private;
    --  Packet socket in datagram mode.
 
-   procedure Init (Socket : in out UDP_Socket_Type);
+   procedure Init
+     (Socket   : in out UDP_Socket_Type;
+      Protocol :        Protocol_Type := Proto_Packet_Ip);
    --  Initialize given Packet/UDP socket.
 
 private
