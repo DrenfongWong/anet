@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -92,6 +92,7 @@ package Anet.Constants is
    -- Ethernet protocol IDs --
    ---------------------------
 
+   ETH_P_ALL           : constant := 16#0003#; --  Every packet
    ETH_P_IP            : constant := 16#0800#; --  Internet Protocol packet
 
    ---------------
