@@ -73,6 +73,20 @@ package body Anet.Sockets.Packet is
 
    -------------------------------------------------------------------------
 
+   procedure Init
+     (Socket   : in out Raw_Socket_Type;
+      Protocol :        Protocol_Type := Proto_Packet_All)
+   is
+   begin
+      Init (Socket   => Socket,
+            Family   => Family_Packet,
+            Mode     => Raw_Socket,
+            Protocol => Byte_Swapping.Host_To_Network
+              (Input => Protocols (Protocol)));
+   end Init;
+
+   -------------------------------------------------------------------------
+
    procedure Receive
      (Socket :     Packet_Socket_Type;
       Src    : out Hardware_Addr_Type;

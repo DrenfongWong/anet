@@ -21,6 +21,7 @@ The Anet networking library has the following features:
 * Supported socket modes
   - Stream (TCP)
   - Datagram (UDP)
+  - RAW
 * Support for IPv4/IPv6 multicast
 * UDP/IPv4 packet creation and validation
 * Binding to the Linux Packet Filter (LPF) system

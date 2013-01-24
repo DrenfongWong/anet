@@ -60,6 +60,9 @@ package Socket_Tests is
    procedure Send_Packet_Datagram;
    --  Test sending over a datagram packet socket.
 
+   procedure Send_Packet_Raw;
+   --  Test sending over a raw packet socket.
+
    procedure Send_Various_Buffers;
    --  Test sending of buffers with various ranges.
 

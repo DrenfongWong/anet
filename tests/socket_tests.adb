@@ -84,9 +84,15 @@ package body Socket_Tests is
       Address_Type => Netlink.Netlink_Addr_Type,
       Receive      => Netlink.Receive);
 
-   package Packet_Receiver is new Receivers.Datagram
+   package Packet_UDP_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Packet.UDP_Socket_Type,
+      Address_Type => Packet.Ether_Addr_Type,
+      Receive      => Packet.Receive);
+
+   package Packet_Raw_Receiver is new Receivers.Datagram
+     (Buffer_Size  => 1024,
+      Socket_Type  => Packet.Raw_Socket_Type,
       Address_Type => Packet.Ether_Addr_Type,
       Receive      => Packet.Receive);
 
@@ -203,6 +209,9 @@ package body Socket_Tests is
       T.Add_Test_Routine
         (Routine => Send_Packet_Datagram'Access,
          Name    => "Send data (Packet, datagram)");
+      T.Add_Test_Routine
+        (Routine => Send_Packet_Raw'Access,
+         Name    => "Send data (Packet, raw)");
       T.Add_Test_Routine
         (Routine => Send_Various_Buffers'Access,
          Name    => "Send data (various buffer ranges)");
@@ -410,7 +419,7 @@ package body Socket_Tests is
 
       C    : Receivers.Count_Type := 0;
       Sock : aliased Packet.UDP_Socket_Type;
-      Rcvr : Packet_Receiver.Receiver_Type (S => Sock'Access);
+      Rcvr : Packet_UDP_Receiver.Receiver_Type (S => Sock'Access);
    begin
       if not Test_Utils.Has_Root_Perms then
          Skip (Message => "Run as root");
@@ -447,6 +456,50 @@ package body Socket_Tests is
          Rcvr.Stop;
          raise;
    end Send_Packet_Datagram;
+
+   -------------------------------------------------------------------------
+
+   procedure Send_Packet_Raw
+   is
+      use type Receivers.Count_Type;
+
+      C    : Receivers.Count_Type := 0;
+      Sock : aliased Packet.Raw_Socket_Type;
+      Rcvr : Packet_Raw_Receiver.Receiver_Type (S => Sock'Access);
+   begin
+      if not Test_Utils.Has_Root_Perms then
+         Skip (Message => "Run as root");
+      end if;
+
+      Sock.Init;
+      Sock.Bind (Iface => "lo");
+
+      Rcvr.Listen (Callback => Test_Utils.Dump'Access);
+
+      --  Precautionary delay to make sure receiver task is ready.
+
+      delay 0.2;
+
+      Sock.Send (Item  => Ref_Chunk);
+
+      for I in 1 .. 30 loop
+         C := Rcvr.Get_Rcv_Msg_Count;
+         exit when C > 0;
+         delay 0.1;
+      end loop;
+
+      Rcvr.Stop;
+
+      Assert (Condition => C = 1,
+              Message   => "Message count not 1:" & C'Img);
+      Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
+              Message   => "Result mismatch");
+
+   exception
+      when others =>
+         Rcvr.Stop;
+         raise;
+   end Send_Packet_Raw;
 
    -------------------------------------------------------------------------
 

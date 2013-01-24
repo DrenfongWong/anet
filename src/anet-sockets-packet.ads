@@ -67,11 +67,24 @@ package Anet.Sockets.Packet is
       Protocol :        Protocol_Type := Proto_Packet_Ip);
    --  Initialize given Packet/UDP socket.
 
+   type Raw_Socket_Type is new Packet_Socket_Type
+     and Dgram_Socket_Type with private;
+   --  Packet socket in raw mode (link level headers not stripped). Behaves
+   --  like a datagram socket from an interface perspective.
+
+   procedure Init
+     (Socket   : in out Raw_Socket_Type;
+      Protocol :        Protocol_Type := Proto_Packet_All);
+   --  Initialize given Packet/Raw socket.
+
 private
 
    type Packet_Socket_Type is abstract new Socket_Type with null record;
 
    type UDP_Socket_Type is new Packet_Socket_Type
+     and Dgram_Socket_Type with null record;
+
+   type Raw_Socket_Type is new Packet_Socket_Type
      and Dgram_Socket_Type with null record;
 
 end Anet.Sockets.Packet;
