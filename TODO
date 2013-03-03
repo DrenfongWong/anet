@@ -1,3 +1,7 @@
 IPv6
 ----
 - Support IPv6 shortform addrs
+
+Misc
+----
+- Document differences/advantages over GNAT.Sockets/AdaSockets
