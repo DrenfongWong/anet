@@ -20,6 +20,13 @@ NUM_CPUS := $(shell getconf _NPROCESSORS_ONLN)
 
 GMAKE_OPTS = -p -R -j$(NUM_CPUS)
 
+# GNU-style directory variables
+prefix      = ${PREFIX}
+exec_prefix = ${prefix}
+includedir  = ${prefix}/include
+libdir      = ${exec_prefix}/lib
+gprdir      = ${prefix}/lib/gnat
+
 all: build_lib
 
 build_lib:
@@ -48,24 +55,24 @@ examples:
 install: install_lib install_$(LIBRARY_KIND)
 
 install_lib: build_lib
-	install -d $(PREFIX)/lib/gnat
-	install -d $(PREFIX)/lib/anet
-	install -d $(PREFIX)/include/anet
-	install -m 644 $(SRCDIR)/*.ad[bs] $(PREFIX)/include/anet
-	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/*.ali $(PREFIX)/lib/anet
-	install -m 644 $(GPR_FILES) $(PREFIX)/lib/gnat
+	install -d $(DESTDIR)$(gprdir)
+	install -d $(DESTDIR)$(libdir)/anet
+	install -d $(DESTDIR)$(includedir)/anet
+	install -m 644 $(SRCDIR)/*.ad[bs] $(DESTDIR)$(includedir)/anet
+	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/*.ali $(DESTDIR)$(libdir)/anet
+	install -m 644 $(GPR_FILES) $(DESTDIR)$(gprdir)
 
 install_static:
-	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/libanet.a $(PREFIX)/lib
+	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/libanet.a $(DESTDIR)$(libdir)
 
 install_dynamic:
-	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(PREFIX)/lib
-	cd $(PREFIX)/lib && ln -sf $(SO_LIBRARY) libanet.so
+	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(DESTDIR)$(libdir)
+	cd $(DESTDIR)$(libdir) && ln -sf $(SO_LIBRARY) libanet.so
 
 install_tests: build_tests
-	install -v -d $(PREFIX)/$(TESTDIR)
-	install -m 755 $(OBJDIR)/$(TESTDIR)/test_runner $(PREFIX)/$(TESTDIR)
-	cp -r data $(PREFIX)/$(TESTDIR)
+	install -v -d $(DESTDIR)$(prefix)/$(TESTDIR)
+	install -m 755 $(OBJDIR)/$(TESTDIR)/test_runner $(DESTDIR)$(prefix)/$(TESTDIR)
+	cp -r data $(DESTDIR)$(prefix)/$(TESTDIR)
 
 doc:
 	@$(MAKE) -C doc
