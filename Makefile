@@ -18,7 +18,12 @@ LIBRARY_KIND = dynamic
 
 NUM_CPUS := $(shell getconf _NPROCESSORS_ONLN)
 
-GMAKE_OPTS = -p -R -j$(NUM_CPUS)
+# GNAT_BUILDER_FLAGS, ADAFLAGS and GNATFLAGS may be overridden in the
+# environment or on the command line.
+GNAT_BUILDER_FLAGS ?= -R -j$(NUM_CPUS)
+GNATFLAGS          ?= ${GNAT_BUILDER_FLAGS} -cargs ${ADAFLAGS}
+# GMAKE_OPTS should not be overridden because -p is essential.
+GMAKE_OPTS = -p ${GNATFLAGS} -margs
 
 # GNU-style directory variables
 prefix      = ${PREFIX}
