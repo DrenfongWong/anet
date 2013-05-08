@@ -16,6 +16,12 @@ TARBALL  = $(ANET).tar.bz2
 SO_LIBRARY   = libanet.so.$(VERSION)
 LIBRARY_KIND = dynamic
 
+# Command variables
+INSTALL         = install
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA    = $(INSTALL) --mode=644 --preserve-timestamps
+INSTALL_ALI     = $(INSTALL) --mode=444
+
 NUM_CPUS := $(shell getconf _NPROCESSORS_ONLN)
 
 # GNAT_BUILDER_FLAGS, ADAFLAGS and GNATFLAGS may be overridden in the
@@ -60,23 +66,23 @@ examples:
 install: install_lib install_$(LIBRARY_KIND)
 
 install_lib: build_lib
-	install -d $(DESTDIR)$(gprdir)
-	install -d $(DESTDIR)$(libdir)/anet
-	install -d $(DESTDIR)$(includedir)/anet
-	install -m 644 $(SRCDIR)/*.ad[bs] $(DESTDIR)$(includedir)/anet
-	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/*.ali $(DESTDIR)$(libdir)/anet
-	install -m 644 $(GPR_FILES) $(DESTDIR)$(gprdir)
+	$(INSTALL) -d $(DESTDIR)$(gprdir)
+	$(INSTALL) -d $(DESTDIR)$(libdir)/anet
+	$(INSTALL) -d $(DESTDIR)$(includedir)/anet
+	$(INSTALL_DATA) $(SRCDIR)/*.ad[bs] $(DESTDIR)$(includedir)/anet
+	$(INSTALL_ALI) $(LIBDIR)/$(LIBRARY_KIND)/*.ali $(DESTDIR)$(libdir)/anet
+	$(INSTALL_DATA) $(GPR_FILES) $(DESTDIR)$(gprdir)
 
 install_static:
-	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/libanet.a $(DESTDIR)$(libdir)
+	$(INSTALL_DATA) $(LIBDIR)/$(LIBRARY_KIND)/libanet.a $(DESTDIR)$(libdir)
 
 install_dynamic:
-	install -m 444 $(LIBDIR)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(DESTDIR)$(libdir)
+	$(INSTALL_PROGRAM) $(LIBDIR)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(DESTDIR)$(libdir)
 	cd $(DESTDIR)$(libdir) && ln -sf $(SO_LIBRARY) libanet.so
 
 install_tests: build_tests
-	install -v -d $(DESTDIR)$(prefix)/$(TESTDIR)
-	install -m 755 $(OBJDIR)/$(TESTDIR)/test_runner $(DESTDIR)$(prefix)/$(TESTDIR)
+	$(INSTALL) -v -d $(DESTDIR)$(prefix)/$(TESTDIR)
+	$(INSTALL_PROGRAM) $(OBJDIR)/$(TESTDIR)/test_runner $(DESTDIR)$(prefix)/$(TESTDIR)
 	cp -r data $(DESTDIR)$(prefix)/$(TESTDIR)
 
 doc:
