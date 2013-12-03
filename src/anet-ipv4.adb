@@ -170,6 +170,7 @@ package body Anet.IPv4 is
       return Ada.Streams.Stream_Element_Array
    is
       Hdr_Buffer : Raw_IP_Hdr_Buffer_Type;
+      Total_Len  : Double_Byte;
       IP_Header  : Raw_IP_Hdr_Type;
       for IP_Header'Address use Hdr_Buffer'Address;
    begin
@@ -190,16 +191,12 @@ package body Anet.IPv4 is
            & IP_Header.Version'Img;
       end if;
 
-      declare
-         Total_Len : constant Double_Byte
-           := Byte_Swapping.Network_To_Host (Input => IP_Header.TL);
-      begin
-         if Total_Len /= Packet'Length then
-            raise Invalid_IP_Packet with "Invalid total length:"
-              & Total_Len'Img & " (packet is" & Natural'Image (Packet'Length)
-              & " bytes)";
-         end if;
-      end;
+      Total_Len := Byte_Swapping.Network_To_Host (Input => IP_Header.TL);
+      if Total_Len > Packet'Length then
+         raise Invalid_IP_Packet with "Invalid total length:"
+           & Total_Len'Img & " (packet is" & Natural'Image (Packet'Length)
+           & " bytes)";
+      end if;
 
       if IP_Header.Protocol /= Constants.Sys.IPPROTO_UDP then
          raise Invalid_IP_Packet with "Protocol is not UDP";
@@ -224,9 +221,11 @@ package body Anet.IPv4 is
       end Calculate_Checksum;
 
       declare
-         UDP_Pkt : constant Ada.Streams.Stream_Element_Array
-           := Packet (Ada.Streams.Stream_Element_Offset
-                      (4 * IP_Header.IHL + 1) .. Packet'Last);
+         use Ada.Streams;
+
+         UDP_Pkt : constant Stream_Element_Array
+           := Packet (Stream_Element_Offset (4 * IP_Header.IHL + 1) ..
+                        Stream_Element_Offset (Total_Len));
       begin
          UDP.Validate_Checksum (Packet => UDP_Pkt,
                                 Src_IP => IP_Header.Saddr,
