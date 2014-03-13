@@ -47,7 +47,7 @@ package Anet.Sockets.Thin is
 
    type IPv4_Mreq_Type is record
       Imr_Multiaddr : IPv4_Addr_Type;
-      Imr_Interface : Interfaces.C.unsigned;
+      Imr_Interface : IPv4_Addr_Type;
    end record;
    pragma Convention (C, IPv4_Mreq_Type);
    --  struct ip_mreq (netinet/in.h).

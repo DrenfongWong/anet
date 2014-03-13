@@ -300,16 +300,16 @@ package body Anet.Sockets.Inet is
    is
       use type C.unsigned_short;
 
-      Mreq      : Thin.IPv4_Mreq_Type;
-      Iface_Idx : Natural := 0;
-      Res       : C.int;
+      Mreq       : Thin.IPv4_Mreq_Type;
+      Iface_Addr : IPv4_Addr_Type := Any_Addr;
+      Res        : C.int;
    begin
       if Iface'Length > 0 then
-         Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
+         Iface_Addr := Net_Ifaces.Get_Iface_IP (Name => Iface);
       end if;
 
       Mreq.Imr_Multiaddr := Group;
-      Mreq.Imr_Interface := C.unsigned (Iface_Idx);
+      Mreq.Imr_Interface := Iface_Addr;
 
       Res := Thin.C_Setsockopt
         (S       => Socket.Sock_FD,
