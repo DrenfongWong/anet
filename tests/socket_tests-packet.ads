@@ -1,7 +1,6 @@
 --
---  Copyright (C) 2011-2013 secunet Security Networks AG
---  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -21,15 +20,19 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
+with Ahven.Framework;
 
-with Anet.OS;
-pragma Elaborate_All (Anet.OS);
+package Socket_Tests.Packet is
 
-package Socket_Tests is
-private
+   type Testcase is new Ahven.Framework.Test_Case with null record;
 
-   Ref_Chunk : constant Ada.Streams.Stream_Element_Array
-     := Anet.OS.Read_File (Filename => "data/chunk1.dat");
+   procedure Initialize (T : in out Testcase);
+   --  Initialize testcase.
 
-end Socket_Tests;
+   procedure Send_Packet_Datagram;
+   --  Test sending over a datagram packet socket.
+
+   procedure Send_Packet_Raw;
+   --  Test sending over a raw packet socket.
+
+end Socket_Tests.Packet;

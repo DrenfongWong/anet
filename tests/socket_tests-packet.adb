@@ -1,7 +1,6 @@
 --
---  Copyright (C) 2011-2013 secunet Security Networks AG
---  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -24,41 +23,40 @@
 with Anet.Sockets.Packet;
 with Anet.Receivers.Datagram;
 
-with Test_Utils.Linux;
+with Test_Utils.GNU_Linux;
 
 pragma Elaborate_All (Anet.Receivers.Datagram);
 
-package body Socket_Tests is
+package body Socket_Tests.Packet is
 
    use Ahven;
    use Anet;
-   use Anet.Sockets;
    use type Ada.Streams.Stream_Element_Array;
 
    package Packet_UDP_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
-      Socket_Type  => Packet.UDP_Socket_Type,
-      Address_Type => Packet.Ether_Addr_Type,
-      Receive      => Packet.Receive);
+      Socket_Type  => Sockets.Packet.UDP_Socket_Type,
+      Address_Type => Sockets.Packet.Ether_Addr_Type,
+      Receive      => Sockets.Packet.Receive);
 
    package Packet_Raw_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
-      Socket_Type  => Packet.Raw_Socket_Type,
-      Address_Type => Packet.Ether_Addr_Type,
-      Receive      => Packet.Receive);
+      Socket_Type  => Sockets.Packet.Raw_Socket_Type,
+      Address_Type => Sockets.Packet.Ether_Addr_Type,
+      Receive      => Sockets.Packet.Receive);
 
    -------------------------------------------------------------------------
 
    procedure Initialize (T : in out Testcase)
    is
    begin
-      T.Set_Name (Name => "Tests for Sockets package");
+      T.Set_Name (Name => "Tests for Sockets package (Packet)");
       T.Add_Test_Routine
         (Routine => Send_Packet_Datagram'Access,
-         Name    => "Send data (Packet, datagram)");
+         Name    => "Send data (datagram)");
       T.Add_Test_Routine
         (Routine => Send_Packet_Raw'Access,
-         Name    => "Send data (Packet, raw)");
+         Name    => "Send data (raw)");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -68,7 +66,7 @@ package body Socket_Tests is
       use type Receivers.Count_Type;
 
       C    : Receivers.Count_Type := 0;
-      Sock : aliased Packet.UDP_Socket_Type;
+      Sock : aliased Sockets.Packet.UDP_Socket_Type;
       Rcvr : Packet_UDP_Receiver.Receiver_Type (S => Sock'Access);
    begin
       if not Test_Utils.Has_Root_Perms then
@@ -78,7 +76,7 @@ package body Socket_Tests is
       Sock.Init;
       Sock.Bind (Iface => "lo");
 
-      Rcvr.Listen (Callback => Test_Utils.Linux.Dump'Access);
+      Rcvr.Listen (Callback => Test_Utils.GNU_Linux.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -114,7 +112,7 @@ package body Socket_Tests is
       use type Receivers.Count_Type;
 
       C    : Receivers.Count_Type := 0;
-      Sock : aliased Packet.Raw_Socket_Type;
+      Sock : aliased Sockets.Packet.Raw_Socket_Type;
       Rcvr : Packet_Raw_Receiver.Receiver_Type (S => Sock'Access);
    begin
       if not Test_Utils.Has_Root_Perms then
@@ -124,7 +122,7 @@ package body Socket_Tests is
       Sock.Init;
       Sock.Bind (Iface => "lo");
 
-      Rcvr.Listen (Callback => Test_Utils.Linux.Dump'Access);
+      Rcvr.Listen (Callback => Test_Utils.GNU_Linux.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -151,4 +149,4 @@ package body Socket_Tests is
          raise;
    end Send_Packet_Raw;
 
-end Socket_Tests;
+end Socket_Tests.Packet;
