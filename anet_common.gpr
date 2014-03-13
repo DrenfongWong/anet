@@ -30,6 +30,9 @@ project Anet_Common is
    type Lib_Type is ("static", "dynamic");
    Libtype : Lib_Type := external ("LIBRARY_KIND", "static");
 
+   type OS_Type is ("Linux", "BSD");
+   OS : OS_Type := external ("OS", "Linux");
+
    Compiler_Switches := ("-gnatygAdISuxo",
                          "-gnatVa",
                          "-gnat05",
