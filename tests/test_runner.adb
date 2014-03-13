@@ -30,6 +30,7 @@ with Type_Tests;
 with OS_Tests;
 with Util_Tests;
 with Socket_Tests.IP;
+with Socket_Tests.Unix;
 with UDP_Tests;
 with IP_Tests;
 with Stream_Tests;
@@ -56,6 +57,8 @@ begin
              T     => new Socket_Tests.Testcase);
    Add_Test (Suite => S.all,
              T     => new Socket_Tests.IP.Testcase);
+   Add_Test (Suite => S.all,
+             T     => new Socket_Tests.Unix.Testcase);
    Add_Test (Suite => S.all,
              T     => new UDP_Tests.Testcase);
    Add_Test (Suite => S.all,
