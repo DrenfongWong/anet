@@ -31,7 +31,7 @@ NUM_CPUS ?= 1
 GNAT_BUILDER_FLAGS ?= -R -j$(NUM_CPUS)
 GNATFLAGS          ?= ${GNAT_BUILDER_FLAGS} -cargs ${ADAFLAGS}
 # GMAKE_OPTS should not be overridden because -p is essential.
-GMAKE_OPTS = -p ${GNATFLAGS} -margs
+GMAKE_OPTS = -XOS=$(OS) -p ${GNATFLAGS} -margs
 
 # GNU-style directory variables
 prefix      = ${PREFIX}
