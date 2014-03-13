@@ -29,9 +29,6 @@ package body Test_Utils is
 
    package D_IO is new Ada.Direct_IO (Element_Type => Character);
 
-   Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
-   Last   : Ada.Streams.Stream_Element_Offset;
-
    -------------------------------------------------------------------------
 
    procedure Dump
@@ -60,31 +57,7 @@ package body Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Netlink.Netlink_Addr_Type)
-   is
-      pragma Unreferenced (Src);
-   begin
-      Buffer (Buffer'First .. Data'Length) := Data;
-      Last                                 := Data'Length;
-   end Dump;
-
-   -------------------------------------------------------------------------
-
-   procedure Dump
-     (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Unix.Full_Path_Type)
-   is
-      pragma Unreferenced (Src);
-   begin
-      Buffer (Buffer'First .. Data'Length) := Data;
-      Last                                 := Data'Length;
-   end Dump;
-
-   -------------------------------------------------------------------------
-
-   procedure Dump
-     (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Packet.Ether_Addr_Type)
    is
       pragma Unreferenced (Src);
    begin

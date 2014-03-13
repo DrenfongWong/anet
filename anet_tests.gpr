@@ -32,9 +32,15 @@ project Anet_Tests is
 
    Compiler_Switches := Anet_Common.Compiler_Switches & "-gnatwal";
    Linker_Switches   := ();
+   Source_Dirs       := ("tests");
 
    for Main use ("test_runner.adb");
-   for Source_Dirs use ("tests");
+
+   case Anet_Common.OS is
+      when "Linux" => Source_Dirs := Source_Dirs & "tests/linux";
+      when others  => null;
+   end case;
+   for Source_Dirs use Source_Dirs;
 
    case Build is
       when "tests" =>

@@ -24,9 +24,7 @@
 with Ada.Streams;
 
 with Anet.Sockets.Inet;
-with Anet.Sockets.Netlink;
 with Anet.Sockets.Unix;
-with Anet.Sockets.Packet;
 
 package Test_Utils is
 
@@ -97,19 +95,7 @@ package Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Netlink.Netlink_Addr_Type);
-   --  This procedure dumps the given data to an internal buffer. Use the
-   --  Get_Dump function to retrieve the content of the buffer.
-
-   procedure Dump
-     (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Unix.Full_Path_Type);
-   --  This procedure dumps the given data to an internal buffer. Use the
-   --  Get_Dump function to retrieve the content of the buffer.
-
-   procedure Dump
-     (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Packet.Ether_Addr_Type);
    --  This procedure dumps the given data to an internal buffer. Use the
    --  Get_Dump function to retrieve the content of the buffer.
 
@@ -130,5 +116,10 @@ package Test_Utils is
    --  handling of the receiver type.
 
    Open_File_Error : exception;
+
+private
+
+   Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
+   Last   : Ada.Streams.Stream_Element_Offset;
 
 end Test_Utils;

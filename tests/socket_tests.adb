@@ -35,7 +35,7 @@ with Anet.Receivers.Datagram;
 with Anet.Receivers.Stream;
 with Anet.Util;
 
-with Test_Utils;
+with Test_Utils.Linux;
 
 pragma Elaborate_All (Anet.OS);
 pragma Elaborate_All (Anet.Receivers.Datagram);
@@ -383,7 +383,7 @@ package body Socket_Tests is
       Sock.Init (Protocol => Netlink.Proto_Netlink_Xfrm);
       Sock.Bind (Address => Pid);
 
-      Rcvr.Listen (Callback => Test_Utils.Dump'Access);
+      Rcvr.Listen (Callback => Test_Utils.Linux.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -428,7 +428,7 @@ package body Socket_Tests is
       Sock.Init;
       Sock.Bind (Iface => "lo");
 
-      Rcvr.Listen (Callback => Test_Utils.Dump'Access);
+      Rcvr.Listen (Callback => Test_Utils.Linux.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -474,7 +474,7 @@ package body Socket_Tests is
       Sock.Init;
       Sock.Bind (Iface => "lo");
 
-      Rcvr.Listen (Callback => Test_Utils.Dump'Access);
+      Rcvr.Listen (Callback => Test_Utils.Linux.Dump'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
