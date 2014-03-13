@@ -51,4 +51,7 @@ package Anet.Sockets.Thin.Inet is
    --  Low-level Internet socket address type (struct sockaddr_in, struct
    --  sockaddr_in6).
 
+   Sockaddr_In_Size  : constant := 16;
+   Sockaddr_In6_Size : constant := 28;
+
 end Anet.Sockets.Thin.Inet;
