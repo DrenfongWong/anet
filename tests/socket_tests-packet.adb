@@ -50,7 +50,7 @@ package body Socket_Tests.Packet is
    procedure Initialize (T : in out Testcase)
    is
    begin
-      T.Set_Name (Name => "Tests for Sockets package (Packet)");
+      T.Set_Name (Name => "Tests for Packet sockets");
       T.Add_Test_Routine
         (Routine => Send_Packet_Datagram'Access,
          Name    => "Send data (datagram)");

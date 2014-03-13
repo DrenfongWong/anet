@@ -44,7 +44,7 @@ package body Socket_Tests.Netlink is
    procedure Initialize (T : in out Testcase)
    is
    begin
-      T.Set_Name (Name => "Tests for Sockets package (Netlink)");
+      T.Set_Name (Name => "Tests for Netlink sockets");
       T.Add_Test_Routine
         (Routine => Send_Netlink_Raw'Access,
          Name    => "Send data (raw)");

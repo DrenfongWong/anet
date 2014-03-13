@@ -54,7 +54,7 @@ package body Socket_Tests.Unix is
    procedure Initialize (T : in out Testcase)
    is
    begin
-      T.Set_Name (Name => "Tests for Sockets package (Unix)");
+      T.Set_Name (Name => "Tests for Unix sockets");
       T.Add_Test_Routine
         (Routine => Send_Unix_Stream'Access,
          Name    => "Send data (stream)");

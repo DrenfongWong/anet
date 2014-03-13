@@ -138,7 +138,7 @@ package body Socket_Tests.IP is
    procedure Initialize (T : in out Testcase)
    is
    begin
-      T.Set_Name (Name => "Tests for Sockets package (IP)");
+      T.Set_Name (Name => "Tests for IP sockets");
       T.Add_Test_Routine
         (Routine => Send_V4_Stream'Access,
          Name    => "Send data (IPv4, stream)");
