@@ -1,7 +1,6 @@
 --
---  Copyright (C) 2011-2013 secunet Security Networks AG
---  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -21,47 +20,37 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
-
 with Ahven.Framework;
 
-with Anet.OS;
-pragma Elaborate_All (Anet.OS);
-
-package Socket_Tests is
+package Socket_Tests.IP is
 
    type Testcase is new Ahven.Framework.Test_Case with null record;
 
    procedure Initialize (T : in out Testcase);
    --  Initialize testcase.
 
-   procedure Send_Unix_Stream;
-   --  Test sending over a UNIX stream socket.
+   procedure Send_V4_Stream;
+   --  Test sending over IPv4 stream socket.
 
-   procedure Send_Unix_Datagram;
-   --  Test sending over a datagram Unix socket.
+   procedure Send_V4_Datagram;
+   --  Test sending over IPv4 datagram socket.
 
-   procedure Send_Netlink_Raw;
-   --  Test sending over raw Netlink socket.
+   procedure Send_V6_Stream;
+   --  Test sending over IPv6 stream socket.
 
-   procedure Send_Packet_Datagram;
-   --  Test sending over a datagram packet socket.
+   procedure Send_V6_Datagram;
+   --  Test sending over IPv6 datagram socket.
 
-   procedure Send_Packet_Raw;
-   --  Test sending over a raw packet socket.
+   procedure Send_Multicast_V4;
+   --  Test sending over IPv4 multicast.
 
-   procedure Send_Various_Buffers;
-   --  Test sending of buffers with various ranges.
+   procedure Send_Multicast_V6;
+   --  Test sending over IPv6 multicast.
 
-   procedure Unix_Delete_Socket;
-   --  Test socket path cleanup of UNIX domain socket.
+   procedure Listen_Callbacks;
+   --  Test data reception callback handling.
 
-   procedure Valid_Unix_Paths;
-   --  Test unix path validation.
+   procedure Error_Callbacks;
+   --  Test error callback handling.
 
-private
-
-   Ref_Chunk : constant Ada.Streams.Stream_Element_Array
-     := Anet.OS.Read_File (Filename => "data/chunk1.dat");
-
-end Socket_Tests;
+end Socket_Tests.IP;
