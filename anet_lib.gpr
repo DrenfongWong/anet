@@ -25,7 +25,13 @@ with "anet_common";
 
 project Anet_Lib is
 
-   for Source_Dirs use ("src");
+   Source_Dirs := ("src");
+   case Anet_Common.OS is
+      when "Linux" => Source_Dirs := Source_Dirs & "src/linux";
+      when others  => null;
+   end case;
+   for Source_Dirs use Source_Dirs;
+
    for Object_Dir use "obj/lib/" & Anet_Common.Libtype;
    for Library_Name use "anet";
    for Library_Dir use "lib/" & Anet_Common.Libtype;
