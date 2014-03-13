@@ -26,19 +26,11 @@ with Ada.Text_IO;
 with Ahven.Text_Runner;
 with Ahven.Framework;
 
-with Type_Tests;
-with OS_Tests;
-with Util_Tests;
-with Socket_Tests.IP;
-with Socket_Tests.Unix;
 with Socket_Tests.Netlink;
 with Socket_Tests.Packet;
-with UDP_Tests;
-with IP_Tests;
-with Stream_Tests;
-with Net_Ifaces_Tests;
 
 with Test_Utils;
+with Common_Tests;
 
 procedure Test_Runner is
    use Ahven.Framework;
@@ -49,28 +41,12 @@ procedure Test_Runner is
    Name : constant String := "Anet tests";
    S    : constant Test_Suite_Access := Create_Suite (Suite_Name => Name);
 begin
-   Add_Test (Suite => S.all,
-             T     => new Type_Tests.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new OS_Tests.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new Util_Tests.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new Socket_Tests.IP.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new Socket_Tests.Unix.Testcase);
+   Common_Tests.Add (Suite => S);
+
    Add_Test (Suite => S.all,
              T     => new Socket_Tests.Netlink.Testcase);
    Add_Test (Suite => S.all,
              T     => new Socket_Tests.Packet.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new UDP_Tests.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new IP_Tests.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new Stream_Tests.Testcase);
-   Add_Test (Suite => S.all,
-             T     => new Net_Ifaces_Tests.Testcase);
 
    if C_Getuid = 0 then
       Test_Utils.Has_Root_Perms := True;
