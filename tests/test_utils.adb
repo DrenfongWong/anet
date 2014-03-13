@@ -22,6 +22,7 @@
 --
 
 with Ada.Direct_IO;
+with Ada.Environment_Variables;
 
 with Anet;
 
@@ -164,4 +165,10 @@ package body Test_Utils is
       raise Constraint_Error with "DO NOT PANIC: Explicit raise";
    end Raise_Error;
 
+begin
+   if Ada.Environment_Variables.Exists (Name => "OS") then
+      OS := OS_Type'Value
+        (Ada.Environment_Variables.Value
+           (Name => "OS"));
+   end if;
 end Test_Utils;

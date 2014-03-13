@@ -30,6 +30,10 @@ package Test_Utils is
 
    Listen_Port : constant := 32101;
 
+   type OS_Type is (Linux, BSD);
+
+   OS : OS_Type := Linux;
+
    Has_Root_Perms : Boolean := False;
 
    DHCP_Ack : constant Ada.Streams.Stream_Element_Array
