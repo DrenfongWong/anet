@@ -61,7 +61,7 @@ package body Anet.Sockets.Inet is
    is
       Res  : C.int;
       Sock : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
-      Len  : aliased C.int := Sock'Size / 8;
+      Len  : aliased C.int := Thin.Inet.Sockaddr_In_Size;
    begin
       New_Socket.Sock_FD := -1;
 
@@ -88,7 +88,7 @@ package body Anet.Sockets.Inet is
    is
       Res  : C.int;
       Sock : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
-      Len  : aliased C.int := Sock'Size / 8;
+      Len  : aliased C.int := Thin.Inet.Sockaddr_In6_Size;
    begin
       New_Socket.Sock_FD := -1;
 
@@ -126,7 +126,7 @@ package body Anet.Sockets.Inet is
 
       Res := Thin.C_Bind (S       => Socket.Sock_FD,
                           Name    => Sockaddr'Address,
-                          Namelen => Sockaddr'Size / 8);
+                          Namelen => Thin.Inet.Sockaddr_In_Size);
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind IPv4 socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
@@ -159,7 +159,7 @@ package body Anet.Sockets.Inet is
 
       Res := Thin.C_Bind (S       => Socket.Sock_FD,
                           Name    => Sockaddr'Address,
-                          Namelen => Sockaddr'Size / 8);
+                          Namelen => Thin.Inet.Sockaddr_In6_Size);
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind IPv6 socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
@@ -187,7 +187,7 @@ package body Anet.Sockets.Inet is
    begin
       Res := Thin.C_Connect (S       => Socket.Sock_FD,
                              Name    => Dst'Address,
-                             Namelen => Dst'Size / 8);
+                             Namelen => Thin.Inet.Sockaddr_In_Size);
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to connect socket to address "
@@ -210,7 +210,7 @@ package body Anet.Sockets.Inet is
    begin
       Res := Thin.C_Connect (S       => Socket.Sock_FD,
                              Name    => Dst'Address,
-                             Namelen => Dst'Size / 8);
+                             Namelen => Thin.Inet.Sockaddr_In6_Size);
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to connect socket to address "
@@ -368,7 +368,7 @@ package body Anet.Sockets.Inet is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.int;
-      Len : aliased C.int := Src'Size / 8;
+      Len : aliased C.int := Thin.Inet.Sockaddr_In_Size;
    begin
       Last := 0;
 
@@ -450,7 +450,7 @@ package body Anet.Sockets.Inet is
                             Len   => Item'Length,
                             Flags => 0,
                             To    => Dst'Address,
-                            Tolen => Dst'Size / 8);
+                            Tolen => Thin.Inet.Sockaddr_In_Size);
 
       if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
@@ -483,7 +483,7 @@ package body Anet.Sockets.Inet is
                             Len   => Item'Length,
                             Flags => 0,
                             To    => Dst'Address,
-                            Tolen => Dst'Size / 8);
+                            Tolen => Thin.Inet.Sockaddr_In6_Size);
 
       if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
