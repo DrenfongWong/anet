@@ -22,7 +22,7 @@
 --
 
 with Anet.Constants;
-with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Inet;
 with Anet.Byte_Swapping;
 with Anet.Net_Ifaces;
 
@@ -32,7 +32,7 @@ package body Anet.Sockets.Inet is
 
    procedure Receive
      (Socket :     C.int;
-      Src    : out Thin.Sockaddr_In_Type;
+      Src    : out Thin.Inet.Sockaddr_In_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given inet socket. This procedure blocks until data
@@ -44,13 +44,13 @@ package body Anet.Sockets.Inet is
    function Create_Inet4
      (Address : IPv4_Addr_Type;
       Port    : Port_Type)
-      return Thin.Sockaddr_In_Type;
+      return Thin.Inet.Sockaddr_In_Type;
    --  Create inet4 sockaddr type from given address and port.
 
    function Create_Inet6
      (Address : IPv6_Addr_Type;
       Port    : Port_Type)
-      return Thin.Sockaddr_In_Type;
+      return Thin.Inet.Sockaddr_In_Type;
    --  Create inet6 sockaddr type from given address and port.
 
    -------------------------------------------------------------------------
@@ -60,7 +60,7 @@ package body Anet.Sockets.Inet is
       New_Socket : out TCPv4_Socket_Type)
    is
       Res  : C.int;
-      Sock : Thin.Sockaddr_In_Type (Family => Family_Inet);
+      Sock : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
       Len  : aliased C.int := Sock'Size / 8;
    begin
       New_Socket.Sock_FD := -1;
@@ -87,7 +87,7 @@ package body Anet.Sockets.Inet is
       New_Socket : out TCPv6_Socket_Type)
    is
       Res  : C.int;
-      Sock : Thin.Sockaddr_In_Type (Family => Family_Inet6);
+      Sock : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
       Len  : aliased C.int := Sock'Size / 8;
    begin
       New_Socket.Sock_FD := -1;
@@ -116,7 +116,7 @@ package body Anet.Sockets.Inet is
       Iface   :        Types.Iface_Name_Type := "")
    is
       Res      : C.int;
-      Sockaddr : constant Thin.Sockaddr_In_Type
+      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
         := Create_Inet4 (Address => Address,
                          Port    => Port);
    begin
@@ -149,7 +149,7 @@ package body Anet.Sockets.Inet is
       Iface   :        Types.Iface_Name_Type := "")
    is
       Res      : C.int;
-      Sockaddr : constant Thin.Sockaddr_In_Type
+      Sockaddr : constant Thin.Inet.Sockaddr_In_Type
         := Create_Inet6 (Address => Address,
                          Port    => Port);
    begin
@@ -181,7 +181,7 @@ package body Anet.Sockets.Inet is
       Port    :        Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Sockaddr_In_Type := Create_Inet4
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet4
         (Address => Address,
          Port    => Port);
    begin
@@ -204,7 +204,7 @@ package body Anet.Sockets.Inet is
       Port    :        Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Sockaddr_In_Type := Create_Inet6
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet6
         (Address => Address,
          Port    => Port);
    begin
@@ -224,7 +224,7 @@ package body Anet.Sockets.Inet is
    function Create_Inet4
      (Address : IPv4_Addr_Type;
       Port    : Port_Type)
-      return Thin.Sockaddr_In_Type
+      return Thin.Inet.Sockaddr_In_Type
    is
    begin
       return (Family     => Family_Inet,
@@ -240,7 +240,7 @@ package body Anet.Sockets.Inet is
    function Create_Inet6
      (Address : IPv6_Addr_Type;
       Port    : Port_Type)
-      return Thin.Sockaddr_In_Type
+      return Thin.Inet.Sockaddr_In_Type
    is
    begin
       return (Family     => Family_Inet6,
@@ -361,7 +361,7 @@ package body Anet.Sockets.Inet is
 
    procedure Receive
      (Socket :     C.int;
-      Src    : out Thin.Sockaddr_In_Type;
+      Src    : out Thin.Inet.Sockaddr_In_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
@@ -402,7 +402,7 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Sockaddr : Thin.Sockaddr_In_Type (Family => Family_Inet);
+      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
    begin
       Receive (Socket => Socket.Sock_FD,
                Src    => Sockaddr,
@@ -421,7 +421,7 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Sockaddr : Thin.Sockaddr_In_Type (Family => Family_Inet6);
+      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
    begin
       Receive (Socket => Socket.Sock_FD,
                Src    => Sockaddr,
@@ -441,7 +441,7 @@ package body Anet.Sockets.Inet is
       Dst_Port : Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Sockaddr_In_Type := Create_Inet4
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet4
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
@@ -474,7 +474,7 @@ package body Anet.Sockets.Inet is
       Dst_Port : Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Sockaddr_In_Type := Create_Inet6
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet6
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin

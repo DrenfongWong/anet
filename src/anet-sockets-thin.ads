@@ -35,35 +35,6 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_Type);
    --  Generic socket address.
 
-   subtype Family_Inet_Type is Family_Type range Family_Inet .. Family_Inet6;
-   --  Internet protocol address families.
-
-   type Sockaddr_In_Type (Family : Family_Inet_Type := Family_Inet) is record
-      Sin_Family : Interfaces.C.unsigned_short;
-      --  Address family
-      Sin_Port   : Interfaces.C.unsigned_short;
-      --  Port in network byte order
-
-      case Family is
-         when Family_Inet =>
-            Sin_Addr : IPv4_Addr_Type      := (others => 0);
-            --  IPv4 address
-            Sin_Zero : Byte_Array (1 .. 8) := (others => 0);
-            --  Padding
-         when Family_Inet6 =>
-            Sin_Flowinfo : Interfaces.C.unsigned;
-            --  IPv6 flow information
-            Sin6_Addr    : IPv6_Addr_Type := (others => 0);
-            --  IPv6 address
-            Sin_Scope_ID : Interfaces.C.unsigned;
-            --  Scope ID
-      end case;
-   end record;
-   pragma Unchecked_Union (Sockaddr_In_Type);
-   pragma Convention (C, Sockaddr_In_Type);
-   --  Low-level Internet socket address type (struct sockaddr_in, struct
-   --  sockaddr_in6).
-
    type Sockaddr_Un_Type is record
       Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
       --  Address family
