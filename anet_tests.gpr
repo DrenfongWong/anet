@@ -38,7 +38,7 @@ project Anet_Tests is
 
    case Anet_Common.OS is
       when "Linux" => Source_Dirs := Source_Dirs & "tests/linux";
-      when others  => null;
+      when "BSD"   => Source_Dirs := Source_Dirs & "tests/bsd";
    end case;
    for Source_Dirs use Source_Dirs;
 
