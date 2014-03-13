@@ -21,25 +21,18 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Text_IO;
-
-with Ahven.Text_Runner;
 with Ahven.Framework;
 
 with Socket_Tests.Netlink;
 with Socket_Tests.Packet;
 
-with Test_Utils;
 with Common_Tests;
 
 procedure Test_Runner is
    use Ahven.Framework;
 
-   function C_Getuid return Integer;
-   pragma Import (C, C_Getuid, "getuid");
-
-   Name : constant String := "Anet tests";
-   S    : constant Test_Suite_Access := Create_Suite (Suite_Name => Name);
+   S : constant Test_Suite_Access := Create_Suite
+     (Suite_Name => "Anet tests");
 begin
    Common_Tests.Add (Suite => S);
 
@@ -48,12 +41,5 @@ begin
    Add_Test (Suite => S.all,
              T     => new Socket_Tests.Packet.Testcase);
 
-   if C_Getuid = 0 then
-      Test_Utils.Has_Root_Perms := True;
-   end if;
-
-   Ada.Text_IO.Put_Line ("Running " & Name & " ... please wait");
-
-   Ahven.Text_Runner.Run (Suite => S);
-   Release_Suite (T => S);
+   Common_Tests.Run (Suite => S);
 end Test_Runner;
