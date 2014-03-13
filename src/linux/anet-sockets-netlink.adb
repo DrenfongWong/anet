@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Netlink;
 
 package body Anet.Sockets.Netlink is
 
@@ -49,7 +49,7 @@ package body Anet.Sockets.Netlink is
       use type Interfaces.Unsigned_32;
 
       Res   : C.int;
-      Value : Thin.Sockaddr_Nl_Type
+      Value : Thin.Netlink.Sockaddr_Nl_Type
         := (Nl_Pid => Interfaces.Unsigned_32 (Address),
             others => <>);
    begin
@@ -96,7 +96,7 @@ package body Anet.Sockets.Netlink is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res   : C.int;
-      Saddr : Thin.Sockaddr_Nl_Type;
+      Saddr : Thin.Netlink.Sockaddr_Nl_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
       Src  := 0;
@@ -129,7 +129,7 @@ package body Anet.Sockets.Netlink is
       To     : Netlink_Addr_Type)
    is
       Res : C.int;
-      Dst : Thin.Sockaddr_Nl_Type
+      Dst : Thin.Netlink.Sockaddr_Nl_Type
         := (Nl_Pid => Interfaces.Unsigned_32 (To),
             others => <>);
    begin
