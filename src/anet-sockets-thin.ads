@@ -74,25 +74,6 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_Un_Type);
    --  Low-level UNIX socket address type (struct sockaddr_un).
 
-   type Sockaddr_Ll_Type is record
-      Sa_Family   : Interfaces.C.unsigned_short := Constants.AF_PACKET;
-      --  Address family (always AF_PACKET)
-      Sa_Protocol : Interfaces.C.unsigned_short := 0;
-      --  Physical layer protocol
-      Sa_Ifindex  : Interfaces.C.int            := 0;
-      --  Interface number
-      Sa_Hatype   : Interfaces.C.unsigned_short := 0;
-      --  Header type
-      Sa_Pkttype  : Interfaces.C.unsigned_char  := 0;
-      --  Packet type
-      Sa_Halen    : Interfaces.C.unsigned_char  := 0;
-      --  Length of address
-      Sa_Addr     : Hardware_Addr_Type (1 .. 8) := (others => 0);
-      --  Physical layer address
-   end record;
-   pragma Convention (C, Sockaddr_Ll_Type);
-   --  Device independent physical layer address
-
    type Sockaddr_Nl_Type is record
       Nl_Family : Interfaces.C.unsigned_short := Constants.AF_NETLINK;
       --  Address family (always AF_NETLINK)

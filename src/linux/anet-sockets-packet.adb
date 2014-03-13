@@ -22,7 +22,7 @@
 --
 
 with Anet.Net_Ifaces;
-with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Packet;
 with Anet.Constants;
 with Anet.Byte_Swapping;
 
@@ -42,7 +42,7 @@ package body Anet.Sockets.Packet is
       Iface  :        Types.Iface_Name_Type)
    is
       Res   : C.int;
-      Value : Thin.Sockaddr_Ll_Type;
+      Value : Thin.Packet.Sockaddr_Ll_Type;
    begin
       Value.Sa_Protocol := C.unsigned_short (Socket.Protocol);
       Value.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index (Name => Iface));
@@ -96,7 +96,7 @@ package body Anet.Sockets.Packet is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res   : C.int;
-      Saddr : Thin.Sockaddr_Ll_Type;
+      Saddr : Thin.Packet.Sockaddr_Ll_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
       Src  := (others => 0);
@@ -130,7 +130,7 @@ package body Anet.Sockets.Packet is
       Iface  : Types.Iface_Name_Type)
    is
       Res     : C.int;
-      Ll_Dest : Thin.Sockaddr_Ll_Type;
+      Ll_Dest : Thin.Packet.Sockaddr_Ll_Type;
    begin
       Ll_Dest.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index
                                     (Name => Iface));
