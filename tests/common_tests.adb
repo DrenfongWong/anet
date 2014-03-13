@@ -20,6 +20,10 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Text_IO;
+
+with Ahven.Text_Runner;
+
 with Type_Tests;
 with OS_Tests;
 with Util_Tests;
@@ -29,6 +33,8 @@ with UDP_Tests;
 with IP_Tests;
 with Stream_Tests;
 with Net_Ifaces_Tests;
+
+with Test_Utils;
 
 package body Common_Tests is
 
@@ -58,5 +64,24 @@ package body Common_Tests is
       Add_Test (Suite => Suite.all,
                 T     => new Net_Ifaces_Tests.Testcase);
    end Add;
+
+   -------------------------------------------------------------------------
+
+   procedure Run (Suite : Ahven.Framework.Test_Suite_Access)
+   is
+      function C_Getuid return Integer;
+      pragma Import (C, C_Getuid, "getuid");
+   begin
+      if C_Getuid = 0 then
+         Test_Utils.Has_Root_Perms := True;
+      end if;
+
+      Ada.Text_IO.Put_Line
+        ("Running " & Suite.all.Get_Name & " (" & Test_Utils.OS'Img
+         & ") ... please wait");
+
+      Ahven.Text_Runner.Run (Suite => Suite);
+      Release_Suite (T => Suite);
+   end Run;
 
 end Common_Tests;

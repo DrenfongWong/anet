@@ -27,4 +27,7 @@ package Common_Tests is
    --  Add common testcases to test suite.
    procedure Add (Suite : Ahven.Framework.Test_Suite_Access);
 
+   --  Run test suite.
+   procedure Run (Suite : Ahven.Framework.Test_Suite_Access);
+
 end Common_Tests;
