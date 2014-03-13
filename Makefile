@@ -22,6 +22,8 @@ INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA    = $(INSTALL) --mode=644 --preserve-timestamps
 INSTALL_ALI     = $(INSTALL) --mode=444
 
+OS ?= Linux
+
 NUM_CPUS ?= 1
 
 # GNAT_BUILDER_FLAGS, ADAFLAGS and GNATFLAGS may be overridden in the
