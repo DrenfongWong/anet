@@ -25,6 +25,7 @@ with Anet.Constants;
 with Anet.OS_Constants;
 with Anet.Sockets.Thin.Inet;
 with Anet.Net_Ifaces;
+with Anet.Sockets.Inet.Iface;
 
 package body Anet.Sockets.Inet is
 
@@ -102,9 +103,8 @@ package body Anet.Sockets.Inet is
       Iface  :        Types.Iface_Name_Type)
    is
    begin
-      Socket.Set_Socket_Option
-        (Option => Bind_To_Device,
-         Value  => String (Iface));
+      Inet.Iface.Bind (Socket => Socket,
+                       Iface  => Iface);
    end Bind;
 
    -------------------------------------------------------------------------
