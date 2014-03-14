@@ -20,10 +20,12 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.OS_Constants;
+
 package Anet.Sockets.Thin.Netlink is
 
    type Sockaddr_Nl_Type is record
-      Nl_Family : Interfaces.C.unsigned_short := Constants.AF_NETLINK;
+      Nl_Family : Interfaces.C.unsigned_short := OS_Constants.AF_NETLINK;
       --  Address family (always AF_NETLINK)
       Nl_Pad    : Interfaces.C.unsigned_short := 0;
       --  Zero

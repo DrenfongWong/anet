@@ -22,6 +22,9 @@
 
 package Anet.OS_Constants is
 
+   AF_NETLINK          : constant := 16; --  Netlink family
+   AF_PACKET           : constant := 17; --  Packet family
+
    IPV6_ADD_MEMBERSHIP : constant := 20; --  Join multicast group (IPv6)
 
 end Anet.OS_Constants;

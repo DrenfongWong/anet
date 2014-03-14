@@ -23,6 +23,7 @@
 with Interfaces.C;
 
 with Anet.Constants;
+with Anet.OS_Constants;
 
 package Anet.Socket_Families is
 
@@ -37,8 +38,8 @@ package Anet.Socket_Families is
    Families : constant array (Family_Type) of Interfaces.C.int
      := (Family_Inet    => Constants.Sys.AF_INET,
          Family_Inet6   => Constants.Sys.AF_INET6,
-         Family_Netlink => Constants.AF_NETLINK,
-         Family_Packet  => Constants.AF_PACKET,
+         Family_Netlink => OS_Constants.AF_NETLINK,
+         Family_Packet  => OS_Constants.AF_PACKET,
          Family_Unix    => Constants.AF_UNIX);
    --  Address family mapping.
 

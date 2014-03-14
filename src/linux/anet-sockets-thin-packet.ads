@@ -20,10 +20,12 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.OS_Constants;
+
 package Anet.Sockets.Thin.Packet is
 
    type Sockaddr_Ll_Type is record
-      Sa_Family   : Interfaces.C.unsigned_short := Constants.AF_PACKET;
+      Sa_Family   : Interfaces.C.unsigned_short := OS_Constants.AF_PACKET;
       --  Address family (always AF_PACKET)
       Sa_Protocol : Interfaces.C.unsigned_short := 0;
       --  Physical layer protocol
