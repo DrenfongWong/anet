@@ -49,44 +49,6 @@ package Anet.Sockets.Thin is
    pragma Convention (C, IPv6_Mreq_Type);
    --  struct ipv6_mreq (netinet/in.h).
 
-   type Netdev_Request_Name is
-     (If_Addr,
-      If_Flags,
-      If_Hwaddr,
-      If_Index);
-   --  Supported netdevice requests.
-
-   type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
-      Ifr_Name : Interfaces.C.char_array
-        (1 .. Constants.IFNAMSIZ) := (others => Interfaces.C.nul);
-
-      case Name is
-         when If_Addr   =>
-            Ifr_Addr    : Sockaddr_Type;
-         when If_Hwaddr =>
-            Ifr_Hwaddr  : Sockaddr_Type;
-         when If_Index  =>
-            Ifr_Ifindex : Interfaces.C.int   := 0;
-         when If_Flags  =>
-            Ifr_Flags   : Interfaces.C.short := 0;
-      end case;
-   end record;
-   pragma Unchecked_Union (If_Req_Type);
-   pragma Convention (C, If_Req_Type);
-   --  Interface request structure (struct ifreq).
-
-   Get_Requests : constant array (Netdev_Request_Name) of Interfaces.C.int
-     := (If_Addr   => Constants.SIOCGIFADDR,
-         If_Flags  => Constants.SIOCGIFFLAGS,
-         If_Hwaddr => Constants.SIOCGIFHWADDR,
-         If_Index  => Constants.SIOCGIFINDEX);
-   --  Currently supported netdevice ioctl get requests.
-
-   Set_Requests : constant array (Netdev_Request_Name) of Interfaces.C.int
-     := (If_Flags => Constants.SIOCSIFFLAGS,
-         others   => Interfaces.C.int (-1));
-   --  Currently supported netdevice ioctl set requests.
-
    -------------
    -- Imports --
    -------------
@@ -169,13 +131,6 @@ package Anet.Sockets.Thin is
       Backlog : Interfaces.C.int)
       return Interfaces.C.int;
    pragma Import (C, C_Listen, "listen");
-
-   function C_Ioctl
-     (S   : Interfaces.C.int;
-      Req : Interfaces.C.int;
-      Arg : access If_Req_Type)
-      return Interfaces.C.int;
-   pragma Import (C, C_Ioctl, "ioctl");
 
    function C_Close (Fd : Interfaces.C.int) return Interfaces.C.int;
    pragma Import (C, C_Close, "close");
