@@ -72,16 +72,6 @@ package Anet.Constants is
    SO_ATTACH_FILTER    : constant := 26;       --  Socket filtering
    IPV6_ADD_MEMBERSHIP : constant := 20;       --  Join multicast group (IPv6)
 
-   -----------------------------------
-   -- Socket configuration controls --
-   -----------------------------------
-
-   SIOCGIFADDR         : constant := 16#8915#; --  Get address
-   SIOCGIFFLAGS        : constant := 16#8913#; --  Get flags
-   SIOCSIFFLAGS        : constant := 16#8914#; --  Set flags
-   SIOCGIFHWADDR       : constant := 16#8927#; --  Get hardware address
-   SIOCGIFINDEX        : constant := 16#8933#; --  Name -> if_index mapping
-
    ---------------------
    -- Interface flags --
    ---------------------
