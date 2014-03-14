@@ -31,7 +31,7 @@ package Net_Ifaces_Tests is
    --  Initialize testcase.
 
    procedure Get_Loopback_Interface_Index;
-   --  Test get interface index function on loopback device.
+   --  Test get interface index function.
 
    procedure Get_Loopback_Interface_Mac;
    --  Test get interface MAC function on loopback device.

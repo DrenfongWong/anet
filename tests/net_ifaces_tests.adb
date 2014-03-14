@@ -47,10 +47,6 @@ package body Net_Ifaces_Tests is
       exception
          when Sockets.Socket_Error => null;
       end;
-
-      Assert (Condition => Net_Ifaces.Get_Iface_Index
-              (Name => Test_Constants.Loopback_Iface_Name) = 1,
-              Message   => "Loopback index not 1");
    end Get_Loopback_Interface_Index;
 
    -------------------------------------------------------------------------
