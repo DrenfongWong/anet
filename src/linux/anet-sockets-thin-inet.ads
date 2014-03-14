@@ -60,4 +60,10 @@ package Anet.Sockets.Thin.Inet is
       return Thin.Inet.Sockaddr_In_Type;
    --  Create inet4 sockaddr type from given address and port.
 
+   function Create_Inet6
+     (Address : IPv6_Addr_Type;
+      Port    : Port_Type)
+      return Thin.Inet.Sockaddr_In_Type;
+   --  Create inet6 sockaddr type from given address and port.
+
 end Anet.Sockets.Thin.Inet;

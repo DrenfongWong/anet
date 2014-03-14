@@ -40,4 +40,20 @@ package body Anet.Sockets.Thin.Inet is
               Sin_Zero   => <>);
    end Create_Inet4;
 
+   -------------------------------------------------------------------------
+
+   function Create_Inet6
+     (Address : IPv6_Addr_Type;
+      Port    : Port_Type)
+      return Thin.Inet.Sockaddr_In_Type
+   is
+   begin
+      return (Family     => Family_Inet6,
+              Sin_Family => Constants.Sys.AF_INET6,
+              Sin_Port   => Interfaces.C.unsigned_short
+                (Byte_Swapping.Host_To_Network (Input => Port)),
+              Sin6_Addr  => Address,
+              others     => 0);
+   end Create_Inet6;
+
 end Anet.Sockets.Thin.Inet;

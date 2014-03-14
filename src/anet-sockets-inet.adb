@@ -23,7 +23,6 @@
 
 with Anet.Constants;
 with Anet.Sockets.Thin.Inet;
-with Anet.Byte_Swapping;
 with Anet.Net_Ifaces;
 
 package body Anet.Sockets.Inet is
@@ -40,12 +39,6 @@ package body Anet.Sockets.Inet is
    --  last character assigned. An exception is raised if a socket error
    --  occurs or if no address information could be retrieved from the
    --  underlying protocol.
-
-   function Create_Inet6
-     (Address : IPv6_Addr_Type;
-      Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type;
-   --  Create inet6 sockaddr type from given address and port.
 
    -------------------------------------------------------------------------
 
@@ -144,8 +137,8 @@ package body Anet.Sockets.Inet is
    is
       Res      : C.int;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
-        := Create_Inet6 (Address => Address,
-                         Port    => Port);
+        := Thin.Inet.Create_Inet6 (Address => Address,
+                                   Port    => Port);
    begin
       Socket.Set_Socket_Option
         (Option => Reuse_Address,
@@ -198,7 +191,7 @@ package body Anet.Sockets.Inet is
       Port    :        Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet6
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet6
         (Address => Address,
          Port    => Port);
    begin
@@ -212,22 +205,6 @@ package body Anet.Sockets.Inet is
            & Get_Errno_String;
       end if;
    end Connect;
-
-   -------------------------------------------------------------------------
-
-   function Create_Inet6
-     (Address : IPv6_Addr_Type;
-      Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type
-   is
-   begin
-      return (Family     => Family_Inet6,
-              Sin_Family => Constants.Sys.AF_INET6,
-              Sin_Port   => C.unsigned_short
-                (Byte_Swapping.Host_To_Network (Input => Port)),
-              Sin6_Addr  => Address,
-              others     => 0);
-   end Create_Inet6;
 
    -------------------------------------------------------------------------
 
@@ -452,7 +429,7 @@ package body Anet.Sockets.Inet is
       Dst_Port : Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet6
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet6
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
