@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.OS_Constants;
 with Anet.Sockets.Thin.Netlink;
 
 package body Anet.Sockets.Netlink is
@@ -28,15 +29,15 @@ package body Anet.Sockets.Netlink is
    package C renames Interfaces.C;
 
    Protocols : constant array (Protocol_Type) of Double_Byte
-     := (Proto_Netlink_Route     => Constants.NETLINK_ROUTE,
-         Proto_Netlink_Firewall  => Constants.NETLINK_FIREWALL,
-         Proto_Netlink_Inet_Diag => Constants.NETLINK_INET_DIAG,
-         Proto_Netlink_Nflog     => Constants.NETLINK_NFLOG,
-         Proto_Netlink_Xfrm      => Constants.NETLINK_XFRM,
-         Proto_Netlink_Selinux   => Constants.NETLINK_SELINUX,
-         Proto_Netlink_Audit     => Constants.NETLINK_AUDIT,
-         Proto_Netlink_Netfilter => Constants.NETLINK_NETFILTER,
-         Proto_Netlink_Crypto    => Constants.NETLINK_CRYPTO);
+     := (Proto_Netlink_Route     => OS_Constants.NETLINK_ROUTE,
+         Proto_Netlink_Firewall  => OS_Constants.NETLINK_FIREWALL,
+         Proto_Netlink_Inet_Diag => OS_Constants.NETLINK_INET_DIAG,
+         Proto_Netlink_Nflog     => OS_Constants.NETLINK_NFLOG,
+         Proto_Netlink_Xfrm      => OS_Constants.NETLINK_XFRM,
+         Proto_Netlink_Selinux   => OS_Constants.NETLINK_SELINUX,
+         Proto_Netlink_Audit     => OS_Constants.NETLINK_AUDIT,
+         Proto_Netlink_Netfilter => OS_Constants.NETLINK_NETFILTER,
+         Proto_Netlink_Crypto    => OS_Constants.NETLINK_CRYPTO);
    --  Netlink protocol mapping.
 
    -------------------------------------------------------------------------
