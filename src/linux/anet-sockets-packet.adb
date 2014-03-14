@@ -95,7 +95,7 @@ package body Anet.Sockets.Packet is
    is
       use type Ada.Streams.Stream_Element_Offset;
 
-      Res   : C.int;
+      Res   : C.long;
       Saddr : Thin.Packet.Sockaddr_Ll_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
@@ -129,7 +129,7 @@ package body Anet.Sockets.Packet is
       To     : Hardware_Addr_Type;
       Iface  : Types.Iface_Name_Type)
    is
-      Res     : C.int;
+      Res     : C.long;
       Ll_Dest : Thin.Packet.Sockaddr_Ll_Type;
    begin
       Ll_Dest.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index

@@ -322,7 +322,7 @@ package body Anet.Sockets.Inet is
    is
       use type Ada.Streams.Stream_Element_Offset;
 
-      Res : C.int;
+      Res : C.long;
       Len : aliased C.int := Thin.Inet.Sockaddr_In_Size;
    begin
       Last := 0;
@@ -395,7 +395,7 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv4_Addr_Type;
       Dst_Port : Port_Type)
    is
-      Res : C.int;
+      Res : C.long;
       Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet4
         (Address => Dst_Addr,
          Port    => Dst_Port);
@@ -428,7 +428,7 @@ package body Anet.Sockets.Inet is
       Dst_Addr : IPv6_Addr_Type;
       Dst_Port : Port_Type)
    is
-      Res : C.int;
+      Res : C.long;
       Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet6
         (Address => Dst_Addr,
          Port    => Dst_Port);

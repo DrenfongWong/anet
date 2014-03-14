@@ -54,7 +54,7 @@ package body Anet.Sockets is
 
    procedure Check_Complete_Send
      (Item      : Ada.Streams.Stream_Element_Array;
-      Result    : Interfaces.C.int;
+      Result    : Interfaces.C.long;
       Error_Msg : String)
    is
       use Ada.Streams;
@@ -70,7 +70,7 @@ package body Anet.Sockets is
 
    -------------------------------------------------------------------------
 
-   function Check_Receive (Result : Interfaces.C.int) return Recv_Result_Type
+   function Check_Receive (Result : Interfaces.C.long) return Recv_Result_Type
    is
    begin
       if Result = 0 then
@@ -171,7 +171,7 @@ package body Anet.Sockets is
    is
       use type Ada.Streams.Stream_Element_Offset;
 
-      Res : C.int;
+      Res : C.long;
    begin
       Last := 0;
 
@@ -197,7 +197,7 @@ package body Anet.Sockets is
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array)
    is
-      Res : C.int;
+      Res : C.long;
    begin
       Res := Thin.C_Send (S     => Socket.Sock_FD,
                           Buf   => Item'Address,

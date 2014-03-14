@@ -95,7 +95,7 @@ package body Anet.Sockets.Netlink is
    is
       use type Ada.Streams.Stream_Element_Offset;
 
-      Res   : C.int;
+      Res   : C.long;
       Saddr : Thin.Netlink.Sockaddr_Nl_Type;
       Len   : aliased C.int := Saddr'Size / 8;
    begin
@@ -128,7 +128,7 @@ package body Anet.Sockets.Netlink is
       Item   : Ada.Streams.Stream_Element_Array;
       To     : Netlink_Addr_Type)
    is
-      Res : C.int;
+      Res : C.long;
       Dst : Thin.Netlink.Sockaddr_Nl_Type
         := (Nl_Pid => Interfaces.Unsigned_32 (To),
             others => <>);

@@ -124,6 +124,10 @@ package Anet.Sockets is
 
 private
 
+   use type Interfaces.C.int;
+   use type Interfaces.C.long;
+   use type Interfaces.C.unsigned_long;
+
    Families : constant array (Family_Type) of Interfaces.C.int
      := (Family_Inet    => Constants.Sys.AF_INET,
          Family_Inet6   => Constants.Sys.AF_INET6,
@@ -151,8 +155,6 @@ private
      := (Bind_To_Device => Constants.SO_BINDTODEVICE);
    --  Mapping for option names with string value.
 
-   use type Interfaces.C.int;
-
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD  : Interfaces.C.int := -1;
       Protocol : Double_Byte      := 0;
@@ -171,7 +173,7 @@ private
 
    procedure Check_Complete_Send
      (Item      : Ada.Streams.Stream_Element_Array;
-      Result    : Interfaces.C.int;
+      Result    : Interfaces.C.long;
       Error_Msg : String);
    --  Verify that a Send operation was able to transmit all bytes of given
    --  buffer by calculating the actual number of bytes sent from the buffer
@@ -185,7 +187,7 @@ private
       Recv_Op_Orderly_Shutdown);
    --  Receive operation result status.
 
-   function Check_Receive (Result : Interfaces.C.int) return Recv_Result_Type;
+   function Check_Receive (Result : Interfaces.C.long) return Recv_Result_Type;
    --  Determine the result of a receive operation.
 
    type Accept_Result_Type is

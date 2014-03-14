@@ -53,51 +53,51 @@ package Anet.Sockets.Thin is
    function C_Bind
      (S       : Interfaces.C.int;
       Name    : System.Address;
-      Namelen : Interfaces.C.int)
+      Namelen : Interfaces.C.unsigned_long)
       return Interfaces.C.int;
    pragma Import (C, C_Bind, "bind");
 
    function C_Connect
      (S       : Interfaces.C.int;
       Name    : System.Address;
-      Namelen : Interfaces.C.int)
+      Namelen : Interfaces.C.unsigned_long)
       return Interfaces.C.int;
    pragma Import (C, C_Connect, "connect");
 
    function C_Recv
      (S     : Interfaces.C.int;
       Msg   : System.Address;
-      Len   : Interfaces.C.int;
+      Len   : Interfaces.C.size_t;
       Flags : Interfaces.C.int)
-      return Interfaces.C.int;
+      return Interfaces.C.long;
    pragma Import (C, C_Recv, "recv");
 
    function C_Recvfrom
      (S       : Interfaces.C.int;
       Msg     : System.Address;
-      Len     : Interfaces.C.int;
+      Len     : Interfaces.C.size_t;
       Flags   : Interfaces.C.int;
       From    : System.Address;
       Fromlen : not null access Interfaces.C.int)
-      return Interfaces.C.int;
+      return Interfaces.C.long;
    pragma Import (C, C_Recvfrom, "recvfrom");
 
    function C_Send
      (S     : Interfaces.C.int;
       Buf   : System.Address;
-      Len   : Interfaces.C.int;
+      Len   : Interfaces.C.size_t;
       Flags : Interfaces.C.int)
-      return Interfaces.C.int;
+      return Interfaces.C.long;
    pragma Import (C, C_Send, "send");
 
    function C_Sendto
      (S     : Interfaces.C.int;
       Buf   : System.Address;
-      Len   : Interfaces.C.int;
+      Len   : Interfaces.C.size_t;
       Flags : Interfaces.C.int;
       To    : System.Address;
-      Tolen : Interfaces.C.int)
-      return Interfaces.C.int;
+      Tolen : Interfaces.C.unsigned_long)
+      return Interfaces.C.long;
    pragma Import (C, C_Sendto, "sendto");
 
    function C_Setsockopt
@@ -105,7 +105,7 @@ package Anet.Sockets.Thin is
       Level   : Interfaces.C.int;
       Optname : Interfaces.C.int;
       Optval  : System.Address;
-      Optlen  : Interfaces.C.int)
+      Optlen  : Interfaces.C.unsigned_long)
       return Interfaces.C.int;
    pragma Import (C, C_Setsockopt, "setsockopt");
 
