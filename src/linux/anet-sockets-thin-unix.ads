@@ -22,10 +22,12 @@
 
 package Anet.Sockets.Thin.Unix is
 
+   UNIX_PATH_MAX : constant := 108;
+
    type Sockaddr_Un_Type is record
       Sun_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
       --  Address family
-      Pathname   : Interfaces.C.char_array (1 .. Constants.UNIX_PATH_MAX)
+      Pathname   : Interfaces.C.char_array (1 .. UNIX_PATH_MAX)
         := (others => Interfaces.C.nul);
       --  Pathname
    end record;

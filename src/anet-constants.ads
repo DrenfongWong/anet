@@ -95,12 +95,6 @@ package Anet.Constants is
    ETH_P_ALL           : constant := 16#0003#; --  Every packet
    ETH_P_IP            : constant := 16#0800#; --  Internet Protocol packet
 
-   ---------------
-   -- Unix path --
-   ---------------
-
-   UNIX_PATH_MAX       : constant := 108;
-
    ---------------------
    -- Interface names --
    ---------------------

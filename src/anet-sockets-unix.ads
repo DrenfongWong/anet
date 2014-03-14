@@ -23,9 +23,11 @@
 
 private with Ada.Strings.Unbounded;
 
+with Anet.Sockets.Thin.Unix;
+
 package Anet.Sockets.Unix is
 
-   subtype Path_Range is Positive range 1 .. Constants.UNIX_PATH_MAX - 1;
+   subtype Path_Range is Positive range 1 .. Thin.Unix.UNIX_PATH_MAX - 1;
    --  Range of unix paths.
 
    type Path_Type is array (Path_Range range <>) of Character;

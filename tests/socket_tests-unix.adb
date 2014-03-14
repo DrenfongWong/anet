@@ -22,7 +22,6 @@
 
 with Ada.Directories;
 
-with Anet.Constants;
 with Anet.Sockets.Unix;
 with Anet.Receivers.Datagram;
 with Anet.Receivers.Stream;
@@ -292,7 +291,8 @@ package body Socket_Tests.Unix is
 
    procedure Valid_Unix_Paths
    is
-      Too_Long : constant String := (1 .. Constants.UNIX_PATH_MAX + 1 => 'a');
+      Too_Long : constant String
+        := (1 .. Sockets.Unix.Path_Range'Last + 1 => 'a');
    begin
       Assert (Condition => Sockets.Unix.Is_Valid (Path => "/tmp/foopath"),
               Message   => "Invalid path '/tmp/foopath'");

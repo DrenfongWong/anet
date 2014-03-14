@@ -22,7 +22,6 @@
 --
 
 with Anet.OS;
-with Anet.Sockets.Thin.Unix;
 
 package body Anet.Sockets.Unix is
 
