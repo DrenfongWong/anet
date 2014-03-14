@@ -98,10 +98,21 @@ package body Anet.Sockets.Inet is
    -------------------------------------------------------------------------
 
    procedure Bind
+     (Socket : in out Inet_Socket_Type;
+      Iface  :        Types.Iface_Name_Type)
+   is
+   begin
+      Socket.Set_Socket_Option
+        (Option => Bind_To_Device,
+         Value  => String (Iface));
+   end Bind;
+
+   -------------------------------------------------------------------------
+
+   procedure Bind
      (Socket  : in out IPv4_Socket_Type;
       Address :        IPv4_Addr_Type        := Any_Addr;
-      Port    :        Port_Type;
-      Iface   :        Types.Iface_Name_Type := "")
+      Port    :        Port_Type)
    is
       Res      : C.int;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
@@ -120,12 +131,6 @@ package body Anet.Sockets.Inet is
            & To_String (Address => Address) & "," & Port'Img & " - "
            & Get_Errno_String;
       end if;
-
-      if Iface'Length /= 0 then
-         Socket.Set_Socket_Option
-           (Option => Bind_To_Device,
-            Value  => String (Iface));
-      end if;
    end Bind;
 
    -------------------------------------------------------------------------
@@ -133,8 +138,7 @@ package body Anet.Sockets.Inet is
    procedure Bind
      (Socket  : in out IPv6_Socket_Type;
       Address :        IPv6_Addr_Type        := Any_Addr_V6;
-      Port    :        Port_Type;
-      Iface   :        Types.Iface_Name_Type := "")
+      Port    :        Port_Type)
    is
       Res      : C.int;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
@@ -152,12 +156,6 @@ package body Anet.Sockets.Inet is
          raise Socket_Error with "Unable to bind IPv6 socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
            & Get_Errno_String;
-      end if;
-
-      if Iface'Length /= 0 then
-         Socket.Set_Socket_Option
-           (Option => Bind_To_Device,
-            Value  => String (Iface));
       end if;
    end Bind;
 

@@ -28,6 +28,11 @@ package Anet.Sockets.Inet is
    type Inet_Socket_Type is abstract new Socket_Type with private;
    --  Internet socket.
 
+   procedure Bind
+     (Socket : in out Inet_Socket_Type;
+      Iface  :        Types.Iface_Name_Type);
+   --  Bind given Inet socket to the specified interface.
+
    ----------
    -- IPv4 --
    ----------
@@ -38,10 +43,8 @@ package Anet.Sockets.Inet is
    procedure Bind
      (Socket  : in out IPv4_Socket_Type;
       Address :        IPv4_Addr_Type        := Any_Addr;
-      Port    :        Port_Type;
-      Iface   :        Types.Iface_Name_Type := "");
-   --  Bind given IPv4 socket to the specified IPv4 address and port. If an
-   --  interface name is given, the socket is bound to it.
+      Port    :        Port_Type);
+   --  Bind given IPv4 socket to the specified IPv4 address and port.
 
    procedure Send
      (Socket   : IPv4_Socket_Type;
@@ -111,10 +114,8 @@ package Anet.Sockets.Inet is
    procedure Bind
      (Socket  : in out IPv6_Socket_Type;
       Address :        IPv6_Addr_Type        := Any_Addr_V6;
-      Port    :        Port_Type;
-      Iface   :        Types.Iface_Name_Type := "");
-   --  Bind given IPv6 socket to the specified IPv6 address and port. If an
-   --  interface name is given, the socket is bound to it.
+      Port    :        Port_Type);
+   --  Bind given IPv6 socket to the specified IPv6 address and port.
 
    procedure Send
      (Socket   : IPv6_Socket_Type;
