@@ -25,16 +25,6 @@ with System;
 
 package Anet.Sockets.Thin is
 
-   type Sockaddr_Type is record
-      Sa_Family : Interfaces.C.unsigned_short;
-      --  Address family
-      Sa_Data   : Interfaces.C.char_array (1 .. 14)
-        := (others => Interfaces.C.nul);
-      --  Family-specific data
-   end record;
-   pragma Convention (C, Sockaddr_Type);
-   --  Generic socket address.
-
    type IPv4_Mreq_Type is record
       Imr_Multiaddr : IPv4_Addr_Type;
       Imr_Interface : IPv4_Addr_Type;

@@ -20,6 +20,8 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Sockets.Thin.Sockaddr;
+
 package Anet.Sockets.Thin.Netdev is
 
    type Netdev_Request_Name is
@@ -35,9 +37,9 @@ package Anet.Sockets.Thin.Netdev is
 
       case Name is
          when If_Addr   =>
-            Ifr_Addr    : Sockaddr_Type;
+            Ifr_Addr    : Sockaddr.Sockaddr_Type;
          when If_Hwaddr =>
-            Ifr_Hwaddr  : Sockaddr_Type;
+            Ifr_Hwaddr  : Sockaddr.Sockaddr_Type;
          when If_Index  =>
             Ifr_Ifindex : Interfaces.C.int   := 0;
          when If_Flags  =>
