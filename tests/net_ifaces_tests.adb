@@ -24,6 +24,7 @@
 with Anet.Net_Ifaces;
 with Anet.Sockets;
 
+with Test_Utils;
 with Test_Constants;
 
 package body Net_Ifaces_Tests is
@@ -66,8 +67,14 @@ package body Net_Ifaces_Tests is
 
    procedure Get_Loopback_Interface_Mac
    is
+      use type Test_Utils.OS_Type;
+
       Ref_Mac : constant Hardware_Addr_Type (1 .. 6) := (others => 0);
    begin
+      if Test_Utils.OS = Test_Utils.BSD then
+         Skip (Message => "Not supported");
+      end if;
+
       Assert (Condition => Net_Ifaces.Get_Iface_Mac
               (Name => Test_Constants.Loopback_Iface_Name) = Ref_Mac,
               Message   => "Loopback Mac not zero");
