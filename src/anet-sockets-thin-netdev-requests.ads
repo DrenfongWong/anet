@@ -20,34 +20,25 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Sockets.Thin.Sockaddr;
+package Anet.Sockets.Thin.Netdev.Requests is
 
-package Anet.Sockets.Thin.Netdev is
+   Get_Requests : constant array (Netdev_Request_Name) of Interfaces.C.int
+     := (If_Addr   => Constants.SIOCGIFADDR,
+         If_Flags  => Constants.SIOCGIFFLAGS,
+         If_Hwaddr => Constants.SIOCGIFHWADDR,
+         If_Index  => Constants.SIOCGIFINDEX);
+   --  Currently supported netdevice ioctl get requests.
 
-   type Netdev_Request_Name is
-     (If_Addr,
-      If_Flags,
-      If_Hwaddr,
-      If_Index);
-   --  Supported netdevice requests.
+   Set_Requests : constant array (Netdev_Request_Name) of Interfaces.C.int
+     := (If_Flags => Constants.SIOCSIFFLAGS,
+         others   => Interfaces.C.int (-1));
+   --  Currently supported netdevice ioctl set requests.
 
-   type If_Req_Type (Name : Netdev_Request_Name := If_Index) is record
-      Ifr_Name : Interfaces.C.char_array
-        (1 .. Constants.IFNAMSIZ) := (others => Interfaces.C.nul);
+   function C_Ioctl
+     (S   : Interfaces.C.int;
+      Req : Interfaces.C.int;
+      Arg : access If_Req_Type)
+      return Interfaces.C.int;
+   pragma Import (C, C_Ioctl, "ioctl");
 
-      case Name is
-         when If_Addr   =>
-            Ifr_Addr    : Sockaddr.Sockaddr_Type;
-         when If_Hwaddr =>
-            Ifr_Hwaddr  : Sockaddr.Sockaddr_Type;
-         when If_Index  =>
-            Ifr_Ifindex : Interfaces.C.int   := 0;
-         when If_Flags  =>
-            Ifr_Flags   : Interfaces.C.short := 0;
-      end case;
-   end record;
-   pragma Unchecked_Union (If_Req_Type);
-   pragma Convention (C, If_Req_Type);
-   --  Interface request structure (struct ifreq).
-
-end Anet.Sockets.Thin.Netdev;
+end Anet.Sockets.Thin.Netdev.Requests;

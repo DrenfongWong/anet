@@ -23,13 +23,14 @@
 
 with Interfaces.C;
 
-with Anet.Sockets.Thin.Netdev;
 with Anet.Constants;
+with Anet.Sockets.Thin.Netdev.Requests;
 
 package body Anet.Net_Ifaces is
 
    use Anet.Sockets.Thin;
    use Anet.Sockets.Thin.Netdev;
+   use Anet.Sockets.Thin.Netdev.Requests;
 
    package C renames Interfaces.C;
 
