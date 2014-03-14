@@ -41,12 +41,6 @@ package body Anet.Sockets.Inet is
    --  occurs or if no address information could be retrieved from the
    --  underlying protocol.
 
-   function Create_Inet4
-     (Address : IPv4_Addr_Type;
-      Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type;
-   --  Create inet4 sockaddr type from given address and port.
-
    function Create_Inet6
      (Address : IPv6_Addr_Type;
       Port    : Port_Type)
@@ -117,8 +111,8 @@ package body Anet.Sockets.Inet is
    is
       Res      : C.int;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
-        := Create_Inet4 (Address => Address,
-                         Port    => Port);
+        := Thin.Inet.Create_Inet4 (Address => Address,
+                                   Port    => Port);
    begin
       Socket.Set_Socket_Option
         (Option => Reuse_Address,
@@ -181,7 +175,7 @@ package body Anet.Sockets.Inet is
       Port    :        Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet4
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet4
         (Address => Address,
          Port    => Port);
    begin
@@ -218,22 +212,6 @@ package body Anet.Sockets.Inet is
            & Get_Errno_String;
       end if;
    end Connect;
-
-   -------------------------------------------------------------------------
-
-   function Create_Inet4
-     (Address : IPv4_Addr_Type;
-      Port    : Port_Type)
-      return Thin.Inet.Sockaddr_In_Type
-   is
-   begin
-      return (Family     => Family_Inet,
-              Sin_Family => Constants.Sys.AF_INET,
-              Sin_Port   => C.unsigned_short
-                (Byte_Swapping.Host_To_Network (Input => Port)),
-              Sin_Addr   => Address,
-              Sin_Zero   => <>);
-   end Create_Inet4;
 
    -------------------------------------------------------------------------
 
@@ -441,7 +419,7 @@ package body Anet.Sockets.Inet is
       Dst_Port : Port_Type)
    is
       Res : C.int;
-      Dst : constant Thin.Inet.Sockaddr_In_Type := Create_Inet4
+      Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet4
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin

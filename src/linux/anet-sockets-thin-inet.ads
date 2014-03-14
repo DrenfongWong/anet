@@ -54,4 +54,10 @@ package Anet.Sockets.Thin.Inet is
    Sockaddr_In_Size  : constant := 16;
    Sockaddr_In6_Size : constant := 28;
 
+   function Create_Inet4
+     (Address : IPv4_Addr_Type;
+      Port    : Port_Type)
+      return Thin.Inet.Sockaddr_In_Type;
+   --  Create inet4 sockaddr type from given address and port.
+
 end Anet.Sockets.Thin.Inet;
