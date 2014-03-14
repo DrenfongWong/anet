@@ -22,7 +22,7 @@
 --
 
 with Anet.OS;
-with Anet.Sockets.Thin;
+with Anet.Sockets.Thin.Unix;
 
 package body Anet.Sockets.Unix is
 
@@ -35,7 +35,7 @@ package body Anet.Sockets.Unix is
       New_Socket : out TCP_Socket_Type)
    is
       Res  : C.int;
-      Sock : Thin.Sockaddr_Un_Type;
+      Sock : Thin.Unix.Sockaddr_Un_Type;
       Len  : aliased C.int := Sock'Size / 8;
    begin
       New_Socket.Sock_FD := -1;
@@ -64,7 +64,7 @@ package body Anet.Sockets.Unix is
    is
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
-      Value  : Thin.Sockaddr_Un_Type;
+      Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
       OS.Delete_File (Filename => String (Path));
 
@@ -103,7 +103,7 @@ package body Anet.Sockets.Unix is
    is
       Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
-      Value  : Thin.Sockaddr_Un_Type;
+      Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 

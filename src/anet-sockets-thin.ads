@@ -35,16 +35,6 @@ package Anet.Sockets.Thin is
    pragma Convention (C, Sockaddr_Type);
    --  Generic socket address.
 
-   type Sockaddr_Un_Type is record
-      Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
-      --  Address family
-      Pathname   : Interfaces.C.char_array (1 .. Constants.UNIX_PATH_MAX)
-        := (others => Interfaces.C.nul);
-      --  Pathname
-   end record;
-   pragma Convention (C, Sockaddr_Un_Type);
-   --  Low-level UNIX socket address type (struct sockaddr_un).
-
    type IPv4_Mreq_Type is record
       Imr_Multiaddr : IPv4_Addr_Type;
       Imr_Interface : IPv4_Addr_Type;
