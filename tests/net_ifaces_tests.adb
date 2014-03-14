@@ -24,6 +24,8 @@
 with Anet.Net_Ifaces;
 with Anet.Sockets;
 
+with Test_Constants;
+
 package body Net_Ifaces_Tests is
 
    use Ahven;
@@ -45,7 +47,8 @@ package body Net_Ifaces_Tests is
          when Sockets.Socket_Error => null;
       end;
 
-      Assert (Condition => Net_Ifaces.Get_Iface_Index (Name => "lo") = 1,
+      Assert (Condition => Net_Ifaces.Get_Iface_Index
+              (Name => Test_Constants.Loopback_Iface_Name) = 1,
               Message   => "Loopback index not 1");
    end Get_Loopback_Interface_Index;
 
@@ -55,7 +58,7 @@ package body Net_Ifaces_Tests is
    is
    begin
       Assert (Condition => Net_Ifaces.Get_Iface_IP
-              (Name => "lo") = Loopback_Addr_V4,
+              (Name => Test_Constants.Loopback_Iface_Name) = Loopback_Addr_V4,
               Message   => "Loopback IP not 127.0.0.1");
    end Get_Loopback_Interface_IP;
 
@@ -65,7 +68,8 @@ package body Net_Ifaces_Tests is
    is
       Ref_Mac : constant Hardware_Addr_Type (1 .. 6) := (others => 0);
    begin
-      Assert (Condition => Net_Ifaces.Get_Iface_Mac (Name => "lo") = Ref_Mac,
+      Assert (Condition => Net_Ifaces.Get_Iface_Mac
+              (Name => Test_Constants.Loopback_Iface_Name) = Ref_Mac,
               Message   => "Loopback Mac not zero");
 
       declare

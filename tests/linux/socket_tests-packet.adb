@@ -23,6 +23,7 @@
 with Anet.Sockets.Packet;
 with Anet.Receivers.Datagram;
 
+with Test_Constants;
 with Test_Utils.GNU_Linux;
 
 pragma Elaborate_All (Anet.Receivers.Datagram);
@@ -74,7 +75,7 @@ package body Socket_Tests.Packet is
       end if;
 
       Sock.Init;
-      Sock.Bind (Iface => "lo");
+      Sock.Bind (Iface => Test_Constants.Loopback_Iface_Name);
 
       Rcvr.Listen (Callback => Test_Utils.GNU_Linux.Dump'Access);
 
@@ -84,7 +85,7 @@ package body Socket_Tests.Packet is
 
       Sock.Send (Item  => Ref_Chunk,
                  To    => Bcast_HW_Addr,
-                 Iface => "lo");
+                 Iface => Test_Constants.Loopback_Iface_Name);
 
       for I in 1 .. 30 loop
          C := Rcvr.Get_Rcv_Msg_Count;
@@ -120,7 +121,7 @@ package body Socket_Tests.Packet is
       end if;
 
       Sock.Init;
-      Sock.Bind (Iface => "lo");
+      Sock.Bind (Iface => Test_Constants.Loopback_Iface_Name);
 
       Rcvr.Listen (Callback => Test_Utils.GNU_Linux.Dump'Access);
 
