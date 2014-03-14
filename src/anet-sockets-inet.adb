@@ -22,6 +22,7 @@
 --
 
 with Anet.Constants;
+with Anet.OS_Constants;
 with Anet.Sockets.Thin.Inet;
 with Anet.Net_Ifaces;
 
@@ -302,7 +303,7 @@ package body Anet.Sockets.Inet is
       Res := Thin.C_Setsockopt
         (S       => Socket.Sock_FD,
          Level   => Constants.IPPROTO_IPV6,
-         Optname => Constants.IPV6_ADD_MEMBERSHIP,
+         Optname => OS_Constants.IPV6_ADD_MEMBERSHIP,
          Optval  => Mreq6'Address,
          Optlen  => Mreq6'Size / 8);
 

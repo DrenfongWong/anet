@@ -33,62 +33,61 @@ package Anet.Constants is
    -- Families --
    --------------
 
-   AF_UNIX             : constant := 1;        --  Unix domain family
-   AF_NETLINK          : constant := 16;       --  Netlink family
-   AF_PACKET           : constant := 17;       --  Packet family
+   AF_UNIX           : constant := 1;        --  Unix domain family
+   AF_NETLINK        : constant := 16;       --  Netlink family
+   AF_PACKET         : constant := 17;       --  Packet family
 
    ------------------
    -- Socket modes --
    ------------------
 
-   SOCK_RAW            : constant := 3;        --  Raw protocol interface
+   SOCK_RAW          : constant := 3;        --  Raw protocol interface
 
    ---------------------
    -- Protocol levels --
    ---------------------
 
-   IPPROTO_IPV6        : constant := 41;       --  IPv6
-   IPPROTO_ESP         : constant := 50;       --  ESP
+   IPPROTO_IPV6      : constant := 41;       --  IPv6
+   IPPROTO_ESP       : constant := 50;       --  ESP
 
    -----------------------
    -- Netlink protocols --
    -----------------------
 
-   NETLINK_ROUTE       : constant := 0;        --  Routing/device hook
-   NETLINK_FIREWALL    : constant := 3;        --  Firewalling hook
-   NETLINK_INET_DIAG   : constant := 4;        --  INET socket monitoring
-   NETLINK_NFLOG       : constant := 5;        --  netfilter/iptables ULOG
-   NETLINK_XFRM        : constant := 6;        --  ipsec
-   NETLINK_SELINUX     : constant := 7;        --  SELinux event notifications
-   NETLINK_AUDIT       : constant := 9;        --  auditing;
-   NETLINK_NETFILTER   : constant := 12;       --  netfilter subsystem
-   NETLINK_CRYPTO      : constant := 21;       --  Crypto layer
+   NETLINK_ROUTE     : constant := 0;        --  Routing/device hook
+   NETLINK_FIREWALL  : constant := 3;        --  Firewalling hook
+   NETLINK_INET_DIAG : constant := 4;        --  INET socket monitoring
+   NETLINK_NFLOG     : constant := 5;        --  netfilter/iptables ULOG
+   NETLINK_XFRM      : constant := 6;        --  ipsec
+   NETLINK_SELINUX   : constant := 7;        --  SELinux event notifications
+   NETLINK_AUDIT     : constant := 9;        --  auditing;
+   NETLINK_NETFILTER : constant := 12;       --  netfilter subsystem
+   NETLINK_CRYPTO    : constant := 21;       --  Crypto layer
 
    -----------------------
    -- Socket operations --
    -----------------------
 
-   SO_BINDTODEVICE     : constant := 25;       --  Bind to interface device
-   SO_ATTACH_FILTER    : constant := 26;       --  Socket filtering
-   IPV6_ADD_MEMBERSHIP : constant := 20;       --  Join multicast group (IPv6)
+   SO_BINDTODEVICE   : constant := 25;       --  Bind to interface device
+   SO_ATTACH_FILTER  : constant := 26;       --  Socket filtering
 
    ---------------------
    -- Interface flags --
    ---------------------
 
-   IFF_UP              : constant := 1;        --  Interface is up
+   IFF_UP            : constant := 1;        --  Interface is up
 
    ---------------------------
    -- Ethernet protocol IDs --
    ---------------------------
 
-   ETH_P_ALL           : constant := 16#0003#; --  Every packet
-   ETH_P_IP            : constant := 16#0800#; --  Internet Protocol packet
+   ETH_P_ALL         : constant := 16#0003#; --  Every packet
+   ETH_P_IP          : constant := 16#0800#; --  Internet Protocol packet
 
    ---------------------
    -- Interface names --
    ---------------------
 
-   IFNAMSIZ            : constant := 16;
+   IFNAMSIZ          : constant := 16;
 
 end Anet.Constants;
