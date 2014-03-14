@@ -65,7 +65,7 @@ package body Anet.Sockets.Packet is
    is
    begin
       Init (Socket   => Socket,
-            Family   => Family_Packet,
+            Family   => Socket_Families.Family_Packet,
             Mode     => Datagram_Socket,
             Protocol => Byte_Swapping.Host_To_Network
               (Input => Protocols (Protocol)));
@@ -79,7 +79,7 @@ package body Anet.Sockets.Packet is
    is
    begin
       Init (Socket   => Socket,
-            Family   => Family_Packet,
+            Family   => Socket_Families.Family_Packet,
             Mode     => Raw_Socket,
             Protocol => Byte_Swapping.Host_To_Network
               (Input => Protocols (Protocol)));

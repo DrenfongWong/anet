@@ -33,7 +33,7 @@ package body Anet.Sockets.Thin.Inet is
    is
    begin
       return (Sin_Len    => Sockaddr_In_Size,
-              Family     => Family_Inet,
+              Family     => Socket_Families.Family_Inet,
               Sin_Family => Constants.Sys.AF_INET,
               Sin_Port   => Interfaces.C.unsigned_short
                 (Byte_Swapping.Host_To_Network (Input => Port)),
@@ -50,7 +50,7 @@ package body Anet.Sockets.Thin.Inet is
    is
    begin
       return (Sin_Len    => Sockaddr_In6_Size,
-              Family     => Family_Inet6,
+              Family     => Socket_Families.Family_Inet6,
               Sin_Family => Constants.Sys.AF_INET6,
               Sin_Port   => Interfaces.C.unsigned_short
                 (Byte_Swapping.Host_To_Network (Input => Port)),

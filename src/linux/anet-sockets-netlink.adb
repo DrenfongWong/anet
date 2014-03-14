@@ -80,7 +80,7 @@ package body Anet.Sockets.Netlink is
    is
    begin
       Init (Socket   => Socket,
-            Family   => Family_Netlink,
+            Family   => Socket_Families.Family_Netlink,
             Mode     => Raw_Socket,
             Protocol => Protocols (Protocol));
    end Init;

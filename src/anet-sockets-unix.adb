@@ -122,7 +122,7 @@ package body Anet.Sockets.Unix is
    is
    begin
       Init (Socket => Socket,
-            Family => Family_Unix,
+            Family => Socket_Families.Family_Unix,
             Mode   => Datagram_Socket);
    end Init;
 
@@ -132,7 +132,7 @@ package body Anet.Sockets.Unix is
    is
    begin
       Init (Socket => Socket,
-            Family => Family_Unix,
+            Family => Socket_Families.Family_Unix,
             Mode   => Stream_Socket);
    end Init;
 

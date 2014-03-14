@@ -21,6 +21,7 @@
 --
 
 with Anet.Byte_Swapping;
+with Anet.Socket_Families;
 
 package body Anet.Sockets.Thin.Inet is
 
@@ -32,7 +33,7 @@ package body Anet.Sockets.Thin.Inet is
       return Thin.Inet.Sockaddr_In_Type
    is
    begin
-      return (Family     => Family_Inet,
+      return (Family     => Socket_Families.Family_Inet,
               Sin_Family => Constants.Sys.AF_INET,
               Sin_Port   => Interfaces.C.unsigned_short
                 (Byte_Swapping.Host_To_Network (Input => Port)),
@@ -48,7 +49,7 @@ package body Anet.Sockets.Thin.Inet is
       return Thin.Inet.Sockaddr_In_Type
    is
    begin
-      return (Family     => Family_Inet6,
+      return (Family     => Socket_Families.Family_Inet6,
               Sin_Family => Constants.Sys.AF_INET6,
               Sin_Port   => Interfaces.C.unsigned_short
                 (Byte_Swapping.Host_To_Network (Input => Port)),

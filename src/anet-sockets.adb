@@ -125,13 +125,13 @@ package body Anet.Sockets is
 
    procedure Init
      (Socket   : in out Socket_Type;
-      Family   :        Family_Type;
+      Family   :        Socket_Families.Family_Type;
       Mode     :        Mode_Type;
       Protocol :        Double_Byte := 0)
    is
       Res : C.int;
    begin
-      Res := Thin.C_Socket (Domain   => Families (Family),
+      Res := Thin.C_Socket (Domain   => Socket_Families.Families (Family),
                             Typ      => Modes (Mode),
                             Protocol => C.int (Protocol));
 

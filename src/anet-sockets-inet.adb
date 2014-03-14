@@ -49,7 +49,8 @@ package body Anet.Sockets.Inet is
       New_Socket : out TCPv4_Socket_Type)
    is
       Res  : C.int;
-      Sock : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
+      Sock : Thin.Inet.Sockaddr_In_Type
+        (Family => Socket_Families.Family_Inet);
       Len  : aliased C.int := Thin.Inet.Sockaddr_In_Size;
    begin
       New_Socket.Sock_FD := -1;
@@ -76,7 +77,8 @@ package body Anet.Sockets.Inet is
       New_Socket : out TCPv6_Socket_Type)
    is
       Res  : C.int;
-      Sock : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
+      Sock : Thin.Inet.Sockaddr_In_Type
+        (Family => Socket_Families.Family_Inet6);
       Len  : aliased C.int := Thin.Inet.Sockaddr_In6_Size;
    begin
       New_Socket.Sock_FD := -1;
@@ -211,7 +213,7 @@ package body Anet.Sockets.Inet is
    is
    begin
       Init (Socket => Socket,
-            Family => Family_Inet,
+            Family => Socket_Families.Family_Inet,
             Mode   => Datagram_Socket);
    end Init;
 
@@ -221,7 +223,7 @@ package body Anet.Sockets.Inet is
    is
    begin
       Init (Socket => Socket,
-            Family => Family_Inet,
+            Family => Socket_Families.Family_Inet,
             Mode   => Stream_Socket);
    end Init;
 
@@ -231,7 +233,7 @@ package body Anet.Sockets.Inet is
    is
    begin
       Init (Socket => Socket,
-            Family => Family_Inet6,
+            Family => Socket_Families.Family_Inet6,
             Mode   => Datagram_Socket);
    end Init;
 
@@ -241,7 +243,7 @@ package body Anet.Sockets.Inet is
    is
    begin
       Init (Socket => Socket,
-            Family => Family_Inet6,
+            Family => Socket_Families.Family_Inet6,
             Mode   => Stream_Socket);
    end Init;
 
@@ -356,7 +358,8 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet);
+      Sockaddr : Thin.Inet.Sockaddr_In_Type
+        (Family => Socket_Families.Family_Inet);
    begin
       Receive (Socket => Socket.Sock_FD,
                Src    => Sockaddr,
@@ -375,7 +378,8 @@ package body Anet.Sockets.Inet is
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
-      Sockaddr : Thin.Inet.Sockaddr_In_Type (Family => Family_Inet6);
+      Sockaddr : Thin.Inet.Sockaddr_In_Type
+        (Family => Socket_Families.Family_Inet6);
    begin
       Receive (Socket => Socket.Sock_FD,
                Src    => Sockaddr,

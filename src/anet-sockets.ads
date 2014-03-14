@@ -26,16 +26,9 @@ private with Ada.Finalization;
 with Interfaces.C;
 
 with Anet.Constants;
+with Anet.Socket_Families;
 
 package Anet.Sockets is
-
-   type Family_Type is
-     (Family_Inet,
-      Family_Inet6,
-      Family_Netlink,
-      Family_Packet,
-      Family_Unix);
-   --  Address families.
 
    type Mode_Type is
      (Datagram_Socket,
@@ -128,14 +121,6 @@ private
    use type Interfaces.C.long;
    use type Interfaces.C.unsigned_long;
 
-   Families : constant array (Family_Type) of Interfaces.C.int
-     := (Family_Inet    => Constants.Sys.AF_INET,
-         Family_Inet6   => Constants.Sys.AF_INET6,
-         Family_Netlink => Constants.AF_NETLINK,
-         Family_Packet  => Constants.AF_PACKET,
-         Family_Unix    => Constants.AF_UNIX);
-   --  Address family mapping.
-
    Modes : constant array (Mode_Type) of Interfaces.C.int
      := (Datagram_Socket => Constants.Sys.SOCK_DGRAM,
          Raw_Socket      => Constants.SOCK_RAW,
@@ -166,7 +151,7 @@ private
 
    procedure Init
      (Socket   : in out Socket_Type;
-      Family   :        Family_Type;
+      Family   :        Socket_Families.Family_Type;
       Mode     :        Mode_Type;
       Protocol :        Double_Byte := 0);
    --  Initialize given socket with specified family, mode and protocol.
