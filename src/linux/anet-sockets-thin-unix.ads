@@ -23,7 +23,7 @@
 package Anet.Sockets.Thin.Unix is
 
    type Sockaddr_Un_Type is record
-      Sin_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
+      Sun_Family : Interfaces.C.unsigned_short := Constants.AF_UNIX;
       --  Address family
       Pathname   : Interfaces.C.char_array (1 .. Constants.UNIX_PATH_MAX)
         := (others => Interfaces.C.nul);
