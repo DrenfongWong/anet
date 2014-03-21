@@ -3,7 +3,6 @@ Section: libs
 Priority: optional
 Maintainer: Reto Buerki <reet@codelabs.ch>
 Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>
-DM-Upload-Allowed: yes
 Build-Depends: asciidoc, debhelper (>= 9), gnat, gnat-4.6, libahven3-dev, socat
 Standards-Version: 3.9.3
 Homepage: http://www.codelabs.ch/anet/
