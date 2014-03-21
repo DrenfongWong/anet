@@ -265,6 +265,7 @@ package body Socket_Tests.IP is
    procedure Send_Multicast_V6
    is
       use type Receivers.Count_Type;
+      use type Test_Utils.OS_Type;
 
       C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv6_Socket_Type;
@@ -272,6 +273,10 @@ package body Socket_Tests.IP is
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
    begin
+      if Test_Utils.OS = Test_Utils.BSD then
+         Skip (Message => "Not supported");
+      end if;
+
       Sock.Init;
       Sock.Bind (Address => Grp,
                  Port    => Test_Utils.Listen_Port);
