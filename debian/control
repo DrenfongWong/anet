@@ -8,7 +8,7 @@ Build-Depends: asciidoc, debhelper (>= 9), gnat, gnat-4.6, libahven3-dev,
 Standards-Version: 3.9.3
 Homepage: http://www.codelabs.ch/anet/
 Vcs-Browser: http://git.codelabs.ch/?p=anet.git
-Vcs-Git: http://git.codelabs.ch/git/anet.git
+Vcs-Git: http://git.codelabs.ch/git/anet.git -b debian
 
 Package: libanet0.3.1
 Architecture: amd64 armel armhf i386 ia64 powerpc s390 s390x
