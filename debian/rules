@@ -1,5 +1,11 @@
 #!/usr/bin/make -f
 
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
+ADAFLAGS := $(filter-out -Wformat -Werror=format-security, $(CFLAGS))
+export ADAFLAGS
+
 %:
 	dh ${@}
 
