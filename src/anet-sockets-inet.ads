@@ -84,6 +84,11 @@ package Anet.Sockets.Inet is
    --  Join the given multicast group on the interface specified by name. If no
    --  interface name is provided, the kernel selects the interface.
 
+   procedure Multicast_Set_Sending_Interface
+     (Socket     : UDPv4_Socket_Type;
+      Iface_Addr : IPv4_Addr_Type);
+   --  Use interface specified by address for Multicast sending on this socket.
+
    type TCPv4_Socket_Type is new IPv4_Socket_Type
      and Stream_Socket_Type with private;
    --  IPv4/TCP socket.

@@ -28,6 +28,7 @@ with Anet.Receivers.Datagram;
 with Anet.Receivers.Stream;
 
 with Test_Utils;
+with Test_Constants;
 
 pragma Elaborate_All (Anet.Receivers.Datagram);
 pragma Elaborate_All (Anet.Receivers.Stream);
@@ -224,7 +225,11 @@ package body Socket_Tests.IP is
       Sock.Init;
       Sock.Bind (Address => Grp,
                  Port    => Test_Utils.Listen_Port);
-      Sock.Join_Multicast_Group (Group => Grp);
+      Sock.Join_Multicast_Group
+        (Group => Grp,
+         Iface => Test_Constants.Loopback_Iface_Name);
+      Sock.Multicast_Set_Sending_Interface
+        (Iface_Addr => Loopback_Addr_V4);
 
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
 

@@ -315,6 +315,28 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
+   procedure Multicast_Set_Sending_Interface
+     (Socket     : UDPv4_Socket_Type;
+      Iface_Addr : IPv4_Addr_Type)
+   is
+      Res : C.int;
+   begin
+      Res := Thin.C_Setsockopt
+        (S       => Socket.Sock_FD,
+         Level   => Constants.Sys.IPPROTO_IP,
+         Optname => Constants.Sys.IP_MULTICAST_IF,
+         Optval  => Iface_Addr'Address,
+         Optlen  => Iface_Addr'Length);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to set sending multicast interface "
+           & "with address " & To_String (Iface_Addr) & "': "
+           & Get_Errno_String;
+      end if;
+   end Multicast_Set_Sending_Interface;
+
+   -------------------------------------------------------------------------
+
    procedure Receive
      (Socket :     C.int;
       Src    : out Thin.Inet.Sockaddr_In_Type;
