@@ -44,7 +44,7 @@ all: build_lib
 
 build_lib:
 	@gnatmake $(GMAKE_OPTS) -Panet_lib -XVERSION="$(VERSION)" \
-		-XLIBRARY_KIND="$(LIBRARY_KIND)"
+		-XLIBRARY_KIND="$(LIBRARY_KIND)" -XLDFLAGS="$(LDFLAGS)"
 
 build_tests:
 	@gnatmake $(GMAKE_OPTS) -Panet_tests

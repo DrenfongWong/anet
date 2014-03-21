@@ -37,6 +37,7 @@ project Anet_Lib is
    for Library_Dir use "lib/" & Anet_Common.Libtype;
    for Library_Kind use Anet_Common.Libtype;
    for Library_Version use "libanet.so." & Anet_Common.Version;
+   for Library_Options use External_As_List ("LDFLAGS", " ");
 
    package Compiler is
       for Default_Switches ("ada") use Anet_Common.Compiler_Switches
