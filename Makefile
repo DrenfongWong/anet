@@ -22,7 +22,8 @@ INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA    = $(INSTALL) --mode=644 --preserve-timestamps
 INSTALL_ALI     = $(INSTALL) --mode=444
 
-OS ?= Linux
+OS      ?= Linux
+OS_LOWER = `echo $(OS) | tr A-Z a-z`
 
 NUM_CPUS ?= 1
 
@@ -72,6 +73,7 @@ install_lib: build_lib
 	$(INSTALL) -d $(DESTDIR)$(libdir)/anet
 	$(INSTALL) -d $(DESTDIR)$(includedir)/anet
 	$(INSTALL_DATA) $(SRCDIR)/*.ad[bs] $(DESTDIR)$(includedir)/anet
+	$(INSTALL_DATA) $(SRCDIR)/$(OS_LOWER)/*.ad[bs] $(DESTDIR)$(includedir)/anet
 	$(INSTALL_ALI) $(LIBDIR)/$(LIBRARY_KIND)/*.ali $(DESTDIR)$(libdir)/anet
 	$(INSTALL_DATA) $(GPR_FILES) $(DESTDIR)$(gprdir)
 
