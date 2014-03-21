@@ -1,51 +1,32 @@
 From: Reto Buerki <reet@codelabs.ch>
-Date: Mon, 21 May 2012 20:40:46 +0200
+Date: Fri, 21 Mar 2014 13:29:06 +0000
 Subject: Disable multicast tests
 
 These tests do not work on the buildd's.
 ---
- tests/anet_socket_tests.adb |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ tests/socket_tests-ip.adb | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/tests/anet_socket_tests.adb b/tests/anet_socket_tests.adb
-index 779e9ab..30c410a 100644
---- a/tests/anet_socket_tests.adb
-+++ b/tests/anet_socket_tests.adb
-@@ -194,12 +194,12 @@ package body Anet_Socket_Tests is
+diff --git a/tests/socket_tests-ip.adb b/tests/socket_tests-ip.adb
+index 9500f6e..0f944c3 100644
+--- a/tests/socket_tests-ip.adb
++++ b/tests/socket_tests-ip.adb
+@@ -152,12 +152,12 @@ package body Socket_Tests.IP is
        T.Add_Test_Routine
          (Routine => Send_V6_Datagram'Access,
           Name    => "Send data (IPv6, datagram)");
 -      T.Add_Test_Routine
 -        (Routine => Send_Multicast_V4'Access,
--         Name    => "Send data (IPv4 multicast)");
+-         Name    => "Send data (IPv4, multicast)");
 -      T.Add_Test_Routine
 -        (Routine => Send_Multicast_V6'Access,
--         Name    => "Send data (IPv6 multicast)");
+-         Name    => "Send data (IPv6, multicast)");
 +--        T.Add_Test_Routine
 +--          (Routine => Send_Multicast_V4'Access,
-+--           Name    => "Send data (IPv4 multicast)");
++--           Name    => "Send data (IPv4, multicast)");
 +--        T.Add_Test_Routine
 +--          (Routine => Send_Multicast_V6'Access,
-+--           Name    => "Send data (IPv6 multicast)");
++--           Name    => "Send data (IPv6, multicast)");
        T.Add_Test_Routine
-         (Routine => Send_Unix_Stream'Access,
-          Name    => "Send data (Unix, stream)");
-@@ -218,12 +218,12 @@ package body Anet_Socket_Tests is
-       T.Add_Test_Routine
-         (Routine => Receive_V6_Datagram'Access,
-          Name    => "Receive data (IPv6, datagram)");
--      T.Add_Test_Routine
--        (Routine => Receive_Multicast_V4'Access,
--         Name    => "Receive data (IPv4 multicast)");
--      T.Add_Test_Routine
--        (Routine => Receive_Multicast_V6'Access,
--         Name    => "Receive data (IPv6 multicast)");
-+--        T.Add_Test_Routine
-+--          (Routine => Receive_Multicast_V4'Access,
-+--           Name    => "Receive data (IPv4 multicast)");
-+--        T.Add_Test_Routine
-+--          (Routine => Receive_Multicast_V6'Access,
-+--           Name    => "Receive data (IPv6 multicast)");
-       T.Add_Test_Routine
-         (Routine => Receive_Unix_Stream'Access,
-          Name    => "Receive data (Unix, stream)");
+         (Routine => Listen_Callbacks'Access,
+          Name    => "Data reception callback handling");
