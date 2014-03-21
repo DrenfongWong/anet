@@ -25,4 +25,4 @@ override_dh_compress:
 	dh_compress -X.ads -X.adb -XMakefile
 
 override_dh_strip:
-	dh_strip --dbg-package=libanet0.1-dbg
+	dh_strip --dbg-package=libanet0.3.1-dbg

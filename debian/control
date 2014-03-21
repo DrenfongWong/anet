@@ -9,7 +9,7 @@ Homepage: http://www.codelabs.ch/anet/
 Vcs-Browser: http://git.codelabs.ch/?p=anet.git
 Vcs-Git: http://git.codelabs.ch/git/anet.git
 
-Package: libanet0.1
+Package: libanet0.3.1
 Architecture: amd64 armel armhf i386 ia64 powerpc s390 s390x
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Ada networking library
@@ -18,10 +18,10 @@ Description: Ada networking library
  and validation. It can be used to implement custom protocols on top of IPv4.
  The library also provides a binding to the Linux Packet Filter (LPF) system.
 
-Package: libanet0.1-dev
+Package: libanet0.3.1-dev
 Section: libdevel
 Architecture: amd64 armel armhf i386 ia64 powerpc s390 s390x
-Depends: ${misc:Depends}, libanet0.1 (= ${binary:Version}), gnat, gnat-4.6
+Depends: ${misc:Depends}, libanet0.3.1 (= ${binary:Version}), gnat, gnat-4.6
 Description: Ada networking library (development)
  Anet is a networking library for the Ada programming language. The library
  provides a BSD socket implementation and support for IPv4/UDP packet creation
@@ -30,12 +30,12 @@ Description: Ada networking library (development)
  .
  This package contains the development files.
 
-Package: libanet0.1-dbg
+Package: libanet0.3.1-dbg
 Section: debug
 Priority: extra
 Architecture: amd64 armel armhf i386 ia64 powerpc s390 s390x
-Depends: ${misc:Depends}, libanet0.1 (= ${binary:Version}),
- libanet0.1-dev (= ${binary:Version})
+Depends: ${misc:Depends}, libanet0.3.1 (= ${binary:Version}),
+ libanet0.3.1-dev (= ${binary:Version})
 Description: Ada networking library (debug)
  Anet is a networking library for the Ada programming language. The library
  provides a BSD socket implementation and support for IPv4/UDP packet creation
