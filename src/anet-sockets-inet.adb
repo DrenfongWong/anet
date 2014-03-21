@@ -337,6 +337,29 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
+   procedure Multicast_Set_Sending_Interface
+     (Socket : UDPv6_Socket_Type;
+      Iface  : Types.Iface_Name_Type)
+   is
+      Res       : C.int;
+      Iface_Idx : constant Natural
+        := Net_Ifaces.Get_Iface_Index (Name => Iface);
+   begin
+      Res := Thin.C_Setsockopt
+        (S       => Socket.Sock_FD,
+         Level   => Constants.IPPROTO_IPV6,
+         Optname => OS_Constants.IPV6_MULTICAST_IF,
+         Optval  => Iface_Idx'Address,
+         Optlen  => Iface_Idx'Size);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable set sending multicast interface to "
+           & String (Iface) & ": " & Get_Errno_String;
+      end if;
+   end Multicast_Set_Sending_Interface;
+
+   -------------------------------------------------------------------------
+
    procedure Receive
      (Socket :     C.int;
       Src    : out Thin.Inet.Sockaddr_In_Type;

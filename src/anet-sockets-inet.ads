@@ -160,6 +160,11 @@ package Anet.Sockets.Inet is
    --  Join the given multicast group on the interface specified by name. If no
    --  interface name is provided, the kernel selects the interface.
 
+   procedure Multicast_Set_Sending_Interface
+     (Socket : UDPv6_Socket_Type;
+      Iface  : Types.Iface_Name_Type);
+   --  Use interface specified by name for Multicast sending on this socket.
+
    type TCPv6_Socket_Type is new IPv6_Socket_Type
      and Stream_Socket_Type with private;
    --  IPv6/TCP socket.
