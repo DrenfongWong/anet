@@ -11,8 +11,7 @@ Vcs-Browser: http://git.codelabs.ch/?p=anet.git
 Vcs-Git: http://git.codelabs.ch/git/anet.git -b debian
 
 Package: libanet0.3.1
-Architecture: amd64 armel armhf i386 ia64 kfreebsd-amd64 kfreebsd-i386 powerpc
- s390 s390x
+Architecture: amd64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Ada networking library
  Anet is a networking library for the Ada programming language. The library
@@ -21,8 +20,7 @@ Description: Ada networking library
 
 Package: libanet0.3.1-dev
 Section: libdevel
-Architecture: amd64 armel armhf i386 ia64 kfreebsd-amd64 kfreebsd-i386 powerpc
- s390 s390x
+Architecture: amd64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
 Depends: ${misc:Depends}, libanet0.3.1 (= ${binary:Version}), gnat, gnat-4.6
 Conflicts: libanet0.1-dev
 Replaces: libanet0.1-dev
@@ -36,8 +34,7 @@ Description: Ada networking library (development)
 Package: libanet0.3.1-dbg
 Section: debug
 Priority: extra
-Architecture: amd64 armel armhf i386 ia64 kfreebsd-amd64 kfreebsd-i386 powerpc
- s390 s390x
+Architecture: amd64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
 Depends: ${misc:Depends}, libanet0.3.1 (= ${binary:Version}),
  libanet0.3.1-dev (= ${binary:Version})
 Description: Ada networking library (debug)
