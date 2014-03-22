@@ -6,23 +6,28 @@ include /usr/share/dpkg/buildflags.mk
 ADAFLAGS := $(filter-out -Wformat -Werror=format-security, $(CFLAGS))
 export ADAFLAGS
 
+DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
+ifeq ($(DEB_HOST_ARCH_OS),kfreebsd)
+MAKE_OPTS = OS=bsd
+endif
+
 %:
 	dh ${@}
 
 override_dh_auto_build:
-	$(MAKE) LIBRARY_KIND=dynamic
-	$(MAKE) LIBRARY_KIND=static
+	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=dynamic
+	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=static
 	$(MAKE) doc
 
 override_dh_auto_install:
-	$(MAKE) PREFIX=$(CURDIR)/debian/tmp install
-	$(MAKE) LIBRARY_KIND=static PREFIX=$(CURDIR)/debian/tmp install
+	$(MAKE) $(MAKE_OPTS) PREFIX=$(CURDIR)/debian/tmp install
+	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=static PREFIX=$(CURDIR)/debian/tmp install
 	rm -rf debian/tmp/lib/gnat
 	mkdir -p debian/tmp/usr/share/ada/adainclude
 	cp debian/addon/*.gpr debian/tmp/usr/share/ada/adainclude
 
 override_dh_auto_test:
-	$(MAKE) tests
+	$(MAKE) $(MAKE_OPTS) tests
 
 override_dh_install:
 	dh_install --fail-missing
