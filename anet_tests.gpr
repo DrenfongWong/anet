@@ -37,8 +37,8 @@ project Anet_Tests is
    for Main use ("test_runner.adb");
 
    case Anet_Common.OS is
-      when "Linux" => Source_Dirs := Source_Dirs & "tests/linux";
-      when "BSD"   => Source_Dirs := Source_Dirs & "tests/bsd";
+      when "linux" => Source_Dirs := Source_Dirs & "tests/linux";
+      when "bsd"   => Source_Dirs := Source_Dirs & "tests/bsd";
    end case;
    for Source_Dirs use Source_Dirs;
 
