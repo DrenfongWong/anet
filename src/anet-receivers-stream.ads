@@ -93,12 +93,10 @@ private
    type Receiver_Type
      (S : not null access Socket_Type)
      is tagged limited record
-      Rcv_Count : Count_Type := 0;
-      pragma Atomic (Rcv_Count);
-
-      Trigger : Trigger_Type;
-      S_Comm  : Socket_Type;
-      R_Task  : Receiver_Task (Parent => Receiver_Type'Access);
+      Rcv_Count : Protected_Count_Type;
+      Trigger   : Trigger_Type;
+      S_Comm    : Socket_Type;
+      R_Task    : Receiver_Task (Parent => Receiver_Type'Access);
    end record;
 
 end Anet.Receivers.Stream;

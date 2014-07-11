@@ -78,4 +78,24 @@ package body Anet.Receivers is
 
    end Trigger_Type;
 
+   -------------------------------------------------------------------------
+
+   protected body Protected_Count_Type is
+
+      function Get return Count_Type
+      is
+      begin
+         return Counter;
+      end Get;
+
+      ----------------------------------------------------------------------
+
+      procedure Increment
+      is
+      begin
+         Counter := Counter + 1;
+      end Increment;
+
+   end Protected_Count_Type;
+
 end Anet.Receivers;

@@ -33,7 +33,7 @@ package body Anet.Receivers.Stream is
    function Get_Rcv_Msg_Count (Receiver : Receiver_Type) return Count_Type
    is
    begin
-      return Receiver.Rcv_Count;
+      return Receiver.Rcv_Count.Get;
    end Get_Rcv_Msg_Count;
 
    -------------------------------------------------------------------------
@@ -134,7 +134,7 @@ package body Anet.Receivers.Stream is
 
                exit Processing_Loop when R_Last = 0;
 
-               Parent.Rcv_Count := Parent.Rcv_Count + 1;
+               Parent.Rcv_Count.Increment;
 
                Data_Callback
                  (Recv_Data => R_Buffer (R_Buffer'First .. R_Last),

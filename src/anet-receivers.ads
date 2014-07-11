@@ -70,4 +70,13 @@ private
    end Trigger_Type;
    --  This trigger is used to terminate receiver tasks by means of ATC.
 
+   protected type Protected_Count_Type is
+      function Get return Count_Type;
+      procedure Increment;
+   private
+      Counter : Count_Type := 0;
+   end Protected_Count_Type;
+   --  This is a protected counter which can be read safely from outside
+   --  the task.
+
 end Anet.Receivers;

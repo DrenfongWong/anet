@@ -34,7 +34,7 @@ package body Anet.Receivers.Datagram is
    function Get_Rcv_Msg_Count (Receiver : Receiver_Type) return Count_Type
    is
    begin
-      return Receiver.Item_Count;
+      return Receiver.Item_Count.Get;
    end Get_Rcv_Msg_Count;
 
    -------------------------------------------------------------------------
@@ -125,7 +125,7 @@ package body Anet.Receivers.Datagram is
 
             Data_Callback (Item => Buffer (Buffer'First .. Last),
                            Src  => Sender);
-            Parent.Item_Count := Parent.Item_Count + 1;
+            Parent.Item_Count.Increment;
 
          exception
             when Ex : others =>
