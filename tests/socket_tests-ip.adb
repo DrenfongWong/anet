@@ -71,10 +71,11 @@ package body Socket_Tests.IP is
    procedure Error_Callbacks
    is
       Sock : aliased Inet.UDPv4_Socket_Type;
+      Port : constant Test_Utils.Test_Port_Type := Test_Utils.Get_Random_Port;
    begin
       Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V4,
-                 Port    => Test_Utils.Listen_Port);
+                 Port    => Port);
 
       declare
          Rcvr : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
@@ -83,7 +84,7 @@ package body Socket_Tests.IP is
 
          Sock.Send (Item     => Ref_Chunk,
                     Dst_Addr => Loopback_Addr_V4,
-                    Dst_Port => Test_Utils.Listen_Port);
+                    Dst_Port => Port);
 
          --  By default all errors should be ignored
 
@@ -106,7 +107,7 @@ package body Socket_Tests.IP is
 
          Sock.Send (Item     => Ref_Chunk,
                     Dst_Addr => Loopback_Addr_V4,
-                    Dst_Port => Test_Utils.Listen_Port);
+                    Dst_Port => Port);
 
          for I in 1 .. 30 loop
             exit when not Rcvr.Is_Listening;
@@ -175,10 +176,11 @@ package body Socket_Tests.IP is
       C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv4_Socket_Type;
       Rcvr : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
+      Port : constant Test_Utils.Test_Port_Type := Test_Utils.Get_Random_Port;
    begin
       Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V4,
-                 Port    => Test_Utils.Listen_Port);
+                 Port    => Port);
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
 
       Assert (Condition => Rcvr.Is_Listening,
@@ -186,7 +188,7 @@ package body Socket_Tests.IP is
 
       Sock.Send (Item     => Ref_Chunk,
                  Dst_Addr => Loopback_Addr_V4,
-                 Dst_Port => Test_Utils.Listen_Port);
+                 Dst_Port => Port);
 
       for I in 1 .. 30 loop
          C := Rcvr.Get_Rcv_Msg_Count;
@@ -219,12 +221,13 @@ package body Socket_Tests.IP is
       C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv4_Socket_Type;
       Rcvr : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
+      Port : constant Test_Utils.Test_Port_Type := Test_Utils.Get_Random_Port;
       Grp  : constant IPv4_Addr_Type
         := To_IPv4_Addr (Str => "224.0.0.117");
    begin
       Sock.Init;
       Sock.Bind (Address => Grp,
-                 Port    => Test_Utils.Listen_Port);
+                 Port    => Port);
       Sock.Join_Multicast_Group
         (Group => Grp,
          Iface => Test_Constants.Loopback_Iface_Name);
@@ -239,7 +242,7 @@ package body Socket_Tests.IP is
 
       Sock.Send (Item     => Ref_Chunk,
                  Dst_Addr => Grp,
-                 Dst_Port => Test_Utils.Listen_Port);
+                 Dst_Port => Port);
 
       for I in 1 .. 30 loop
          C := Rcvr.Get_Rcv_Msg_Count;
@@ -270,6 +273,7 @@ package body Socket_Tests.IP is
       C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv6_Socket_Type;
       Rcvr : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
+      Port : constant Test_Utils.Test_Port_Type := Test_Utils.Get_Random_Port;
       Grp  : constant IPv6_Addr_Type
         := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
    begin
@@ -279,7 +283,7 @@ package body Socket_Tests.IP is
 
       Sock.Init;
       Sock.Bind (Address => Grp,
-                 Port    => Test_Utils.Listen_Port);
+                 Port    => Port);
       Sock.Join_Multicast_Group (Group => Grp);
 
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
@@ -290,7 +294,7 @@ package body Socket_Tests.IP is
 
       Sock.Send (Item     => Ref_Chunk,
                  Dst_Addr => Grp,
-                 Dst_Port => Test_Utils.Listen_Port);
+                 Dst_Port => Port);
 
       for I in 1 .. 30 loop
          C := Rcvr.Get_Rcv_Msg_Count;
@@ -320,10 +324,11 @@ package body Socket_Tests.IP is
       C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv4_Socket_Type;
       Rcvr : UDPv4_Receiver.Receiver_Type (S => Sock'Access);
+      Port : constant Test_Utils.Test_Port_Type := Test_Utils.Get_Random_Port;
    begin
       Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V4,
-                 Port    => Test_Utils.Listen_Port);
+                 Port    => Port);
 
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
 
@@ -333,7 +338,7 @@ package body Socket_Tests.IP is
 
       Sock.Send (Item     => Ref_Chunk,
                  Dst_Addr => Loopback_Addr_V4,
-                 Dst_Port => Test_Utils.Listen_Port);
+                 Dst_Port => Port);
 
       for I in 1 .. 30 loop
          C := Rcvr.Get_Rcv_Msg_Count;
@@ -363,10 +368,12 @@ package body Socket_Tests.IP is
       C            : Receivers.Count_Type := 0;
       S_Srv, S_Cli : aliased Inet.TCPv4_Socket_Type;
       Rcvr         : TCPv4_Receiver.Receiver_Type (S => S_Srv'Access);
+      Port         : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
    begin
       S_Srv.Init;
       S_Srv.Bind (Address => Loopback_Addr_V4,
-                  Port    => Test_Utils.Listen_Port);
+                  Port    => Port);
 
       Rcvr.Listen (Callback => Test_Utils.Echo'Access);
 
@@ -376,9 +383,9 @@ package body Socket_Tests.IP is
 
       S_Cli.Init;
       S_Cli.Bind (Address => Loopback_Addr_V4,
-                  Port    => Test_Utils.Listen_Port + 1);
+                  Port    => Port + 1);
       S_Cli.Connect (Address => Loopback_Addr_V4,
-                     Port    => Test_Utils.Listen_Port);
+                     Port    => Port);
       S_Cli.Send (Item => Ref_Chunk);
 
       for I in 1 .. 30 loop
@@ -418,10 +425,11 @@ package body Socket_Tests.IP is
       C    : Receivers.Count_Type := 0;
       Sock : aliased Inet.UDPv6_Socket_Type;
       Rcvr : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
+      Port : constant Test_Utils.Test_Port_Type := Test_Utils.Get_Random_Port;
    begin
       Sock.Init;
       Sock.Bind (Address => Loopback_Addr_V6,
-                 Port    => Test_Utils.Listen_Port);
+                 Port    => Port);
 
       Rcvr.Listen (Callback => Test_Utils.Dump'Access);
 
@@ -431,7 +439,7 @@ package body Socket_Tests.IP is
 
       Sock.Send (Item     => Ref_Chunk,
                  Dst_Addr => Loopback_Addr_V6,
-                 Dst_Port => Test_Utils.Listen_Port);
+                 Dst_Port => Port);
 
       for I in 1 .. 30 loop
          C := Rcvr.Get_Rcv_Msg_Count;
@@ -461,10 +469,12 @@ package body Socket_Tests.IP is
       C            : Receivers.Count_Type := 0;
       S_Srv, S_Cli : aliased Inet.TCPv6_Socket_Type;
       Rcvr         : TCPv6_Receiver.Receiver_Type (S => S_Srv'Access);
+      Port         : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
    begin
       S_Srv.Init;
       S_Srv.Bind (Address => Loopback_Addr_V6,
-                  Port    => Test_Utils.Listen_Port);
+                  Port    => Port);
 
       Rcvr.Listen (Callback => Test_Utils.Echo'Access);
 
@@ -474,9 +484,9 @@ package body Socket_Tests.IP is
 
       S_Cli.Init;
       S_Cli.Bind (Address => Loopback_Addr_V6,
-                  Port    => Test_Utils.Listen_Port + 1);
+                  Port    => Port + 1);
       S_Cli.Connect (Address => Loopback_Addr_V6,
-                     Port    => Test_Utils.Listen_Port);
+                     Port    => Port);
       S_Cli.Send (Item => Ref_Chunk);
 
       for I in 1 .. 30 loop

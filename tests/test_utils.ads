@@ -28,8 +28,6 @@ with Anet.Sockets.Unix;
 
 package Test_Utils is
 
-   Listen_Port : constant := 32101;
-
    type OS_Type is (Linux, BSD);
 
    OS : OS_Type := Linux;
