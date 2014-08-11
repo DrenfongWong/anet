@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2014  Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014  Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -24,7 +24,9 @@
 with Ada.Directories;
 with Ada.Numerics.Discrete_Random;
 
-with Interfaces.C;
+with Interfaces;
+
+with Anet.Thin;
 
 package body Anet.Util is
 
@@ -37,9 +39,6 @@ package body Anet.Util is
    package Random_Chars is new Ada.Numerics.Discrete_Random
      (Result_Subtype => Chars_Range);
    Generator : Random_Chars.Generator;
-
-   function C_Getpid return Interfaces.C.int;
-   pragma Import (C, C_Getpid, "getpid");
 
    -------------------------------------------------------------------------
 
@@ -136,5 +135,5 @@ package body Anet.Util is
 
 begin
    Random_Chars.Reset (Gen       => Generator,
-                       Initiator => Integer (C_Getpid));
+                       Initiator => Integer (Thin.C_Getpid));
 end Anet.Util;
