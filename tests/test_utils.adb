@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2011-2013 secunet Security Networks AG
---  Copyright (C) 2011-2013 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011-2013 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -23,12 +23,17 @@
 
 with Ada.Direct_IO;
 with Ada.Environment_Variables;
+with Ada.Numerics.Discrete_Random;
 
-with Anet;
+with Anet.Thin;
 
 package body Test_Utils is
 
    package D_IO is new Ada.Direct_IO (Element_Type => Character);
+
+   package Random_Ports is new Ada.Numerics.Discrete_Random
+     (Result_Subtype => Test_Port_Type);
+   Generator : Random_Ports.Generator;
 
    -------------------------------------------------------------------------
 
@@ -157,6 +162,14 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
+   function Get_Random_Port return Test_Port_Type
+   is
+   begin
+      return Random_Ports.Random (Gen => Generator);
+   end Get_Random_Port;
+
+   -------------------------------------------------------------------------
+
    procedure Raise_Error
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Inet.UDPv4_Sockaddr_Type)
@@ -171,4 +184,7 @@ begin
         (Ada.Environment_Variables.Value
            (Name => "OS"));
    end if;
+
+   Random_Ports.Reset (Gen       => Generator,
+                       Initiator => Integer (Anet.Thin.C_Getpid));
 end Test_Utils;

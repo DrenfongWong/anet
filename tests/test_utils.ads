@@ -119,6 +119,12 @@ package Test_Utils is
    --  This procedure raises a constraint error. It is used to verify error
    --  handling of the receiver type.
 
+   subtype Test_Port_Type is Anet.Port_Type range 30000 .. 40000;
+   --  Ports used in unit tests.
+
+   function Get_Random_Port return Test_Port_Type;
+   --  Get random test port number.
+
    Open_File_Error : exception;
 
 private
