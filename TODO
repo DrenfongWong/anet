@@ -5,5 +5,3 @@ IPv6
 Misc
 ----
 - Document differences/advantages over GNAT.Sockets/AdaSockets
-- Use random port numbers in unit tests
-  o Allows parallel execution on build hosts
