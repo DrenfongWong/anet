@@ -42,7 +42,7 @@ package Anet.Sockets.Inet is
 
    procedure Bind
      (Socket  : in out IPv4_Socket_Type;
-      Address :        IPv4_Addr_Type        := Any_Addr;
+      Address :        IPv4_Addr_Type := Any_Addr;
       Port    :        Port_Type);
    --  Bind given IPv4 socket to the specified IPv4 address and port.
 
