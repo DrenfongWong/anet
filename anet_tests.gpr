@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012 secunet Security Networks AG
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012      secunet Security Networks AG
+--  Copyright (C) 2012-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -32,9 +32,15 @@ project Anet_Tests is
 
    Compiler_Switches := Anet_Common.Compiler_Switches & "-gnatwal";
    Linker_Switches   := ();
+   Source_Dirs       := ("tests");
 
    for Main use ("test_runner.adb");
-   for Source_Dirs use ("tests");
+
+   case Anet_Common.OS is
+      when "linux" => Source_Dirs := Source_Dirs & "tests/linux";
+      when "bsd"   => Source_Dirs := Source_Dirs & "tests/bsd";
+   end case;
+   for Source_Dirs use Source_Dirs;
 
    case Build is
       when "tests" =>

@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -21,213 +21,129 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.OS;
+with GNAT.OS_Lib;
+
 with Anet.Sockets.Thin;
 
 package body Anet.Sockets is
 
-   function Get_Iface_Index
-     (Name : Iface_Name_Type)
-      return Positive
-      renames Thin.Get_Iface_Index;
-
-   function Get_Iface_Mac
-     (Name : Iface_Name_Type)
-      return Hardware_Addr_Type
-      renames Thin.Get_Iface_Mac;
-
-   function Get_Iface_IP
-     (Name : Iface_Name_Type)
-      return IPv4_Addr_Type
-      renames Thin.Get_Iface_IP;
-
-   function Is_Iface_Up
-     (Name : Iface_Name_Type)
-      return Boolean
-      renames Thin.Is_Iface_Up;
-
-   procedure Set_Iface_State
-     (Name  : Iface_Name_Type;
-      State : Boolean)
-      renames Thin.Set_Iface_State;
+   package C renames Interfaces.C;
 
    -------------------------------------------------------------------------
 
-   procedure Accept_Connection
-     (Socket     :     Socket_Type;
-      New_Socket : out Socket_Type)
-   is
-      Sock_In   : Thin.Sockaddr_In_Type (Family => Family_Inet);
-      Sock_In6  : Thin.Sockaddr_In_Type (Family => Family_Inet6);
-      Sock_Un   : Thin.Sockaddr_Un_Type;
-      Sock_Addr : System.Address;
-      Sock_Len  : Integer := 0;
-   begin
-      New_Socket.Address := Socket.Address;
-
-      case Socket.Address.Family is
-         when Family_Inet  =>
-            Sock_Addr := Sock_In'Address;
-            Sock_Len  := Sock_In'Size / 8;
-         when Family_Inet6 =>
-            Sock_Addr := Sock_In6'Address;
-            Sock_Len  := Sock_In6'Size / 8;
-         when Family_Unix  =>
-            Sock_Addr := Sock_Un'Address;
-            Sock_Len  := Sock_Un'Size / 8;
-         when others       =>
-            raise Socket_Error with "Accept operation not supported for "
-              & Socket.Address.Family'Img & " sockets";
-      end case;
-
-      Thin.Accept_Socket (Socket       => Socket.Sock_FD,
-                          Sockaddr     => Sock_Addr,
-                          Sockaddr_Len => Sock_Len,
-                          New_Socket   => New_Socket.Sock_FD);
-   end Accept_Connection;
-
-   -------------------------------------------------------------------------
-
-   procedure Bind
-     (Socket  : in out Socket_Type;
-      Address :        Socket_Addr_Type := (Addr_V4 => Any_Addr, others => <>);
-      Iface   :        Iface_Name_Type  := "")
+   function Check_Accept (Result : Interfaces.C.int) return Accept_Result_Type
    is
    begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Reuse_Address,
-         Value  => True);
+      if Result = C_Failure then
+         if GNAT.OS_Lib.Errno = Constants.Sys.EINTR then
 
-      Thin.Bind_Socket (Socket  => Socket.Sock_FD,
-                        Address => Address);
-      Socket.Address := Address;
+            --  Aborted, most probably via an ATC in the receiver task.
 
-      if Iface'Length /= 0 then
-         Thin.Set_Socket_Option
-           (Socket => Socket.Sock_FD,
-            Level  => Thin.Socket_Level,
-            Option => Bind_To_Device,
-            Value  => String (Iface));
+            return Accept_Op_Aborted;
+         end if;
+
+         --  Some other error occurred.
+
+         return Accept_Op_Error;
       end if;
-   end Bind;
+
+      return Accept_Op_Ok;
+   end Check_Accept;
 
    -------------------------------------------------------------------------
 
-   procedure Bind_Packet
-     (Socket : in out Socket_Type;
-      Iface  :        Iface_Name_Type)
+   procedure Check_Complete_Send
+     (Item      : Ada.Streams.Stream_Element_Array;
+      Result    : Interfaces.C.long;
+      Error_Msg : String)
    is
+      use Ada.Streams;
+
+      Sent_Bytes : constant Stream_Element_Offset
+        := Item'First + (Stream_Element_Offset (Result) - Item'First);
    begin
-      Thin.Bind_Socket (Socket => Socket.Sock_FD,
-                        Iface  => Iface);
-      Socket.Address.HW_Addr := Get_Iface_Mac (Name => Iface);
-   end Bind_Packet;
+      if Sent_Bytes /= Item'Length then
+         raise Socket_Error with Error_Msg & ", only" & Sent_Bytes'Img & " of"
+           & Item'Length'Img & " bytes sent";
+      end if;
+   end Check_Complete_Send;
 
    -------------------------------------------------------------------------
 
-   procedure Bind_Unix
-     (Socket : in out Socket_Type;
-      Path   :        Unix_Path_Type)
+   function Check_Receive (Result : Interfaces.C.long) return Recv_Result_Type
    is
    begin
-      Thin.Bind_Unix_Socket (Socket => Socket.Sock_FD,
-                             Path  => Path);
-      Socket.Address.Path := Ada.Strings.Unbounded.To_Unbounded_String
-        (String (Path));
-   end Bind_Unix;
+      if Result = 0 then
+
+         --  The peer performed an orderly shutdown.
+
+         return Recv_Op_Orderly_Shutdown;
+      end if;
+
+      if Result = C_Failure then
+         if GNAT.OS_Lib.Errno = Constants.Sys.EINTR then
+
+            --  Aborted, most probably via an ATC in the receiver task.
+
+            return Recv_Op_Aborted;
+         end if;
+
+         --  Some other error occurred.
+
+         return Recv_Op_Error;
+      end if;
+
+      return Recv_Op_Ok;
+   end Check_Receive;
 
    -------------------------------------------------------------------------
 
    procedure Close (Socket : in out Socket_Type)
    is
+      Res : C.int;
    begin
       if Socket.Sock_FD /= -1 then
-         Thin.Close_Socket (Socket => Socket.Sock_FD);
-         Socket.Sock_FD := -1;
-         if Socket.Address.Family = Family_Unix then
-            OS.Delete_File (Filename => Ada.Strings.Unbounded.To_String
-                            (Socket.Address.Path));
+         Res := Thin.C_Close (Socket.Sock_FD);
+         if Res = C_Failure then
+            raise Socket_Error with "Unable to close socket: "
+              & Get_Errno_String;
          end if;
+         Socket.Sock_FD  := -1;
+         Socket.Protocol := 0;
       end if;
    end Close;
-
-   -------------------------------------------------------------------------
-
-   procedure Connect
-     (Socket : in out Socket_Type;
-      Dst    :        Socket_Addr_Type)
-   is
-   begin
-      if Dst.Family = Family_Unix then
-         Thin.Connect_Socket (Socket => Socket.Sock_FD,
-                              Path   => Unix_Path_Type
-                                (Ada.Strings.Unbounded.To_String (Dst.Path)));
-      else
-         Thin.Connect_Socket (Socket => Socket.Sock_FD,
-                              Dst    => Dst);
-      end if;
-   end Connect;
-
-   -------------------------------------------------------------------------
-
-   procedure Create
-     (Socket : out Socket_Type;
-      Family :     Family_Type;
-      Mode   :     Mode_Type)
-   is
-      Addr : Socket_Addr_Type (Family => Family);
-   begin
-      Thin.Create_Socket (Socket => Socket.Sock_FD,
-                          Family => Family,
-                          Mode   => Mode);
-      Socket.Address := Addr;
-   end Create;
 
    -------------------------------------------------------------------------
 
    procedure Finalize (Socket : in out Socket_Type)
    is
    begin
-      Socket.Close;
+      Socket_Type'Class (Socket).Close;
    end Finalize;
 
    -------------------------------------------------------------------------
 
-   function Is_Valid_Iface (Name : String) return Boolean
+   procedure Init
+     (Socket   : in out Socket_Type;
+      Family   :        Socket_Families.Family_Type;
+      Mode     :        Mode_Type;
+      Protocol :        Double_Byte := 0)
    is
+      Res : C.int;
    begin
-      if Name'Length in Iface_Name_Range then
-         return True;
-      else
-         return False;
+      Res := Thin.C_Socket (Domain   => Socket_Families.Families (Family),
+                            Typ      => Modes (Mode),
+                            Protocol => C.int (Protocol));
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to create socket (" & Family'Img & "/"
+           & Mode'Img & ", protocol" & Protocol'Img & "): "
+           & Get_Errno_String;
       end if;
-   end Is_Valid_Iface;
 
-   -------------------------------------------------------------------------
-
-   function Is_Valid_Unix (Path : String) return Boolean
-   is
-   begin
-      if Path'Length in Unix_Path_Range then
-         return True;
-      else
-         return False;
-      end if;
-   end Is_Valid_Unix;
-
-   -------------------------------------------------------------------------
-
-   procedure Join_Multicast_Group
-     (Socket : Socket_Type;
-      Group  : Socket_Addr_Type;
-      Iface  : Iface_Name_Type := "")
-   is
-   begin
-      Thin.Join_Multicast_Group (Socket => Socket.Sock_FD,
-                                 Group  => Group,
-                                 Iface  => Iface);
-   end Join_Multicast_Group;
+      Socket.Sock_FD  := Res;
+      Socket.Protocol := Protocol;
+   end Init;
 
    -------------------------------------------------------------------------
 
@@ -235,85 +151,45 @@ package body Anet.Sockets is
      (Socket  : Socket_Type;
       Backlog : Positive := 1)
    is
+      Res : C.int;
    begin
-      Thin.Listen_Socket (Socket  => Socket.Sock_FD,
-                          Backlog => Backlog);
+      Res := Thin.C_Listen (Socket  => Socket.Sock_FD,
+                            Backlog => C.int (Backlog));
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to listen on socket with backlog"
+           & Backlog'Img & " - " & Get_Errno_String;
+      end if;
    end Listen;
 
    -------------------------------------------------------------------------
 
    procedure Receive
      (Socket :     Socket_Type;
-      Src    : out Socket_Addr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
+      use type Ada.Streams.Stream_Element_Offset;
+
+      Res : C.long;
    begin
-      if Socket.Address.Family = Family_Packet then
-         Thin.Receive_Socket (Socket      => Socket.Sock_FD,
-                              Data        => Item,
-                              Last        => Last,
-                              Src_HW_Addr => Src.HW_Addr);
-      elsif Socket.Address.Family = Family_Unix then
-         Thin.Receive_Socket (Socket => Socket.Sock_FD,
-                              Data   => Item,
-                              Last   => Last);
-      else
-         Thin.Receive_Socket (Socket => Socket.Sock_FD,
-                              Data   => Item,
-                              Last   => Last,
-                              Source => Src);
-      end if;
+      Last := 0;
+
+      Res := Thin.C_Recv (S     => Socket.Sock_FD,
+                          Msg   => Item'Address,
+                          Len   => Item'Length,
+                          Flags => 0);
+
+      case Check_Receive (Result => Res)
+      is
+         when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
+         when Recv_Op_Error =>
+            raise Socket_Error with "Error receiving data from socket: "
+              & Get_Errno_String;
+         when Recv_Op_Ok =>
+            Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
+      end case;
    end Receive;
-
-   -------------------------------------------------------------------------
-
-   procedure Send
-     (Socket : Socket_Type;
-      Item   : Ada.Streams.Stream_Element_Array;
-      Dst    : Socket_Addr_Type)
-   is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Len : Ada.Streams.Stream_Element_Offset;
-   begin
-      Thin.Send_Socket (Socket => Socket.Sock_FD,
-                        Data   => Item,
-                        Last   => Len,
-                        Dst    => Dst);
-
-      if Len /= Item'Length then
-         raise Socket_Error with "Incomplete send operation to "
-           & To_String (Address => Dst) & ", only" & Len'Img & " of"
-           & Item'Length'Img & " bytes sent";
-      end if;
-   end Send;
-
-   -------------------------------------------------------------------------
-
-   procedure Send
-     (Socket :     Socket_Type;
-      Item   :     Ada.Streams.Stream_Element_Array;
-      To     :     Hardware_Addr_Type;
-      Iface  :     Iface_Name_Type)
-   is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Len : Ada.Streams.Stream_Element_Offset;
-   begin
-      Thin.Send_Socket
-        (Socket => Socket.Sock_FD,
-         Data   => Item,
-         Last   => Len,
-         To     => To,
-         Iface  => Iface);
-
-      if Len /= Item'Length then
-         raise Socket_Error with "Incomplete packet send operation to "
-           & To_String (Address => To) & ", only" & Len'Img & " of"
-           & Item'Length'Img & " bytes sent";
-      end if;
-   end Send;
 
    -------------------------------------------------------------------------
 
@@ -321,19 +197,22 @@ package body Anet.Sockets is
      (Socket : Socket_Type;
       Item   : Ada.Streams.Stream_Element_Array)
    is
-      use type Ada.Streams.Stream_Element_Offset;
-
-      Len : Ada.Streams.Stream_Element_Offset;
+      Res : C.long;
    begin
-      Thin.Send_Socket
-        (Socket => Socket.Sock_FD,
-         Data   => Item,
-         Last   => Len);
+      Res := Thin.C_Send (S     => Socket.Sock_FD,
+                          Buf   => Item'Address,
+                          Len   => Item'Length,
+                          Flags => 0);
 
-      if Len /= Item'Length then
-         raise Socket_Error with "Incomplete send operation on unix socket"
-         & ", only" & Len'Img & " of" & Item'Length'Img & " bytes sent";
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to send data on socket - "
+           & Get_Errno_String;
       end if;
+
+      Check_Complete_Send
+        (Item      => Item,
+         Result    => Res,
+         Error_Msg => "Incomplete send operation on socket");
    end Send;
 
    -------------------------------------------------------------------------
@@ -343,11 +222,20 @@ package body Anet.Sockets is
       Option : Option_Name_Bool;
       Value  : Boolean)
    is
+      Val : C.int := C.int (Boolean'Pos (Value));
+      Res : C.int;
    begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Option,
-         Value  => Value);
+      Res := Thin.C_Setsockopt
+        (S       => Socket.Sock_FD,
+         Level   => Levels (Socket_Level),
+         Optname => Options_Bool (Option),
+         Optval  => Val'Address,
+         Optlen  => Val'Size / 8);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable set boolean socket option "
+           & Option'Img & " to " & Value'Img & ": " & Get_Errno_String;
+      end if;
    end Set_Socket_Option;
 
    -------------------------------------------------------------------------
@@ -357,30 +245,20 @@ package body Anet.Sockets is
       Option : Option_Name_Str;
       Value  : String)
    is
+      Val : constant C.char_array := C.To_C (Value);
+      Res : C.int;
    begin
-      Thin.Set_Socket_Option
-        (Socket => Socket.Sock_FD,
-         Option => Option,
-         Value  => Value);
+      Res := Thin.C_Setsockopt
+        (S       => Socket.Sock_FD,
+         Level   => Levels (Socket_Level),
+         Optname => Options_Str (Option),
+         Optval  => Val'Address,
+         Optlen  => Val'Size / 8);
+
+      if Res = C_Failure then
+         raise Socket_Error with "Unable set string socket option "
+           & Option'Img & " to '" & Value & "': " & Get_Errno_String;
+      end if;
    end Set_Socket_Option;
-
-   -------------------------------------------------------------------------
-
-   function To_String (Address : Socket_Addr_Type) return String
-   is
-   begin
-      case Address.Family is
-         when Family_Inet   =>
-            return To_String (Address => Address.Addr_V4)
-              & " (" & Address.Port_V4'Img & " )";
-         when Family_Inet6  =>
-            return To_String (Address => Address.Addr_V6)
-              & " (" & Address.Port_V6'Img & " )";
-         when Family_Packet =>
-            return To_String (Address => Address.HW_Addr);
-         when Family_Unix   =>
-            return Ada.Strings.Unbounded.To_String (Source => Address.Path);
-      end case;
-   end To_String;
 
 end Anet.Sockets;

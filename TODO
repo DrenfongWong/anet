@@ -2,11 +2,6 @@ IPv6
 ----
 - Support IPv6 shortform addrs
 
-Examples
---------
-- Add examples for common usecases
-
-Sockets
--------
-- Revisit receiver task ATC
-- Provide address of peer socket in Accept_Socket
+Misc
+----
+- Document differences/advantages over GNAT.Sockets/AdaSockets

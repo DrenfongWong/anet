@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2013 secunet Security Networks AG
+--  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -33,43 +33,45 @@ package Anet.Constants is
    -- Families --
    --------------
 
-   AF_UNIX             : constant := 1;        --  Unix domain family
-   AF_PACKET           : constant := 17;       --  Packet family
+   AF_UNIX           : constant := 1;        --  Unix domain family
+
+   ------------------
+   -- Socket modes --
+   ------------------
+
+   SOCK_RAW          : constant := 3;        --  Raw protocol interface
 
    ---------------------
    -- Protocol levels --
    ---------------------
 
-   IPPROTO_IPV6        : constant := 41;       --  IPv6
+   IPPROTO_IPV6      : constant := 41;       --  IPv6
+   IPPROTO_ESP       : constant := 50;       --  ESP
 
    -----------------------
    -- Socket operations --
    -----------------------
 
-   SO_BINDTODEVICE     : constant := 25;       --  Bind to interface device
-   SO_ATTACH_FILTER    : constant := 26;       --  Socket filtering
-   IPV6_ADD_MEMBERSHIP : constant := 20;       --  Join multicast group (IPv6)
-
-   -----------------------------------
-   -- Socket configuration controls --
-   -----------------------------------
-
-   SIOCGIFADDR         : constant := 16#8915#; --  Get address
-   SIOCGIFFLAGS        : constant := 16#8913#; --  Get flags
-   SIOCSIFFLAGS        : constant := 16#8914#; --  Set flags
-   SIOCGIFHWADDR       : constant := 16#8927#; --  Get hardware address
-   SIOCGIFINDEX        : constant := 16#8933#; --  Name -> if_index mapping
+   SO_BINDTODEVICE   : constant := 25;       --  Bind to interface device
+   SO_ATTACH_FILTER  : constant := 26;       --  Socket filtering
 
    ---------------------
    -- Interface flags --
    ---------------------
 
-   IFF_UP              : constant := 1;        --  Interface is up
+   IFF_UP            : constant := 1;        --  Interface is up
 
    ---------------------------
    -- Ethernet protocol IDs --
    ---------------------------
 
-   ETH_P_IP            : constant := 16#0800#; --  Internet Protocol packet
+   ETH_P_ALL         : constant := 16#0003#; --  Every packet
+   ETH_P_IP          : constant := 16#0800#; --  Internet Protocol packet
+
+   ---------------------
+   -- Interface names --
+   ---------------------
+
+   IFNAMSIZ          : constant := 16;
 
 end Anet.Constants;

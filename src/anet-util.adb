@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2014  Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2014  Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -21,11 +21,24 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Directories;
+with Ada.Numerics.Discrete_Random;
+
 with Interfaces;
+
+with Anet.Thin;
 
 package body Anet.Util is
 
    use Ada.Streams;
+
+   Chars : constant String := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+     & "abcdefghijklmnopqrstuvwxyz" & "0123456789";
+   subtype Chars_Range is Positive range Chars'First .. Chars'Last;
+
+   package Random_Chars is new Ada.Numerics.Discrete_Random
+     (Result_Subtype => Chars_Range);
+   Generator : Random_Chars.Generator;
 
    -------------------------------------------------------------------------
 
@@ -87,4 +100,40 @@ package body Anet.Util is
       return Double_Byte (Sum);
    end Calculate_One_Complement;
 
+   -------------------------------------------------------------------------
+
+   function Random_String (Len : Positive) return String
+   is
+      Result : String (1 .. Len);
+   begin
+      for I in Result'Range loop
+         Result (I) := Chars (Random_Chars.Random (Gen => Generator));
+      end loop;
+
+      return Result;
+   end Random_String;
+
+   -------------------------------------------------------------------------
+
+   procedure Wait_For_File
+     (Path     : String;
+      Timespan : Duration)
+   is
+   begin
+      for L in 1 .. Positive (100 * Timespan) loop
+         if Ada.Directories.Exists (Name => Path) then
+            return;
+         end if;
+         delay Timespan / 100;
+      end loop;
+
+      raise Wait_Timeout with "File '" & Path & "' not available after"
+        & Timespan'Img & " second(s)";
+   end Wait_For_File;
+
+   -------------------------------------------------------------------------
+
+begin
+   Random_Chars.Reset (Gen       => Generator,
+                       Initiator => Integer (Thin.C_Getpid));
 end Anet.Util;

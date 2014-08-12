@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
-
 package Anet.Streams is
 
    type Memory_Stream_Type (Max_Elements : Ada.Streams.Stream_Element_Offset)

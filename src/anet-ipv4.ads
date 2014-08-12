@@ -21,8 +21,6 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
-
 package Anet.IPv4 is
 
    IP_Header_Length : constant := 20;

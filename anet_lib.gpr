@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012 secunet Security Networks AG
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012      secunet Security Networks AG
+--  Copyright (C) 2012-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -25,12 +25,19 @@ with "anet_common";
 
 project Anet_Lib is
 
-   for Source_Dirs use ("src");
+   Source_Dirs := ("src");
+   case Anet_Common.OS is
+      when "linux" => Source_Dirs := Source_Dirs & "src/linux";
+      when "bsd"   => Source_Dirs := Source_Dirs & "src/bsd";
+   end case;
+   for Source_Dirs use Source_Dirs;
+
    for Object_Dir use "obj/lib/" & Anet_Common.Libtype;
    for Library_Name use "anet";
    for Library_Dir use "lib/" & Anet_Common.Libtype;
    for Library_Kind use Anet_Common.Libtype;
    for Library_Version use "libanet.so." & Anet_Common.Version;
+   for Library_Options use External_As_List ("LDFLAGS", " ");
 
    package Compiler is
       for Default_Switches ("ada") use Anet_Common.Compiler_Switches

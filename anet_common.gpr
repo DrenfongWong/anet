@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012 secunet Security Networks AG
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012      secunet Security Networks AG
+--  Copyright (C) 2012-2014 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -29,6 +29,9 @@ project Anet_Common is
 
    type Lib_Type is ("static", "dynamic");
    Libtype : Lib_Type := external ("LIBRARY_KIND", "static");
+
+   type OS_Type is ("linux", "bsd");
+   OS : OS_Type := external ("OS", "linux");
 
    Compiler_Switches := ("-gnatygAdISuxo",
                          "-gnatVa",

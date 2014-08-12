@@ -21,13 +21,23 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Ada.Streams;
-
 package Anet.Util is
 
    function Calculate_One_Complement
      (Data : Ada.Streams.Stream_Element_Array)
       return Double_Byte;
    --  Calculate one's complement sum of the 16 bit aligned data bytes.
+
+   function Random_String (Len : Positive) return String;
+   --  Return a random string of given length.
+
+   procedure Wait_For_File
+     (Path     : String;
+      Timespan : Duration);
+   --  This procedure waits max. the given timespan in seconds until the file
+   --  specified by path is available. An exception is raised if the file is
+   --  not present after the timespan has passed.
+
+   Wait_Timeout : exception;
 
 end Anet.Util;

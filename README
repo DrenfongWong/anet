@@ -1,34 +1,30 @@
-Anet - Ada Networking Library
-=============================
+Anet
+====
 
-Anet is a networking library for the Ada programming language. The library
-provides a BSD socket implementation and support for IPv4/UDP packet creation
-and validation. It can be used to implement custom protocols on top of IPv4.
-The library also provides a binding to the Linux Packet Filter (LPF) system.
+Anet is a networking library for the Ada programming language.
 
-The Anet BSD socket implementation has the following features:
+Features
+--------
+The Anet networking library has the following features:
 
+* BSD socket implementation
+* High abstraction level
+* Extendable socket type hierarchy
+* Socket receiver tasks (Stream and Datagram)
+* Ada type serialisation/deserialisation over sockets
 * Supported socket families
   - IPv4 (AF_INET)
   - IPv6 (AF_INET6)
   - Packet (AF_PACKET)
   - UNIX domain (AF_UNIX)
+  - Netlink (AF_NETLINK)
 * Supported socket modes
   - Stream (TCP)
   - Datagram (UDP)
+  - RAW
 * Support for IPv4/IPv6 multicast
-
-
-Licence
--------
---------------------------------------------------------------------------------
-Copyright (C) 2011, 2012 secunet Security Networks AG
-Copyright (C) 2011, 2012 Reto Buerki <reet@codelabs.ch>
-Copyright (C) 2011, 2012 Adrian-Ken Rueegsegger <ken@codelabs.ch>
-
-Free use of this software is granted under the terms of the GNAT Modified
-General Public License (GMGPL).
---------------------------------------------------------------------------------
+* UDP/IPv4 packet creation and validation
+* Binding to the Linux Packet Filter (LPF) system
 
 
 Download
@@ -37,19 +33,19 @@ Download
 Release version
 ~~~~~~~~~~~~~~~
 The current release version of Anet is available at
-http://www.codelabs.ch/download.
+http://www.codelabs.ch/download/.
 
 Verify a Release
 ~~~~~~~~~~~~~~~~
 To verify the integrity and authenticity of the distribution tarball, import
-the key http://www.codelabs.ch/keys/0x3DC359DEpub.asc and type the following
+the key http://www.codelabs.ch/keys/0xBB793815pub.asc and type the following
 command:
 
   $ gpg --verify libanet-{version}.tar.bz2.sig
 
-The key fingerprint of the public key ('0x3DC359DE') is:
+The key fingerprint of the public key ('0xBB793815') is:
 
-  Key fingerprint = 752C 4EBC 115D 5EAD 75F7  0F34 A0AE 8AD7 3DC3 59DE
+  Key fingerprint = A2FB FF56 83FB 67D8 017B  C50C F8C5 F8B5 BB79 3815
 
 Development version
 ~~~~~~~~~~~~~~~~~~~
@@ -61,12 +57,12 @@ A browsable version of the repository is also available here:
 http://git.codelabs.ch/?p=anet.git
 
 
-Build
------
-To compile Anet on your system, you need to have the following software
-installed:
+Installation
+------------
+To compile and install Anet on your system, you need to have the following
+software installed:
 
-* GNAT compiler:
+* GNAT Ada compiler:
   http://www.gnu.org/software/gnat/gnat.html
 
 If you want to run the unit tests before installation of Anet (which is
@@ -75,24 +71,37 @@ recommended) you furthermore need to have the following installed:
 * Ahven (Test-Framework):
   http://ahven.stronglytyped.org/
 
-* socat (SOcket CAT)
-  http://www.dest-unreach.org/socat/
+Anet supports BSD and Linux operating systems. To build for BSD, append
+`OS=bsd` to the `make` commands below. The building and installation process of
+Anet is straightforward. Just type in the following commands.
+
+  $ make
+  $ make PREFIX=/usr/local install
+
+If neither `PREFIX` nor `OS` are specified, `$(HOME)/libraries` is used as
+installation directory and the library is built for Linux.
 
 
 Testing
 -------
-Anet contains a unit test suite which can be run by entering the following
-command:
+Anet contains a comprehensive unit test suite which can be run by entering the
+following command:
 
   $ make tests
 
-All tests should be marked with *PASS* behind the test name.
+All tests should be marked with *PASS* behind the test name. To run the tests
+on BSD, type:
+
+  $ make tests OS=bsd
 
 
-Installation
-------------
-To install Anet on your system, type the following:
+Licence
+-------
+--------------------------------------------------------------------------------
+Copyright (C) 2011-2013 secunet Security Networks AG
+Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
+Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 
-  $ make PREFIX=/usr/local install
-
-If no `PREFIX` is specified, `$(HOME)/libraries` is used as install destination.
+Free use of this software is granted under the terms of the GNAT Modified
+General Public License (GMGPL).
+--------------------------------------------------------------------------------
