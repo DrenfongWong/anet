@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Reto Buerki <reet@codelabs.ch>
 Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>
-Build-Depends: asciidoc, debhelper (>= 9), gnat, gnat-4.6, libahven3-dev,
+Build-Depends: asciidoc, debhelper (>= 9), gnat, gnat-4.9, libahven3-dev,
  source-highlight
 Standards-Version: 3.9.5
 Homepage: http://www.codelabs.ch/anet/
@@ -21,7 +21,7 @@ Description: Ada networking library
 Package: libanet0.3.1-dev
 Section: libdevel
 Architecture: amd64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
-Depends: ${misc:Depends}, libanet0.3.1 (= ${binary:Version}), gnat, gnat-4.6
+Depends: ${misc:Depends}, libanet0.3.1 (= ${binary:Version}), gnat, gnat-4.9
 Conflicts: libanet0.1-dev
 Replaces: libanet0.1-dev
 Description: Ada networking library (development)
