@@ -455,6 +455,8 @@ package body Socket_Tests.IP is
               Message   => "Message count not 1:" & C'Img);
       Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
+      Assert (Condition => Test_Utils.Get_Last_Address.Addr = Loopback_Addr_V6,
+              Message   => "Address mismatch");
 
    exception
       when others =>
