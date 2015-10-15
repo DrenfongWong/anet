@@ -369,7 +369,7 @@ package body Anet.Sockets.Inet is
       use type Ada.Streams.Stream_Element_Offset;
 
       Res : C.long;
-      Len : aliased C.int := Thin.Inet.Sockaddr_In_Size;
+      Len : aliased C.int := Src'Size / 8;
    begin
       Last := 0;
 
