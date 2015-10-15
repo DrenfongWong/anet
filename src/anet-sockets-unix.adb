@@ -154,6 +154,7 @@ package body Anet.Sockets.Unix is
    is
       Path : constant String := Ada.Strings.Unbounded.To_String (Socket.Path);
    begin
+      Src := (others => ' ');
       Socket_Type (Socket).Receive (Item => Item,
                                     Last => Last);
       Src (Src'First .. Path'Length) := Path_Type (Path);
