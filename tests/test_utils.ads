@@ -127,7 +127,10 @@ package Test_Utils is
 
 private
 
-   Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
-   Last   : Ada.Streams.Stream_Element_Offset;
+   Buffer         : Ada.Streams.Stream_Element_Array (1 .. 1500);
+   Last           : Ada.Streams.Stream_Element_Offset;
+   Last_Addr_v4   : Anet.Sockets.Inet.UDPv4_Sockaddr_Type;
+   Last_Addr_v6   : Anet.Sockets.Inet.UDPv6_Sockaddr_Type;
+   Last_Addr_Unix : Anet.Sockets.Unix.Full_Path_Type;
 
 end Test_Utils;
