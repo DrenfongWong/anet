@@ -79,6 +79,7 @@ package body Socket_Tests.Unix is
    procedure Send_Unix_Datagram
    is
       use type Receivers.Count_Type;
+      use type Sockets.Unix.Path_Type;
 
       C            : Receivers.Count_Type := 0;
       Path         : constant String      := "/tmp/mysock-"
@@ -109,6 +110,9 @@ package body Socket_Tests.Unix is
               Message   => "Message count not 1:" & C'Img);
       Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
+      Assert (Condition => Path = Sockets.Unix.To_String
+              (Path => Test_Utils.Get_Last_Address),
+              Message   => "Source path mismatch");
 
    exception
       when others =>
