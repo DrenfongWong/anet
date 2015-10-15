@@ -44,4 +44,7 @@ package Socket_Tests.Unix is
    procedure Valid_Unix_Paths;
    --  Test UNIX path validation.
 
+   procedure To_String;
+   --  Test UNIX path to string conversion.
+
 end Socket_Tests.Unix;

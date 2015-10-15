@@ -21,6 +21,8 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Strings.Fixed;
+
 with Anet.OS;
 
 package body Anet.Sockets.Unix is
@@ -159,5 +161,15 @@ package body Anet.Sockets.Unix is
                                     Last => Last);
       Src (Src'First .. Path'Length) := Path_Type (Path);
    end Receive;
+
+   -------------------------------------------------------------------------
+
+   function To_String (Path : Full_Path_Type) return String
+   is
+   begin
+      return Ada.Strings.Fixed.Trim
+        (Source => String (Path),
+         Side   => Ada.Strings.Right);
+   end To_String;
 
 end Anet.Sockets.Unix;

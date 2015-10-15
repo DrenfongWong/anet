@@ -39,6 +39,9 @@ package Anet.Sockets.Unix is
    function Is_Valid (Path : String) return Boolean;
    --  Returns true if the given path is a valid unix path.
 
+   function To_String (Path : Full_Path_Type) return String;
+   --  Returned trimmed string representation of given full path.
+
    type Unix_Socket_Type is abstract new Socket_Type with private;
    --  UNIX domain socket.
 
