@@ -162,6 +162,30 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
+   function Get_Last_Address return Anet.Sockets.Inet.UDPv4_Sockaddr_Type
+   is
+   begin
+      return Last_Addr_v4;
+   end Get_Last_Address;
+
+   -------------------------------------------------------------------------
+
+   function Get_Last_Address return Anet.Sockets.Inet.UDPv6_Sockaddr_Type
+   is
+   begin
+      return Last_Addr_v6;
+   end Get_Last_Address;
+
+   -------------------------------------------------------------------------
+
+   function Get_Last_Address return Anet.Sockets.Unix.Full_Path_Type
+   is
+   begin
+      return Last_Addr_Unix;
+   end Get_Last_Address;
+
+   -------------------------------------------------------------------------
+
    function Get_Random_Port return Test_Port_Type
    is
    begin
