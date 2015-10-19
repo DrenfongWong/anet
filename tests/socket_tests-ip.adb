@@ -117,6 +117,11 @@ package body Socket_Tests.IP is
          Assert (Condition => not Rcvr.Is_Listening,
                  Message   => "Receiver still listening");
 
+         Rcvr.Listen (Callback => Test_Utils.Raise_Error'Access);
+         Assert (Condition => Rcvr.Is_Listening,
+                 Message   => "Receiver not restarted");
+         Rcvr.Stop;
+
       exception
          when others =>
             Rcvr.Stop;

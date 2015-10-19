@@ -83,60 +83,62 @@ package body Anet.Receivers.Datagram is
       Error_Callback : Error_Handler_Callback := No_Op_Cb'Access;
       Stop           : Boolean                := False;
    begin
-      Setup_Loop :
       loop
-         select
-            accept Listen (Cb : Rcv_Item_Callback)
-            do
-               Data_Callback := Cb;
-            end Listen;
-
-            exit Setup_Loop;
-
-         or
-            accept Set_Error_Handler (Cb : Error_Handler_Callback)
-            do
-               Error_Callback := Cb;
-            end Set_Error_Handler;
-
-         or
-
-            terminate;
-         end select;
-      end loop Setup_Loop;
-
-      Reception_Loop :
-      loop
-         declare
-            Sender : Address_Type;
-            Buffer : Ada.Streams.Stream_Element_Array (1 .. Buffer_Size);
-            Last   : Ada.Streams.Stream_Element_Offset;
-         begin
+         Setup_Loop :
+         loop
             select
-               Parent.Trigger.Stop;
-               exit Reception_Loop;
-            then abort
-               Receive
-                 (Socket => Parent.S.all,
-                  Src    => Sender,
-                  Item   => Buffer,
-                  Last   => Last);
+               accept Listen (Cb : Rcv_Item_Callback)
+               do
+                  Data_Callback := Cb;
+               end Listen;
+
+               exit Setup_Loop;
+
+            or
+               accept Set_Error_Handler (Cb : Error_Handler_Callback)
+               do
+                  Error_Callback := Cb;
+               end Set_Error_Handler;
+
+            or
+
+               terminate;
             end select;
+         end loop Setup_Loop;
 
-            Data_Callback (Item => Buffer (Buffer'First .. Last),
-                           Src  => Sender);
-            Parent.Item_Count.Increment;
-
-         exception
-            when Ex : others =>
-               Error_Callback (E         => Ex,
-                               Stop_Flag => Stop);
-               if Stop then
+         Reception_Loop :
+         loop
+            declare
+               Sender : Address_Type;
+               Buffer : Ada.Streams.Stream_Element_Array (1 .. Buffer_Size);
+               Last   : Ada.Streams.Stream_Element_Offset;
+            begin
+               select
+                  Parent.Trigger.Stop;
                   exit Reception_Loop;
-               end if;
-         end;
-      end loop Reception_Loop;
-      Parent.Trigger.Signal_Termination;
+               then abort
+                  Receive
+                    (Socket => Parent.S.all,
+                     Src    => Sender,
+                     Item   => Buffer,
+                     Last   => Last);
+               end select;
+
+               Data_Callback (Item => Buffer (Buffer'First .. Last),
+                              Src  => Sender);
+               Parent.Item_Count.Increment;
+
+            exception
+               when Ex : others =>
+                  Error_Callback (E         => Ex,
+                                  Stop_Flag => Stop);
+                  if Stop then
+                     exit Reception_Loop;
+                  end if;
+            end;
+         end loop Reception_Loop;
+         Parent.Trigger.Signal_Termination;
+      end loop;
    end Receiver_Task;
 
 end Anet.Receivers.Datagram;
