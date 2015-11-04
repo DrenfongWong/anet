@@ -350,7 +350,7 @@ package body Anet.Sockets.Inet is
          Level   => Constants.IPPROTO_IPV6,
          Optname => OS_Constants.IPV6_MULTICAST_IF,
          Optval  => Iface_Idx'Address,
-         Optlen  => Iface_Idx'Size);
+         Optlen  => Iface_Idx'Size / 8);
 
       if Res = C_Failure then
          raise Socket_Error with "Unable set sending multicast interface to "
