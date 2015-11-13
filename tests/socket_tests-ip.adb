@@ -280,7 +280,7 @@ package body Socket_Tests.IP is
       Rcvr : UDPv6_Receiver.Receiver_Type (S => Sock'Access);
       Port : constant Test_Utils.Test_Port_Type := Test_Utils.Get_Random_Port;
       Grp  : constant IPv6_Addr_Type
-        := To_IPv6_Addr (Str => "ff01:0000:0000:0000:0000:0000:0001:0002");
+        := To_IPv6_Addr (Str => "ff04:0000:0000:0000:0000:0000:0001:0002");
    begin
       if Test_Utils.OS = Test_Utils.BSD then
          Skip (Message => "Not supported");
