@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Errno;
 with Anet.OS_Constants;
 with Anet.Sockets.Thin.Netlink;
 
@@ -69,7 +70,7 @@ package body Anet.Sockets.Netlink is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind Netlink socket - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Bind;
 
@@ -115,7 +116,7 @@ package body Anet.Sockets.Netlink is
          when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
          when Recv_Op_Error =>
             raise Socket_Error with "Error receiving data from Netlink"
-              & " socket: " & Get_Errno_String;
+              & " socket: " & Errno.Get_Errno_String;
          when Recv_Op_Ok =>
             Src  := Netlink_Addr_Type (Saddr.Nl_Pid);
             Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
@@ -143,7 +144,7 @@ package body Anet.Sockets.Netlink is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to send data on Netlink socket - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
 
       Check_Complete_Send

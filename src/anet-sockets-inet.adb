@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Errno;
 with Anet.Constants;
 with Anet.OS_Constants;
 with Anet.Sockets.Thin.Inet;
@@ -64,7 +65,7 @@ package body Anet.Sockets.Inet is
          when Accept_Op_Aborted => return;
          when Accept_Op_Error =>
             raise Socket_Error with "Unable to accept connection on TCPv4 "
-              & "socket - " & Get_Errno_String;
+              & "socket - " & Errno.Get_Errno_String;
          when Accept_Op_Ok =>
             New_Socket.Sock_FD := Res;
       end case;
@@ -92,7 +93,7 @@ package body Anet.Sockets.Inet is
          when Accept_Op_Aborted => return;
          when Accept_Op_Error =>
             raise Socket_Error with "Unable to accept connection on TCPv6 "
-              & "socket - " & Get_Errno_String;
+              & "socket - " & Errno.Get_Errno_String;
          when Accept_Op_Ok =>
             New_Socket.Sock_FD := Res;
       end case;
@@ -131,7 +132,7 @@ package body Anet.Sockets.Inet is
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind IPv4 socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Bind;
 
@@ -157,7 +158,7 @@ package body Anet.Sockets.Inet is
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind IPv6 socket to "
            & To_String (Address => Address) & "," & Port'Img & " - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Bind;
 
@@ -180,7 +181,7 @@ package body Anet.Sockets.Inet is
       if Res = C_Failure then
          raise Socket_Error with "Unable to connect socket to address "
            & To_String (Address => Address) & " (" & Port'Img & " ) - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Connect;
 
@@ -203,7 +204,7 @@ package body Anet.Sockets.Inet is
       if Res = C_Failure then
          raise Socket_Error with "Unable to connect socket to address "
            & To_String (Address => Address) & " (" & Port'Img & " ) - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Connect;
 
@@ -276,7 +277,7 @@ package body Anet.Sockets.Inet is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to join multicast group "
-           & To_String (Address => Group) & ": " & Get_Errno_String;
+           & To_String (Address => Group) & ": " & Errno.Get_Errno_String;
       end if;
    end Join_Multicast_Group;
 
@@ -309,7 +310,7 @@ package body Anet.Sockets.Inet is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to join multicast group "
-           & To_String (Address => Group) & ": " & Get_Errno_String;
+           & To_String (Address => Group) & ": " & Errno.Get_Errno_String;
       end if;
    end Join_Multicast_Group;
 
@@ -331,7 +332,7 @@ package body Anet.Sockets.Inet is
       if Res = C_Failure then
          raise Socket_Error with "Unable to set sending multicast interface "
            & "with address " & To_String (Iface_Addr) & "': "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Multicast_Set_Sending_Interface;
 
@@ -354,7 +355,7 @@ package body Anet.Sockets.Inet is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable set sending multicast interface to "
-           & String (Iface) & ": " & Get_Errno_String;
+           & String (Iface) & ": " & Errno.Get_Errno_String;
       end if;
    end Multicast_Set_Sending_Interface;
 
@@ -385,7 +386,7 @@ package body Anet.Sockets.Inet is
          when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
          when Recv_Op_Error =>
             raise Socket_Error with "Error receiving data from inet socket: "
-              & Get_Errno_String;
+              & Errno.Get_Errno_String;
          when Recv_Op_Ok =>
             if Len = 0 then
                raise Socket_Error with "No address information received";
@@ -458,7 +459,7 @@ package body Anet.Sockets.Inet is
       if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
            & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
 
       Check_Complete_Send
@@ -491,7 +492,7 @@ package body Anet.Sockets.Inet is
       if Res = C_Failure then
          raise Socket_Error with "Error sending data to "
            & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
 
       Check_Complete_Send

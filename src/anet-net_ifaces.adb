@@ -23,6 +23,7 @@
 
 with Interfaces.C;
 
+with Anet.Errno;
 with Anet.Constants;
 with Anet.Sockets.Thin.Netdev.Requests;
 
@@ -124,7 +125,7 @@ package body Anet.Net_Ifaces is
       if Res = C_Failure then
          raise Sockets.Socket_Error with "Ioctl (" & Request'Img
            & ") failed on interface '" & String (Iface_Name) & "': "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
 
       return If_Req;
@@ -207,7 +208,7 @@ package body Anet.Net_Ifaces is
          if Res = C_Failure then
             raise Sockets.Socket_Error with "Ioctl (" & If_Flags'Img
               & ") failed on interface '" & String (Name) & "': "
-              & Get_Errno_String;
+              & Errno.Get_Errno_String;
          end if;
 
       exception

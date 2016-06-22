@@ -24,6 +24,7 @@
 with Ada.Strings.Fixed;
 
 with Anet.OS;
+with Anet.Errno;
 
 package body Anet.Sockets.Unix is
 
@@ -50,7 +51,7 @@ package body Anet.Sockets.Unix is
          when Accept_Op_Aborted => return;
          when Accept_Op_Error =>
             raise Socket_Error with "Unable to accept connection on UNIX/TCP "
-              & "socket - " & Get_Errno_String;
+              & "socket - " & Errno.Get_Errno_String;
          when Accept_Op_Ok =>
             New_Socket.Sock_FD         := Res;
             New_Socket.Path            := Socket.Path;
@@ -78,7 +79,7 @@ package body Anet.Sockets.Unix is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
+           & String (Path) & " - " & Errno.Get_Errno_String;
       end if;
 
       Socket.Path := Ada.Strings.Unbounded.To_Unbounded_String
@@ -115,7 +116,7 @@ package body Anet.Sockets.Unix is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to connect unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
+           & String (Path) & " - " & Errno.Get_Errno_String;
       end if;
    end Connect;
 

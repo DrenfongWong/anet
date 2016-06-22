@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Errno;
 with Anet.Net_Ifaces;
 with Anet.Sockets.Thin.Packet;
 with Anet.Constants;
@@ -53,7 +54,7 @@ package body Anet.Sockets.Packet is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to bind packet socket to interface "
-           & String (Iface) & " - " & Get_Errno_String;
+           & String (Iface) & " - " & Errno.Get_Errno_String;
       end if;
    end Bind;
 
@@ -114,7 +115,7 @@ package body Anet.Sockets.Packet is
          when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
          when Recv_Op_Error =>
             raise Socket_Error with "Error receiving packet data: "
-              & Get_Errno_String;
+              & Errno.Get_Errno_String;
          when Recv_Op_Ok =>
             Src  := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src'Length);
             Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
@@ -149,7 +150,7 @@ package body Anet.Sockets.Packet is
       if Res = C_Failure then
          raise Socket_Error with "Unable to send packet data on interface "
            & String (Iface) & " to " & To_String (Address => To)
-           & " - " & Get_Errno_String;
+           & " - " & Errno.Get_Errno_String;
       end if;
 
       Check_Complete_Send

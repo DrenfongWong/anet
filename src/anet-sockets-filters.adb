@@ -23,6 +23,7 @@
 
 with System;
 
+with Anet.Errno;
 with Anet.Constants;
 with Anet.Sockets.Thin;
 
@@ -54,7 +55,7 @@ package body Anet.Sockets.Filters is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable set socket filter - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Set_Filter;
 

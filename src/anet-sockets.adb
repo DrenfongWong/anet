@@ -23,6 +23,7 @@
 
 with GNAT.OS_Lib;
 
+with Anet.Errno;
 with Anet.OS_Constants;
 with Anet.Sockets.Thin;
 
@@ -107,7 +108,7 @@ package body Anet.Sockets is
          Res := Thin.C_Close (Socket.Sock_FD);
          if Res = C_Failure then
             raise Socket_Error with "Unable to close socket: "
-              & Get_Errno_String;
+              & Errno.Get_Errno_String;
          end if;
          Socket.Sock_FD  := -1;
          Socket.Protocol := 0;
@@ -139,7 +140,7 @@ package body Anet.Sockets is
       if Res = C_Failure then
          raise Socket_Error with "Unable to create socket (" & Family'Img & "/"
            & Mode'Img & ", protocol" & Protocol'Img & "): "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
 
       Socket.Sock_FD  := Res;
@@ -159,7 +160,7 @@ package body Anet.Sockets is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to listen on socket with backlog"
-           & Backlog'Img & " - " & Get_Errno_String;
+           & Backlog'Img & " - " & Errno.Get_Errno_String;
       end if;
    end Listen;
 
@@ -186,7 +187,7 @@ package body Anet.Sockets is
          when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
          when Recv_Op_Error =>
             raise Socket_Error with "Error receiving data from socket: "
-              & Get_Errno_String;
+              & Errno.Get_Errno_String;
          when Recv_Op_Ok =>
             Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
       end case;
@@ -207,7 +208,7 @@ package body Anet.Sockets is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable to send data on socket - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
 
       Check_Complete_Send
@@ -266,7 +267,7 @@ package body Anet.Sockets is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable set boolean socket option "
-           & Option'Img & " to " & Value'Img & ": " & Get_Errno_String;
+           & Option'Img & " to " & Value'Img & ": " & Errno.Get_Errno_String;
       end if;
    end Set_Socket_Option;
 
@@ -289,7 +290,7 @@ package body Anet.Sockets is
 
       if Res = C_Failure then
          raise Socket_Error with "Unable set string socket option "
-           & Option'Img & " to '" & Value & "': " & Get_Errno_String;
+           & Option'Img & " to '" & Value & "': " & Errno.Get_Errno_String;
       end if;
    end Set_Socket_Option;
 
