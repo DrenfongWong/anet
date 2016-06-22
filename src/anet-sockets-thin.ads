@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2011, 2012 secunet Security Networks AG
---  Copyright (C) 2011-2014  Buerki <reet@codelabs.ch>
---  Copyright (C) 2011-2014  Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2016  Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2016  Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -124,5 +124,12 @@ package Anet.Sockets.Thin is
 
    function C_Close (Fd : Interfaces.C.int) return Interfaces.C.int;
    pragma Import (C, C_Close, "close");
+
+   function C_Fcntl
+     (Fd  : Interfaces.C.int;
+      Cmd : Interfaces.C.int;
+      Arg : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Fcntl, "fcntl");
 
 end Anet.Sockets.Thin;
