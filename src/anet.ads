@@ -113,6 +113,8 @@ package Anet is
    C_Failure : constant := -1;
    --  Used to test return codes of imported C functions.
 
+   Socket_Error : exception;
+
 private
 
    for Byte'Size use 8;

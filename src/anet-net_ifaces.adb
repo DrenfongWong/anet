@@ -123,7 +123,7 @@ package body Anet.Net_Ifaces is
                       Req => Get_Requests (Request),
                       Arg => If_Req'Access);
       if Res = C_Failure then
-         raise Sockets.Socket_Error with "Ioctl (" & Request'Img
+         raise Socket_Error with "Ioctl (" & Request'Img
            & ") failed on interface '" & String (Iface_Name) & "': "
            & Errno.Get_Errno_String;
       end if;
@@ -167,7 +167,7 @@ package body Anet.Net_Ifaces is
                            Iface_Name => Iface_Name);
 
       exception
-         when Sockets.Socket_Error =>
+         when Socket_Error =>
             Res := C_Close (Fd => Sock);
             raise;
       end;
@@ -206,13 +206,13 @@ package body Anet.Net_Ifaces is
                          Req => Set_Requests (If_Flags),
                          Arg => Req'Access);
          if Res = C_Failure then
-            raise Sockets.Socket_Error with "Ioctl (" & If_Flags'Img
+            raise Socket_Error with "Ioctl (" & If_Flags'Img
               & ") failed on interface '" & String (Name) & "': "
               & Errno.Get_Errno_String;
          end if;
 
       exception
-         when Sockets.Socket_Error =>
+         when Socket_Error =>
             Res := C_Close (Fd => Sock);
             raise;
       end;

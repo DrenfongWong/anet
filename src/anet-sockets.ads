@@ -119,8 +119,6 @@ package Anet.Sockets is
       Value  : String);
    --  Set socket option of given socket to specified string value.
 
-   Socket_Error : exception;
-
 private
 
    use type Interfaces.C.int;

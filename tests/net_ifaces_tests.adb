@@ -22,7 +22,6 @@
 --
 
 with Anet.Net_Ifaces;
-with Anet.Sockets;
 
 with Test_Utils;
 with Test_Constants;
@@ -45,7 +44,7 @@ package body Net_Ifaces_Tests is
          Fail (Message => "Expected socket error (nonexistent)");
 
       exception
-         when Sockets.Socket_Error => null;
+         when Socket_Error => null;
       end;
    end Get_Loopback_Interface_Index;
 
@@ -83,7 +82,7 @@ package body Net_Ifaces_Tests is
          Fail (Message => "Expected socket error (nonexistent)");
 
       exception
-         when Sockets.Socket_Error => null;
+         when Socket_Error => null;
       end;
    end Get_Loopback_Interface_Mac;
 
