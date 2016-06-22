@@ -50,7 +50,6 @@ package body Anet.Sockets.Netlink is
    is
       use type Interfaces.Unsigned_32;
 
-      Res   : C.int;
       Value : Thin.Netlink.Sockaddr_Nl_Type
         := (Nl_Pid => Interfaces.Unsigned_32 (Address),
             others => <>);
@@ -64,14 +63,12 @@ package body Anet.Sockets.Netlink is
          end loop;
       end if;
 
-      Res := Thin.C_Bind (S       => Socket.Sock_FD,
-                          Name    => Value'Address,
-                          Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind Netlink socket - "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Bind
+           (S       => Socket.Sock_FD,
+            Name    => Value'Address,
+            Namelen => Value'Size / 8),
+         Message => "Unable to bind Netlink socket");
    end Bind;
 
    -------------------------------------------------------------------------
@@ -135,18 +132,17 @@ package body Anet.Sockets.Netlink is
         := (Nl_Pid => Interfaces.Unsigned_32 (To),
             others => <>);
    begin
-      Res := Thin.C_Sendto (S     => Socket.Sock_FD,
-                            Buf   => Item'Address,
-                            Len   => Item'Length,
-                            Flags => 0,
-                            To    => Dst'Address,
-                            Tolen => Dst'Size / 8);
+      Res := Thin.C_Sendto
+        (S     => Socket.Sock_FD,
+         Buf   => Item'Address,
+         Len   => Item'Length,
+         Flags => 0,
+         To    => Dst'Address,
+         Tolen => Dst'Size / 8);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to send data on Netlink socket - "
-           & Errno.Get_Errno_String;
-      end if;
-
+      Errno.Check_Or_Raise
+        (Result  => C.int (Res),
+         Message => "Unable to send data on Netlink socket");
       Check_Complete_Send
         (Item      => Item,
          Result    => Res,

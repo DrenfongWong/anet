@@ -42,21 +42,17 @@ package body Anet.Sockets.Filters is
      (Socket : Socket_Type;
       Filter : Sock_Filter_Array)
    is
-      Res  : Interfaces.C.int;
       Meta : Sock_Fprog_Type := (Len    => Filter'Length,
                                  Filter => Filter'Address);
    begin
-      Res := Thin.C_Setsockopt
-        (S       => Socket.Sock_FD,
-         Level   => Constants.Sys.SOL_SOCKET,
-         Optname => Constants.SO_ATTACH_FILTER,
-         Optval  => Meta'Address,
-         Optlen  => Meta'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable set socket filter - "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Setsockopt
+           (S       => Socket.Sock_FD,
+            Level   => Constants.Sys.SOL_SOCKET,
+            Optname => Constants.SO_ATTACH_FILTER,
+            Optval  => Meta'Address,
+            Optlen  => Meta'Size / 8),
+         Message => "Unable set socket filter");
    end Set_Filter;
 
 end Anet.Sockets.Filters;

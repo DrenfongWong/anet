@@ -114,19 +114,17 @@ package body Anet.Net_Ifaces is
    is
       use type C.int;
 
-      Res    : C.int;
       C_Name : constant C.char_array := C.To_C (String (Iface_Name));
       If_Req : aliased If_Req_Type (Name => Request);
    begin
       If_Req.Ifr_Name (1 .. C_Name'Length) := C_Name;
-      Res := C_Ioctl (S   => Socket,
-                      Req => Get_Requests (Request),
-                      Arg => If_Req'Access);
-      if Res = C_Failure then
-         raise Socket_Error with "Ioctl (" & Request'Img
-           & ") failed on interface '" & String (Iface_Name) & "': "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => C_Ioctl
+           (S   => Socket,
+            Req => Get_Requests (Request),
+            Arg => If_Req'Access),
+         Message => "Ioctl (" & Request'Img &
+           ") failed on interface '" & String (Iface_Name) & "'");
 
       return If_Req;
    end Ioctl_Get;
@@ -202,14 +200,14 @@ package body Anet.Net_Ifaces is
             Req.Ifr_Flags := 0;
          end if;
 
-         Res := C_Ioctl (S   => Sock,
-                         Req => Set_Requests (If_Flags),
-                         Arg => Req'Access);
-         if Res = C_Failure then
-            raise Socket_Error with "Ioctl (" & If_Flags'Img
-              & ") failed on interface '" & String (Name) & "': "
-              & Errno.Get_Errno_String;
-         end if;
+         Res := C_Ioctl
+           (S   => Sock,
+            Req => Set_Requests (If_Flags),
+            Arg => Req'Access);
+         Errno.Check_Or_Raise
+           (Result  => Res,
+            Message => "Ioctl (" & If_Flags'Img & ") failed on interface '" &
+              String (Name) & "'");
 
       exception
          when Socket_Error =>

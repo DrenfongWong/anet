@@ -117,7 +117,6 @@ package body Anet.Sockets.Inet is
       Address :        IPv4_Addr_Type        := Any_Addr;
       Port    :        Port_Type)
    is
-      Res      : C.int;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
         := Thin.Inet.Create_Inet4 (Address => Address,
                                    Port    => Port);
@@ -126,14 +125,13 @@ package body Anet.Sockets.Inet is
         (Option => Reuse_Address,
          Value  => True);
 
-      Res := Thin.C_Bind (S       => Socket.Sock_FD,
-                          Name    => Sockaddr'Address,
-                          Namelen => Sockaddr'Size / 8);
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind IPv4 socket to "
-           & To_String (Address => Address) & "," & Port'Img & " - "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Bind
+           (S       => Socket.Sock_FD,
+            Name    => Sockaddr'Address,
+            Namelen => Sockaddr'Size / 8),
+         Message => "Unable to bind IPv4 socket to " & To_String
+           (Address => Address) & "," & Port'Img);
    end Bind;
 
    -------------------------------------------------------------------------
@@ -143,7 +141,6 @@ package body Anet.Sockets.Inet is
       Address :        IPv6_Addr_Type := Any_Addr_V6;
       Port    :        Port_Type)
    is
-      Res      : C.int;
       Sockaddr : constant Thin.Inet.Sockaddr_In_Type
         := Thin.Inet.Create_Inet6 (Address => Address,
                                    Port    => Port);
@@ -152,14 +149,13 @@ package body Anet.Sockets.Inet is
         (Option => Reuse_Address,
          Value  => True);
 
-      Res := Thin.C_Bind (S       => Socket.Sock_FD,
-                          Name    => Sockaddr'Address,
-                          Namelen => Sockaddr'Size / 8);
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind IPv6 socket to "
-           & To_String (Address => Address) & "," & Port'Img & " - "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Bind
+           (S       => Socket.Sock_FD,
+            Name    => Sockaddr'Address,
+            Namelen => Sockaddr'Size / 8),
+         Message => "Unable to bind IPv6 socket to " & To_String
+           (Address => Address) & "," & Port'Img);
    end Bind;
 
    -------------------------------------------------------------------------
@@ -169,20 +165,17 @@ package body Anet.Sockets.Inet is
       Address :        IPv4_Addr_Type;
       Port    :        Port_Type)
    is
-      Res : C.int;
       Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet4
         (Address => Address,
          Port    => Port);
    begin
-      Res := Thin.C_Connect (S       => Socket.Sock_FD,
-                             Name    => Dst'Address,
-                             Namelen => Dst'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to connect socket to address "
-           & To_String (Address => Address) & " (" & Port'Img & " ) - "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Connect
+           (S       => Socket.Sock_FD,
+            Name    => Dst'Address,
+            Namelen => Dst'Size / 8),
+         Message => "Unable to connect socket to address " & To_String
+           (Address => Address) & " (" & Port'Img & " )");
    end Connect;
 
    -------------------------------------------------------------------------
@@ -192,20 +185,17 @@ package body Anet.Sockets.Inet is
       Address :        IPv6_Addr_Type;
       Port    :        Port_Type)
    is
-      Res : C.int;
       Dst : constant Thin.Inet.Sockaddr_In_Type := Thin.Inet.Create_Inet6
         (Address => Address,
          Port    => Port);
    begin
-      Res := Thin.C_Connect (S       => Socket.Sock_FD,
-                             Name    => Dst'Address,
-                             Namelen => Dst'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to connect socket to address "
-           & To_String (Address => Address) & " (" & Port'Img & " ) - "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Connect
+           (S       => Socket.Sock_FD,
+            Name    => Dst'Address,
+            Namelen => Dst'Size / 8),
+         Message => "Unable to connect socket to address " & To_String
+           (Address => Address) & " (" & Port'Img & " )");
    end Connect;
 
    -------------------------------------------------------------------------
@@ -259,7 +249,6 @@ package body Anet.Sockets.Inet is
 
       Mreq       : Thin.IPv4_Mreq_Type;
       Iface_Addr : IPv4_Addr_Type := Any_Addr;
-      Res        : C.int;
    begin
       if Iface'Length > 0 then
          Iface_Addr := Net_Ifaces.Get_Iface_IP (Name => Iface);
@@ -268,17 +257,15 @@ package body Anet.Sockets.Inet is
       Mreq.Imr_Multiaddr := Group;
       Mreq.Imr_Interface := Iface_Addr;
 
-      Res := Thin.C_Setsockopt
-        (S       => Socket.Sock_FD,
-         Level   => Constants.Sys.IPPROTO_IP,
-         Optname => Constants.Sys.IP_ADD_MEMBERSHIP,
-         Optval  => Mreq'Address,
-         Optlen  => Mreq'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to join multicast group "
-           & To_String (Address => Group) & ": " & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Setsockopt
+           (S       => Socket.Sock_FD,
+            Level   => Constants.Sys.IPPROTO_IP,
+            Optname => Constants.Sys.IP_ADD_MEMBERSHIP,
+            Optval  => Mreq'Address,
+            Optlen  => Mreq'Size / 8),
+         Message => "Unable to join multicast group " & To_String
+           (Address => Group));
    end Join_Multicast_Group;
 
    -------------------------------------------------------------------------
@@ -292,7 +279,6 @@ package body Anet.Sockets.Inet is
 
       Mreq6     : Thin.IPv6_Mreq_Type;
       Iface_Idx : Natural := 0;
-      Res       : C.int;
    begin
       if Iface'Length > 0 then
          Iface_Idx := Net_Ifaces.Get_Iface_Index (Name => Iface);
@@ -301,17 +287,15 @@ package body Anet.Sockets.Inet is
       Mreq6.IPv6mr_Multiaddr := Group;
       Mreq6.IPv6mr_Interface := C.unsigned (Iface_Idx);
 
-      Res := Thin.C_Setsockopt
-        (S       => Socket.Sock_FD,
-         Level   => Constants.IPPROTO_IPV6,
-         Optname => OS_Constants.IPV6_ADD_MEMBERSHIP,
-         Optval  => Mreq6'Address,
-         Optlen  => Mreq6'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to join multicast group "
-           & To_String (Address => Group) & ": " & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Setsockopt
+           (S       => Socket.Sock_FD,
+            Level   => Constants.IPPROTO_IPV6,
+            Optname => OS_Constants.IPV6_ADD_MEMBERSHIP,
+            Optval  => Mreq6'Address,
+            Optlen  => Mreq6'Size / 8),
+         Message => "Unable to join multicast group " & To_String
+           (Address => Group));
    end Join_Multicast_Group;
 
    -------------------------------------------------------------------------
@@ -320,20 +304,16 @@ package body Anet.Sockets.Inet is
      (Socket     : UDPv4_Socket_Type;
       Iface_Addr : IPv4_Addr_Type)
    is
-      Res : C.int;
    begin
-      Res := Thin.C_Setsockopt
-        (S       => Socket.Sock_FD,
-         Level   => Constants.Sys.IPPROTO_IP,
-         Optname => Constants.Sys.IP_MULTICAST_IF,
-         Optval  => Iface_Addr'Address,
-         Optlen  => Iface_Addr'Length);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to set sending multicast interface "
-           & "with address " & To_String (Iface_Addr) & "': "
-           & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Setsockopt
+           (S       => Socket.Sock_FD,
+            Level   => Constants.Sys.IPPROTO_IP,
+            Optname => Constants.Sys.IP_MULTICAST_IF,
+            Optval  => Iface_Addr'Address,
+            Optlen  => Iface_Addr'Length),
+         Message => "Unable to set sending multicast interface " &
+           "with address " & To_String (Iface_Addr) & "'");
    end Multicast_Set_Sending_Interface;
 
    -------------------------------------------------------------------------
@@ -342,21 +322,18 @@ package body Anet.Sockets.Inet is
      (Socket : UDPv6_Socket_Type;
       Iface  : Types.Iface_Name_Type)
    is
-      Res       : C.int;
       Iface_Idx : constant Natural
         := Net_Ifaces.Get_Iface_Index (Name => Iface);
    begin
-      Res := Thin.C_Setsockopt
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Setsockopt
         (S       => Socket.Sock_FD,
          Level   => Constants.IPPROTO_IPV6,
          Optname => OS_Constants.IPV6_MULTICAST_IF,
          Optval  => Iface_Idx'Address,
-         Optlen  => Iface_Idx'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable set sending multicast interface to "
-           & String (Iface) & ": " & Errno.Get_Errno_String;
-      end if;
+         Optlen  => Iface_Idx'Size / 8),
+         Message => "Unable set sending multicast interface to " &
+           String (Iface));
    end Multicast_Set_Sending_Interface;
 
    -------------------------------------------------------------------------
@@ -449,24 +426,23 @@ package body Anet.Sockets.Inet is
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
-      Res := Thin.C_Sendto (S     => Socket.Sock_FD,
-                            Buf   => Item'Address,
-                            Len   => Item'Length,
-                            Flags => 0,
-                            To    => Dst'Address,
-                            Tolen => Dst'Size / 8);
+      Res := Thin.C_Sendto
+        (S     => Socket.Sock_FD,
+         Buf   => Item'Address,
+         Len   => Item'Length,
+         Flags => 0,
+         To    => Dst'Address,
+         Tolen => Dst'Size / 8);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Error sending data to "
-           & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - "
-           & Errno.Get_Errno_String;
-      end if;
-
+      Errno.Check_Or_Raise
+        (Result  => C.int (Res),
+         Message => "Error sending data to " &
+           To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
       Check_Complete_Send
         (Item      => Item,
          Result    => Res,
-         Error_Msg => "Incomplete send operation to "
-         & To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
+         Error_Msg => "Incomplete send operation to " &
+           To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
    end Send;
 
    -------------------------------------------------------------------------
@@ -482,24 +458,23 @@ package body Anet.Sockets.Inet is
         (Address => Dst_Addr,
          Port    => Dst_Port);
    begin
-      Res := Thin.C_Sendto (S     => Socket.Sock_FD,
-                            Buf   => Item'Address,
-                            Len   => Item'Length,
-                            Flags => 0,
-                            To    => Dst'Address,
-                            Tolen => Dst'Size / 8);
+      Res := Thin.C_Sendto
+        (S     => Socket.Sock_FD,
+         Buf   => Item'Address,
+         Len   => Item'Length,
+         Flags => 0,
+         To    => Dst'Address,
+         Tolen => Dst'Size / 8);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Error sending data to "
-           & To_String (Address => Dst_Addr) & "," & Dst_Port'Img & " - "
-           & Errno.Get_Errno_String;
-      end if;
-
+      Errno.Check_Or_Raise
+        (Result  => C.int (Res),
+         Message => "Error sending data to " &
+           To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
       Check_Complete_Send
         (Item      => Item,
          Result    => Res,
-         Error_Msg => "Incomplete send operation to "
-         & To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
+         Error_Msg => "Incomplete send operation to " &
+           To_String (Address => Dst_Addr) & "," & Dst_Port'Img);
    end Send;
 
 end Anet.Sockets.Inet;

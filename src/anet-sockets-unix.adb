@@ -65,7 +65,6 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
-      Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
@@ -73,14 +72,12 @@ package body Anet.Sockets.Unix is
 
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
-      Res := Thin.C_Bind (S       => Socket.Sock_FD,
-                          Name    => Value'Address,
-                          Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind unix socket to path "
-           & String (Path) & " - " & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Bind
+           (S       => Socket.Sock_FD,
+            Name    => Value'Address,
+            Namelen => Value'Size / 8),
+         Message => "Unable to bind unix socket to path " & String (Path));
 
       Socket.Path := Ada.Strings.Unbounded.To_Unbounded_String
         (String (Path));
@@ -104,20 +101,17 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
-      Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
-      Res := Thin.C_Connect (S       => Socket.Sock_FD,
-                             Name    => Value'Address,
-                             Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to connect unix socket to path "
-           & String (Path) & " - " & Errno.Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Connect
+           (S       => Socket.Sock_FD,
+            Name    => Value'Address,
+            Namelen => Value'Size / 8),
+         Message => "Unable to connect unix socket to path " & String (Path));
    end Connect;
 
    -------------------------------------------------------------------------
