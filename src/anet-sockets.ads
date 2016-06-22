@@ -63,6 +63,12 @@ package Anet.Sockets is
       Backlog : Positive := 1);
    --  Listen for specified amount of requests on given socket.
 
+   --  Enable/disable non-blocking mode of operation. Newly created sockets
+   --  operate in blocking mode by default.
+   procedure Set_Nonblocking_Mode
+     (Socket : Socket_Type;
+      Enable : Boolean := True);
+
    type Dgram_Socket_Type is limited interface;
    --  Datagram socket.
 

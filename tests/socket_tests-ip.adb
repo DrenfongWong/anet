@@ -170,6 +170,9 @@ package body Socket_Tests.IP is
       T.Add_Test_Routine
         (Routine => Error_Callbacks'Access,
          Name    => "Error callback handling");
+      T.Add_Test_Routine
+        (Routine => Non_Blocking'Access,
+         Name    => "Non-blocking operation");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -216,6 +219,52 @@ package body Socket_Tests.IP is
          Rcvr.Stop;
          raise;
    end Listen_Callbacks;
+
+   -------------------------------------------------------------------------
+
+   procedure Non_Blocking
+   is
+      Sock    : Inet.UDPv4_Socket_Type;
+      Buffer  : Ada.Streams.Stream_Element_Array (1 .. 1);
+      Last    : Ada.Streams.Stream_Element_Offset;
+      Aborted : Boolean := False;
+      Port    : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+   begin
+      Sock.Init;
+      Sock.Set_Nonblocking_Mode (Enable => True);
+      Sock.Bind (Address => Loopback_Addr_V4,
+                 Port    => Port);
+
+      begin
+         select
+            delay 2.0;
+            Aborted := True;
+         then abort
+            Sock.Receive (Item => Buffer,
+                          Last => Last);
+         end select;
+         Assert (Condition => not Aborted,
+                 Message   => "Receive aborted");
+
+      exception
+         when Socket_Error => null;
+      end;
+
+      Sock.Set_Nonblocking_Mode (Enable => False);
+
+      --  This should block again.
+
+      select
+         delay 2.0;
+         Aborted := True;
+      then abort
+         Sock.Receive (Item => Buffer,
+                       Last => Last);
+      end select;
+      Assert (Condition => Aborted,
+              Message   => "Receive not aborted");
+   end Non_Blocking;
 
    -------------------------------------------------------------------------
 

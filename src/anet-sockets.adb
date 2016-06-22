@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2011-2013 secunet Security Networks AG
---  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2016 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2016 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -23,6 +23,7 @@
 
 with GNAT.OS_Lib;
 
+with Anet.OS_Constants;
 with Anet.Sockets.Thin;
 
 package body Anet.Sockets is
@@ -214,6 +215,37 @@ package body Anet.Sockets is
          Result    => Res,
          Error_Msg => "Incomplete send operation on socket");
    end Send;
+
+   -------------------------------------------------------------------------
+
+   procedure Set_Nonblocking_Mode
+     (Socket : Socket_Type;
+      Enable : Boolean := True)
+   is
+      use Interfaces;
+
+      Res   : C.int;
+      Flags : Unsigned_32 := Unsigned_32
+        (Thin.C_Fcntl
+           (Fd  => Socket.Sock_FD,
+            Cmd => Constants.Sys.F_GETFL,
+            Arg => 0));
+   begin
+      if Enable then
+         Flags := Flags or Unsigned_32 (OS_Constants.O_NONBLOCK);
+      else
+         Flags := Flags and not Unsigned_32 (OS_Constants.O_NONBLOCK);
+      end if;
+
+      Res := Thin.C_Fcntl
+        (Fd  => Socket.Sock_FD,
+         Cmd => Constants.Sys.F_SETFL,
+         Arg => C.int (Flags));
+      if Res = C_Failure then
+         raise Socket_Error with "Unable to set non-blocking mode to "
+           & Enable'Img;
+      end if;
+   end Set_Nonblocking_Mode;
 
    -------------------------------------------------------------------------
 
