@@ -24,33 +24,7 @@
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 
-with Interfaces.C.Strings;
-
-with GNAT.OS_Lib;
-
 package body Anet is
-
-   -------------------------------------------------------------------------
-
-   function Get_Errno_String return String
-   is
-      package C renames Interfaces.C;
-
-      use type Interfaces.C.Strings.chars_ptr;
-
-      function C_Strerror (Errnum : C.int) return C.Strings.chars_ptr;
-      pragma Import (C, C_Strerror, "strerror");
-
-      C_Msg : C.Strings.chars_ptr;
-   begin
-      C_Msg := C_Strerror (C.int (GNAT.OS_Lib.Errno));
-
-      if C_Msg = C.Strings.Null_Ptr then
-         return "";
-      end if;
-
-      return C.Strings.Value (Item => C_Msg);
-   end Get_Errno_String;
 
    -------------------------------------------------------------------------
 

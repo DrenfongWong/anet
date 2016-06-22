@@ -33,6 +33,8 @@ pragma Detect_Blocking;
 
 with Ada.Streams;
 
+with GNAT.OS_Lib;
+
 package Anet is
 
    type Byte is range 0 .. 255;
@@ -113,8 +115,11 @@ package Anet is
    C_Failure : constant := -1;
    --  Used to test return codes of imported C functions.
 
-   function Get_Errno_String return String;
-   --  Return error string associated with current errno value.
+   function Get_Errno_String
+     (Err     : Integer := GNAT.OS_Lib.Errno;
+      Default : String  := "")
+      return String
+      renames GNAT.OS_Lib.Errno_Message;
 
 private
    for Byte'Size use 8;
