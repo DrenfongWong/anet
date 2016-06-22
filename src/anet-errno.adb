@@ -27,23 +27,25 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
+with Ada.Strings.Fixed;
 
-with GNAT.OS_Lib;
-
-package Anet.Errno
+package body Anet.Errno
 is
 
-   function Get_Errno_String
-     (Err     : Integer := GNAT.OS_Lib.Errno;
-      Default : String  := "")
-      return String
-      renames GNAT.OS_Lib.Errno_Message;
+   -------------------------------------------------------------------------
 
-   --  Raise Socket_Error exception with given message and appended errno
-   --  string if specified result code indicates failure.
    procedure Check_Or_Raise
      (Result  : Interfaces.C.int;
-      Message : String);
+      Message : String)
+   is
+      use type Interfaces.C.int;
+   begin
+      if Result = C_Failure then
+         raise Socket_Error with Message & " - " & Get_Errno_String
+           & " (" & Ada.Strings.Fixed.Trim
+           (Source => GNAT.OS_Lib.Errno'Img,
+            Side   => Ada.Strings.Left) & ")";
+      end if;
+   end Check_Or_Raise;
 
 end Anet.Errno;
