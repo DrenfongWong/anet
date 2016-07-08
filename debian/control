@@ -30,16 +30,3 @@ Description: Ada networking library (development)
  extendable socket type hierarchy.
  .
  This package contains the development files.
-
-Package: libanet0.3.1-dbg
-Section: debug
-Priority: extra
-Architecture: amd64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
-Depends: ${misc:Depends}, libanet0.3.1 (= ${binary:Version}),
- libanet0.3.1-dev (= ${binary:Version})
-Description: Ada networking library (debug)
- Anet is a networking library for the Ada programming language. The library
- provides a BSD socket implementation with a high level of abstraction and an
- extendable socket type hierarchy.
- .
- This package contains the debugging symbols.
