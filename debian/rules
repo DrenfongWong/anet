@@ -23,8 +23,6 @@ override_dh_auto_install:
 	$(MAKE) $(MAKE_OPTS) PREFIX=$(CURDIR)/debian/tmp install
 	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=static PREFIX=$(CURDIR)/debian/tmp install
 	rm -rf debian/tmp/lib/gnat
-	mkdir -p debian/tmp/usr/share/ada/adainclude
-	cp debian/addon/*.gpr debian/tmp/usr/share/ada/adainclude
 
 override_dh_auto_test:
 	$(MAKE) $(MAKE_OPTS) tests

@@ -1,5 +1,5 @@
 --  Anet project file
---  Copyright (C) 2012 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2016 Reto Buerki <reet@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -13,13 +13,6 @@
 --
 --  This project file is designed to help build applications that use
 --  Anet.  Here is an example of how to use this project file:
---
---  with "anet";
---  project Example is
---     for Object_Dir use "obj";
---     for Exec_Dir use ".";
---     for Main use ("example");
---  end Example;
 
 project Anet is
    for Source_Dirs use ("/usr/share/ada/adainclude/anet");
