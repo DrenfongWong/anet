@@ -22,8 +22,6 @@ Package: libanet1-dev
 Section: libdevel
 Architecture: amd64 arm64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
 Depends: ${misc:Depends}, libanet0.3.3 (= ${binary:Version}), gnat, gnat-6
-Conflicts: libanet0.1-dev
-Replaces: libanet0.1-dev
 Description: Ada networking library (development)
  Anet is a networking library for the Ada programming language. The library
  provides a BSD socket implementation with a high level of abstraction and an
