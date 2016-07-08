@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2012-2013 secunet Security Networks AG
---  Copyright (C) 2012-2014 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012-2016 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2016 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -21,7 +21,10 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Ada.Strings.Fixed;
+
 with Anet.OS;
+with Anet.Errno;
 
 package body Anet.Sockets.Unix is
 
@@ -48,10 +51,11 @@ package body Anet.Sockets.Unix is
          when Accept_Op_Aborted => return;
          when Accept_Op_Error =>
             raise Socket_Error with "Unable to accept connection on UNIX/TCP "
-              & "socket - " & Get_Errno_String;
+              & "socket - " & Errno.Get_Errno_String;
          when Accept_Op_Ok =>
-            New_Socket.Sock_FD := Res;
-            New_Socket.Path    := Socket.Path;
+            New_Socket.Sock_FD         := Res;
+            New_Socket.Path            := Socket.Path;
+            New_Socket.Delete_On_Close := False;
       end case;
    end Accept_Connection;
 
@@ -61,7 +65,6 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
-      Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
@@ -69,14 +72,12 @@ package body Anet.Sockets.Unix is
 
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
-      Res := Thin.C_Bind (S       => Socket.Sock_FD,
-                          Name    => Value'Address,
-                          Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Bind
+           (S       => Socket.Sock_FD,
+            Name    => Value'Address,
+            Namelen => Value'Size / 8),
+         Message => "Unable to bind unix socket to path " & String (Path));
 
       Socket.Path := Ada.Strings.Unbounded.To_Unbounded_String
         (String (Path));
@@ -87,7 +88,7 @@ package body Anet.Sockets.Unix is
    procedure Close (Socket : in out Unix_Socket_Type)
    is
    begin
-      if Socket.Sock_FD /= -1 then
+      if Socket.Sock_FD /= -1 and then Socket.Delete_On_Close then
          OS.Delete_File (Filename => Ada.Strings.Unbounded.To_String
                          (Socket.Path));
          Socket_Type (Socket).Close;
@@ -100,20 +101,17 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
-      Res    : C.int;
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
       Value.Pathname (1 .. C_Path'Length) := C_Path;
 
-      Res := Thin.C_Connect (S       => Socket.Sock_FD,
-                             Name    => Value'Address,
-                             Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to connect unix socket to path "
-           & String (Path) & " - " & Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Connect
+           (S       => Socket.Sock_FD,
+            Name    => Value'Address,
+            Namelen => Value'Size / 8),
+         Message => "Unable to connect unix socket to path " & String (Path));
    end Connect;
 
    -------------------------------------------------------------------------
@@ -154,9 +152,20 @@ package body Anet.Sockets.Unix is
    is
       Path : constant String := Ada.Strings.Unbounded.To_String (Socket.Path);
    begin
+      Src := (others => ' ');
       Socket_Type (Socket).Receive (Item => Item,
                                     Last => Last);
       Src (Src'First .. Path'Length) := Path_Type (Path);
    end Receive;
+
+   -------------------------------------------------------------------------
+
+   function To_String (Path : Full_Path_Type) return String
+   is
+   begin
+      return Ada.Strings.Fixed.Trim
+        (Source => String (Path),
+         Side   => Ada.Strings.Right);
+   end To_String;
 
 end Anet.Sockets.Unix;

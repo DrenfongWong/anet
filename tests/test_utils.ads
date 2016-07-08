@@ -105,6 +105,15 @@ package Test_Utils is
    --  Return last dumped buffer. The internal buffer is cleared after a call
    --  to this function.
 
+   function Get_Last_Address return Anet.Sockets.Inet.UDPv4_Sockaddr_Type;
+   --  Return last IPv4 address used in call to Dump procedure.
+
+   function Get_Last_Address return Anet.Sockets.Inet.UDPv6_Sockaddr_Type;
+   --  Return last IPv6 address used in call to Dump procedure.
+
+   function Get_Last_Address return Anet.Sockets.Unix.Full_Path_Type;
+   --  Return last Unix path used in call to Dump procedure.
+
    procedure Echo
      (Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;
@@ -127,7 +136,10 @@ package Test_Utils is
 
 private
 
-   Buffer : Ada.Streams.Stream_Element_Array (1 .. 1500);
-   Last   : Ada.Streams.Stream_Element_Offset;
+   Buffer         : Ada.Streams.Stream_Element_Array (1 .. 1500);
+   Last           : Ada.Streams.Stream_Element_Offset;
+   Last_Addr_v4   : Anet.Sockets.Inet.UDPv4_Sockaddr_Type;
+   Last_Addr_v6   : Anet.Sockets.Inet.UDPv6_Sockaddr_Type;
+   Last_Addr_Unix : Anet.Sockets.Unix.Full_Path_Type;
 
 end Test_Utils;

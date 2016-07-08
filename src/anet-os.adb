@@ -30,6 +30,7 @@ with Interfaces.C_Streams;
 
 with GNAT.OS_Lib;
 
+with Anet.Errno;
 with Anet.Constants;
 
 package body Anet.OS is
@@ -51,7 +52,7 @@ package body Anet.OS is
         (GNAT.OS_Lib.Errno /= Constants.Sys.ENOENT or else not Ignore_Missing)
       then
          raise IO_Error with "Unable to delete file '" & Filename & "' - "
-           & Get_Errno_String;
+           & Errno.Get_Errno_String;
       end if;
    end Delete_File;
 

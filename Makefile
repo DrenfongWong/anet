@@ -1,5 +1,5 @@
 PREFIX   ?= $(HOME)/libraries
-TESTDIR   = tests
+TESTDIR   = $(OS)/tests
 OBJDIR    = obj
 COVDIR    = $(OBJDIR)/cov
 LIBDIR    = lib
@@ -8,7 +8,7 @@ GPR_FILES = gnat/*.gpr
 
 MAJOR    = 0
 MINOR    = 3
-REVISION = 1
+REVISION = 3
 VERSION  = $(MAJOR).$(MINOR).$(REVISION)
 ANET     = libanet-$(VERSION)
 TARBALL  = $(ANET).tar.bz2
@@ -73,14 +73,14 @@ install_lib: build_lib
 	$(INSTALL) -d $(DESTDIR)$(includedir)/anet
 	$(INSTALL_DATA) $(SRCDIR)/*.ad[bs] $(DESTDIR)$(includedir)/anet
 	$(INSTALL_DATA) $(SRCDIR)/$(OS)/*.ad[bs] $(DESTDIR)$(includedir)/anet
-	$(INSTALL_ALI) $(LIBDIR)/$(LIBRARY_KIND)/*.ali $(DESTDIR)$(libdir)/anet
+	$(INSTALL_ALI) $(LIBDIR)/$(OS)/$(LIBRARY_KIND)/*.ali $(DESTDIR)$(libdir)/anet
 	$(INSTALL_DATA) $(GPR_FILES) $(DESTDIR)$(gprdir)
 
 install_static:
-	$(INSTALL_DATA) $(LIBDIR)/$(LIBRARY_KIND)/libanet.a $(DESTDIR)$(libdir)
+	$(INSTALL_DATA) $(LIBDIR)/$(OS)/$(LIBRARY_KIND)/libanet.a $(DESTDIR)$(libdir)
 
 install_dynamic:
-	$(INSTALL_PROGRAM) $(LIBDIR)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(DESTDIR)$(libdir)
+	$(INSTALL_PROGRAM) $(LIBDIR)/$(OS)/$(LIBRARY_KIND)/$(SO_LIBRARY) $(DESTDIR)$(libdir)
 	cd $(DESTDIR)$(libdir) && ln -sf $(SO_LIBRARY) libanet.so
 
 install_tests: build_tests

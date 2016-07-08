@@ -22,20 +22,22 @@
 
 package Anet.OS_Constants is
 
-   AF_NETLINK          : constant := 16; --  Netlink family
-   AF_PACKET           : constant := 17; --  Packet family
+   AF_NETLINK          : constant := 16;   --  Netlink family
+   AF_PACKET           : constant := 17;   --  Packet family
 
-   IPV6_MULTICAST_IF   : constant := 17; --  Sending interface
-   IPV6_ADD_MEMBERSHIP : constant := 20; --  Join multicast group (IPv6)
+   IPV6_MULTICAST_IF   : constant := 17;   --  Sending interface
+   IPV6_ADD_MEMBERSHIP : constant := 20;   --  Join multicast group (IPv6)
 
-   NETLINK_ROUTE       : constant := 0;  --  Routing/device hook
-   NETLINK_FIREWALL    : constant := 3;  --  Firewalling hook
-   NETLINK_INET_DIAG   : constant := 4;  --  INET socket monitoring
-   NETLINK_NFLOG       : constant := 5;  --  netfilter/iptables ULOG
-   NETLINK_XFRM        : constant := 6;  --  ipsec
-   NETLINK_SELINUX     : constant := 7;  --  SELinux event notifications
-   NETLINK_AUDIT       : constant := 9;  --  auditing;
-   NETLINK_NETFILTER   : constant := 12; --  netfilter subsystem
-   NETLINK_CRYPTO      : constant := 21; --  Crypto layer
+   NETLINK_ROUTE       : constant := 0;    --  Routing/device hook
+   NETLINK_FIREWALL    : constant := 3;    --  Firewalling hook
+   NETLINK_INET_DIAG   : constant := 4;    --  INET socket monitoring
+   NETLINK_NFLOG       : constant := 5;    --  netfilter/iptables ULOG
+   NETLINK_XFRM        : constant := 6;    --  ipsec
+   NETLINK_SELINUX     : constant := 7;    --  SELinux event notifications
+   NETLINK_AUDIT       : constant := 9;    --  auditing;
+   NETLINK_NETFILTER   : constant := 12;   --  netfilter subsystem
+   NETLINK_CRYPTO      : constant := 21;   --  Crypto layer
+
+   O_NONBLOCK          : constant := 4000; --  Non-blocking sockets
 
 end Anet.OS_Constants;

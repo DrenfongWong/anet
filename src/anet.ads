@@ -113,10 +113,10 @@ package Anet is
    C_Failure : constant := -1;
    --  Used to test return codes of imported C functions.
 
-   function Get_Errno_String return String;
-   --  Return error string associated with current errno value.
+   Socket_Error : exception;
 
 private
+
    for Byte'Size use 8;
    for Double_Byte'Size use 16;
    for Word32'Size use 32;

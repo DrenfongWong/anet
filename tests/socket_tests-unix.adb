@@ -69,6 +69,9 @@ package body Socket_Tests.Unix is
       T.Add_Test_Routine
         (Routine => Valid_Unix_Paths'Access,
          Name    => "Unix path validation");
+      T.Add_Test_Routine
+        (Routine => To_String'Access,
+         Name    => "Unix path to string conversion");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -76,6 +79,7 @@ package body Socket_Tests.Unix is
    procedure Send_Unix_Datagram
    is
       use type Receivers.Count_Type;
+      use type Sockets.Unix.Path_Type;
 
       C            : Receivers.Count_Type := 0;
       Path         : constant String      := "/tmp/mysock-"
@@ -106,6 +110,9 @@ package body Socket_Tests.Unix is
               Message   => "Message count not 1:" & C'Img);
       Assert (Condition => Test_Utils.Get_Dump = Ref_Chunk,
               Message   => "Result mismatch");
+      Assert (Condition => Path = Sockets.Unix.To_String
+              (Path => Test_Utils.Get_Last_Address),
+              Message   => "Source path mismatch");
 
    exception
       when others =>
@@ -268,6 +275,32 @@ package body Socket_Tests.Unix is
          end if;
          raise;
    end Send_Various_Buffers;
+
+   -------------------------------------------------------------------------
+
+   procedure To_String
+   is
+      use Anet.Sockets.Unix;
+
+      Ref_Path_1 : constant Full_Path_Type := (others => 'a');
+      Ref_Path_2 : constant Full_Path_Type := (others => ' ');
+      Ref_Path_3 : constant Path_Type
+        := Path_Type ("/tmp/my-sock" & Util.Random_String (Len => 8));
+   begin
+      Assert (Condition => To_String
+              (Path => Ref_Path_1) = String (Ref_Path_1),
+              Message   => "Path mismatch (1)");
+      Assert (Condition => To_String (Path => Ref_Path_2) = "",
+              Message   => "Path mismatch (2)");
+
+      declare
+         Path : Full_Path_Type := (others => ' ');
+      begin
+         Path (Path'First .. Ref_Path_3'Length) := Ref_Path_3;
+         Assert (Condition => To_String (Path => Path) = String (Ref_Path_3),
+                 Message   => "Path mismatch (3)");
+      end;
+   end To_String;
 
    -------------------------------------------------------------------------
 

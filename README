@@ -23,6 +23,7 @@ The Anet networking library has the following features:
   - Datagram (UDP)
   - RAW
 * Support for IPv4/IPv6 multicast
+* Support for non-blocking operation
 * UDP/IPv4 packet creation and validation
 * Binding to the Linux Packet Filter (LPF) system
 
@@ -99,8 +100,8 @@ Licence
 -------
 --------------------------------------------------------------------------------
 Copyright (C) 2011-2013 secunet Security Networks AG
-Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
-Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+Copyright (C) 2011-2016 Reto Buerki <reet@codelabs.ch>
+Copyright (C) 2011-2016 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 
 Free use of this software is granted under the terms of the GNAT Modified
 General Public License (GMGPL).

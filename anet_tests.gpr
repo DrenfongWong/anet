@@ -23,7 +23,6 @@
 
 with "ahven";
 with "anet_common";
-with "anet_lib";
 
 project Anet_Tests is
 
@@ -32,22 +31,22 @@ project Anet_Tests is
 
    Compiler_Switches := Anet_Common.Compiler_Switches & "-gnatwal";
    Linker_Switches   := ();
-   Source_Dirs       := ("tests");
+   Source_Dirs       := ("src", "tests");
 
    for Main use ("test_runner.adb");
 
    case Anet_Common.OS is
-      when "linux" => Source_Dirs := Source_Dirs & "tests/linux";
-      when "bsd"   => Source_Dirs := Source_Dirs & "tests/bsd";
+      when "linux" => Source_Dirs := Source_Dirs & "src/linux" & "tests/linux";
+      when "bsd"   => Source_Dirs := Source_Dirs & "src/bsd"   & "tests/bsd";
    end case;
    for Source_Dirs use Source_Dirs;
 
    case Build is
       when "tests" =>
-         for Object_Dir use "obj/tests";
+         for Object_Dir use Anet_Common.Obj_Dir & "/tests";
 
       when "coverage" =>
-         for Object_Dir use "obj/cov";
+         for Object_Dir use Anet_Common.Obj_Dir & "/cov";
          Compiler_Switches := Compiler_Switches
            & ("-ftest-coverage", "-fprofile-arcs");
          Linker_Switches   := Linker_Switches

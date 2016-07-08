@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2012      secunet Security Networks AG
---  Copyright (C) 2012-2014 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2012-2016 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2012-2016 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -38,6 +38,9 @@ package Anet.Sockets.Unix is
 
    function Is_Valid (Path : String) return Boolean;
    --  Returns true if the given path is a valid unix path.
+
+   function To_String (Path : Full_Path_Type) return String;
+   --  Returned trimmed string representation of given full path.
 
    type Unix_Socket_Type is abstract new Socket_Type with private;
    --  UNIX domain socket.
@@ -91,7 +94,8 @@ package Anet.Sockets.Unix is
 private
 
    type Unix_Socket_Type is abstract new Socket_Type with record
-      Path : Ada.Strings.Unbounded.Unbounded_String;
+      Path            : Ada.Strings.Unbounded.Unbounded_String;
+      Delete_On_Close : Boolean := True;
    end record;
 
    type UDP_Socket_Type is new Unix_Socket_Type

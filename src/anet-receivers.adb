@@ -33,7 +33,8 @@ package body Anet.Receivers is
       procedure Activate
       is
       begin
-         Is_Terminated := False;
+         Is_Terminated      := False;
+         Shutdown_Requested := False;
       end Activate;
 
       ----------------------------------------------------------------------

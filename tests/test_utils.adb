@@ -41,10 +41,10 @@ package body Test_Utils is
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Inet.UDPv4_Sockaddr_Type)
    is
-      pragma Unreferenced (Src);
    begin
       Buffer (Buffer'First .. Data'Length) := Data;
       Last                                 := Data'Length;
+      Last_Addr_v4                         := Src;
    end Dump;
 
    -------------------------------------------------------------------------
@@ -53,10 +53,10 @@ package body Test_Utils is
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Inet.UDPv6_Sockaddr_Type)
    is
-      pragma Unreferenced (Src);
    begin
-      Dump (Data => Data,
-            Src  => Anet.Sockets.Inet.UDPv4_Sockaddr_Type'(others => <>));
+      Buffer (Buffer'First .. Data'Length) := Data;
+      Last                                 := Data'Length;
+      Last_Addr_v6                         := Src;
    end Dump;
 
    -------------------------------------------------------------------------
@@ -65,10 +65,10 @@ package body Test_Utils is
      (Data : Ada.Streams.Stream_Element_Array;
       Src  : Anet.Sockets.Unix.Full_Path_Type)
    is
-      pragma Unreferenced (Src);
    begin
       Buffer (Buffer'First .. Data'Length) := Data;
       Last                                 := Data'Length;
+      Last_Addr_Unix                       := Src;
    end Dump;
 
    -------------------------------------------------------------------------
@@ -159,6 +159,30 @@ package body Test_Utils is
       Last   := Ada.Streams.Stream_Element_Offset'First;
       return Result;
    end Get_Dump;
+
+   -------------------------------------------------------------------------
+
+   function Get_Last_Address return Anet.Sockets.Inet.UDPv4_Sockaddr_Type
+   is
+   begin
+      return Last_Addr_v4;
+   end Get_Last_Address;
+
+   -------------------------------------------------------------------------
+
+   function Get_Last_Address return Anet.Sockets.Inet.UDPv6_Sockaddr_Type
+   is
+   begin
+      return Last_Addr_v6;
+   end Get_Last_Address;
+
+   -------------------------------------------------------------------------
+
+   function Get_Last_Address return Anet.Sockets.Unix.Full_Path_Type
+   is
+   begin
+      return Last_Addr_Unix;
+   end Get_Last_Address;
 
    -------------------------------------------------------------------------
 

@@ -33,6 +33,8 @@ project Anet_Common is
    type OS_Type is ("linux", "bsd");
    OS : OS_Type := external ("OS", "linux");
 
+   Obj_Dir := "obj/" & OS;
+
    Compiler_Switches := ("-gnatygAdISuxo",
                          "-gnatVa",
                          "-gnat05",

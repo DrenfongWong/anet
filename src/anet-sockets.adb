@@ -1,7 +1,7 @@
 --
 --  Copyright (C) 2011-2013 secunet Security Networks AG
---  Copyright (C) 2011-2014 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2011-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2011-2016 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2011-2016 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -23,6 +23,8 @@
 
 with GNAT.OS_Lib;
 
+with Anet.Errno;
+with Anet.OS_Constants;
 with Anet.Sockets.Thin;
 
 package body Anet.Sockets is
@@ -104,10 +106,9 @@ package body Anet.Sockets is
    begin
       if Socket.Sock_FD /= -1 then
          Res := Thin.C_Close (Socket.Sock_FD);
-         if Res = C_Failure then
-            raise Socket_Error with "Unable to close socket: "
-              & Get_Errno_String;
-         end if;
+         Errno.Check_Or_Raise
+           (Result  => Res,
+            Message => "Unable to close socket");
          Socket.Sock_FD  := -1;
          Socket.Protocol := 0;
       end if;
@@ -131,15 +132,14 @@ package body Anet.Sockets is
    is
       Res : C.int;
    begin
-      Res := Thin.C_Socket (Domain   => Socket_Families.Families (Family),
-                            Typ      => Modes (Mode),
-                            Protocol => C.int (Protocol));
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to create socket (" & Family'Img & "/"
-           & Mode'Img & ", protocol" & Protocol'Img & "): "
-           & Get_Errno_String;
-      end if;
+      Res := Thin.C_Socket
+        (Domain   => Socket_Families.Families (Family),
+         Typ      => Modes (Mode),
+         Protocol => C.int (Protocol));
+      Errno.Check_Or_Raise
+        (Result  => Res,
+         Message => "Unable to create socket (" & Family'Img & "/" & Mode'Img &
+           ", protocol" & Protocol'Img & ")");
 
       Socket.Sock_FD  := Res;
       Socket.Protocol := Protocol;
@@ -151,15 +151,12 @@ package body Anet.Sockets is
      (Socket  : Socket_Type;
       Backlog : Positive := 1)
    is
-      Res : C.int;
    begin
-      Res := Thin.C_Listen (Socket  => Socket.Sock_FD,
-                            Backlog => C.int (Backlog));
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to listen on socket with backlog"
-           & Backlog'Img & " - " & Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Listen
+           (Socket  => Socket.Sock_FD,
+            Backlog => C.int (Backlog)),
+         Message => "Unable to listen on socket with backlog" & Backlog'Img);
    end Listen;
 
    -------------------------------------------------------------------------
@@ -185,7 +182,7 @@ package body Anet.Sockets is
          when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
          when Recv_Op_Error =>
             raise Socket_Error with "Error receiving data from socket: "
-              & Get_Errno_String;
+              & Errno.Get_Errno_String;
          when Recv_Op_Ok =>
             Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
       end case;
@@ -199,21 +196,48 @@ package body Anet.Sockets is
    is
       Res : C.long;
    begin
-      Res := Thin.C_Send (S     => Socket.Sock_FD,
-                          Buf   => Item'Address,
-                          Len   => Item'Length,
-                          Flags => 0);
+      Res := Thin.C_Send
+        (S     => Socket.Sock_FD,
+         Buf   => Item'Address,
+         Len   => Item'Length,
+         Flags => 0);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to send data on socket - "
-           & Get_Errno_String;
-      end if;
-
+      Errno.Check_Or_Raise
+        (Result  => C.int (Res),
+         Message => "Unable to send data on socket");
       Check_Complete_Send
         (Item      => Item,
          Result    => Res,
          Error_Msg => "Incomplete send operation on socket");
    end Send;
+
+   -------------------------------------------------------------------------
+
+   procedure Set_Nonblocking_Mode
+     (Socket : Socket_Type;
+      Enable : Boolean := True)
+   is
+      use Interfaces;
+
+      Flags : Unsigned_32 := Unsigned_32
+        (Thin.C_Fcntl
+           (Fd  => Socket.Sock_FD,
+            Cmd => Constants.Sys.F_GETFL,
+            Arg => 0));
+   begin
+      if Enable then
+         Flags := Flags or Unsigned_32 (OS_Constants.O_NONBLOCK);
+      else
+         Flags := Flags and not Unsigned_32 (OS_Constants.O_NONBLOCK);
+      end if;
+
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Fcntl
+           (Fd  => Socket.Sock_FD,
+            Cmd => Constants.Sys.F_SETFL,
+            Arg => C.int (Flags)),
+         Message => "Unable to set non-blocking mode to " & Enable'Img);
+   end Set_Nonblocking_Mode;
 
    -------------------------------------------------------------------------
 
@@ -223,19 +247,16 @@ package body Anet.Sockets is
       Value  : Boolean)
    is
       Val : C.int := C.int (Boolean'Pos (Value));
-      Res : C.int;
    begin
-      Res := Thin.C_Setsockopt
-        (S       => Socket.Sock_FD,
-         Level   => Levels (Socket_Level),
-         Optname => Options_Bool (Option),
-         Optval  => Val'Address,
-         Optlen  => Val'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable set boolean socket option "
-           & Option'Img & " to " & Value'Img & ": " & Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Setsockopt
+           (S       => Socket.Sock_FD,
+            Level   => Levels (Socket_Level),
+            Optname => Options_Bool (Option),
+            Optval  => Val'Address,
+            Optlen  => Val'Size / 8),
+         Message => "Unable set boolean socket option " & Option'Img & " to " &
+           Value'Img);
    end Set_Socket_Option;
 
    -------------------------------------------------------------------------
@@ -246,19 +267,16 @@ package body Anet.Sockets is
       Value  : String)
    is
       Val : constant C.char_array := C.To_C (Value);
-      Res : C.int;
    begin
-      Res := Thin.C_Setsockopt
-        (S       => Socket.Sock_FD,
-         Level   => Levels (Socket_Level),
-         Optname => Options_Str (Option),
-         Optval  => Val'Address,
-         Optlen  => Val'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable set string socket option "
-           & Option'Img & " to '" & Value & "': " & Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Setsockopt
+           (S       => Socket.Sock_FD,
+            Level   => Levels (Socket_Level),
+            Optname => Options_Str (Option),
+            Optval  => Val'Address,
+            Optlen  => Val'Size / 8),
+         Message => "Unable set string socket option " & Option'Img & " to '" &
+           Value & "'");
    end Set_Socket_Option;
 
 end Anet.Sockets;

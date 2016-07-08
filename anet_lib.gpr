@@ -32,9 +32,9 @@ project Anet_Lib is
    end case;
    for Source_Dirs use Source_Dirs;
 
-   for Object_Dir use "obj/lib/" & Anet_Common.Libtype;
+   for Object_Dir use Anet_Common.Obj_Dir & "/lib/" & Anet_Common.Libtype;
    for Library_Name use "anet";
-   for Library_Dir use "lib/" & Anet_Common.Libtype;
+   for Library_Dir use "lib/" & Anet_Common.OS & "/" & Anet_Common.Libtype;
    for Library_Kind use Anet_Common.Libtype;
    for Library_Version use "libanet.so." & Anet_Common.Version;
    for Library_Options use External_As_List ("LDFLAGS", " ");

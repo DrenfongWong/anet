@@ -21,6 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
+with Anet.Errno;
 with Anet.Net_Ifaces;
 with Anet.Sockets.Thin.Packet;
 with Anet.Constants;
@@ -41,20 +42,18 @@ package body Anet.Sockets.Packet is
      (Socket : in out Packet_Socket_Type;
       Iface  :        Types.Iface_Name_Type)
    is
-      Res   : C.int;
       Value : Thin.Packet.Sockaddr_Ll_Type;
    begin
       Value.Sa_Protocol := C.unsigned_short (Socket.Protocol);
       Value.Sa_Ifindex  := C.int (Net_Ifaces.Get_Iface_Index (Name => Iface));
 
-      Res := Thin.C_Bind (S       => Socket.Sock_FD,
-                          Name    => Value'Address,
-                          Namelen => Value'Size / 8);
-
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to bind packet socket to interface "
-           & String (Iface) & " - " & Get_Errno_String;
-      end if;
+      Errno.Check_Or_Raise
+        (Result  => Thin.C_Bind
+           (S       => Socket.Sock_FD,
+            Name    => Value'Address,
+            Namelen => Value'Size / 8),
+         Message => "Unable to bind packet socket to interface " &
+           String (Iface));
    end Bind;
 
    -------------------------------------------------------------------------
@@ -114,7 +113,7 @@ package body Anet.Sockets.Packet is
          when Recv_Op_Orderly_Shutdown | Recv_Op_Aborted => return;
          when Recv_Op_Error =>
             raise Socket_Error with "Error receiving packet data: "
-              & Get_Errno_String;
+              & Errno.Get_Errno_String;
          when Recv_Op_Ok =>
             Src  := Saddr.Sa_Addr (Saddr.Sa_Addr'First .. Src'Length);
             Last := Item'First + Ada.Streams.Stream_Element_Offset (Res - 1);
@@ -139,24 +138,23 @@ package body Anet.Sockets.Packet is
 
       Ll_Dest.Sa_Addr (1 .. To'Length) := To;
 
-      Res := Thin.C_Sendto (S     => Socket.Sock_FD,
-                            Buf   => Item'Address,
-                            Len   => Item'Length,
-                            Flags => 0,
-                            To    => Ll_Dest'Address,
-                            Tolen => Ll_Dest'Size / 8);
+      Res := Thin.C_Sendto
+        (S     => Socket.Sock_FD,
+         Buf   => Item'Address,
+         Len   => Item'Length,
+         Flags => 0,
+         To    => Ll_Dest'Address,
+         Tolen => Ll_Dest'Size / 8);
 
-      if Res = C_Failure then
-         raise Socket_Error with "Unable to send packet data on interface "
-           & String (Iface) & " to " & To_String (Address => To)
-           & " - " & Get_Errno_String;
-      end if;
-
+      Errno.Check_Or_Raise
+        (Result  => C.int (Res),
+         Message => "Unable to send packet data on interface " &
+           String (Iface) & " to " & To_String (Address => To));
       Check_Complete_Send
         (Item      => Item,
          Result    => Res,
-         Error_Msg => "Incomplete packet send operation to "
-         & To_String (Address => To));
+         Error_Msg => "Incomplete packet send operation to " &
+           To_String (Address => To));
    end Send;
 
 end Anet.Sockets.Packet;

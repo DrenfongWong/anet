@@ -118,7 +118,7 @@ package Anet.Sockets.Inet is
 
    procedure Bind
      (Socket  : in out IPv6_Socket_Type;
-      Address :        IPv6_Addr_Type        := Any_Addr_V6;
+      Address :        IPv6_Addr_Type := Any_Addr_V6;
       Port    :        Port_Type);
    --  Bind given IPv6 socket to the specified IPv6 address and port.
 

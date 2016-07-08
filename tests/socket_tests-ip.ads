@@ -53,4 +53,7 @@ package Socket_Tests.IP is
    procedure Error_Callbacks;
    --  Test error callback handling.
 
+   procedure Non_Blocking;
+   --  Test non-blocking mode of operation.
+
 end Socket_Tests.IP;
