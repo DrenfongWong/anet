@@ -1,0 +1,22 @@
+From: Reto Buerki <reet@codelabs.ch>
+Date: Fri, 8 Jul 2016 20:07:27 +0200
+Subject: Set TZ=UTC before calling asciidoc
+
+This is required to support reproducible builds.
+---
+ doc/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/doc/Makefile b/doc/Makefile
+index 3f37355..d6de6b1 100644
+--- a/doc/Makefile
++++ b/doc/Makefile
+@@ -16,7 +16,7 @@ $(DESTDIR)/asciidoc.css: asciidoc.css
+ 	cp $< $@
+ 
+ $(DESTDIR)/index.html: index page.conf ../README
+-	asciidoc $(ASCIIDOC_OPTS) $< > $@
++	TZ=UTC asciidoc $(ASCIIDOC_OPTS) $< > $@
+ 
+ clean:
+ 	@rm -f $(DESTDIR)/*.html
