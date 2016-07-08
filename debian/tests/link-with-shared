@@ -1,0 +1,21 @@
+#!/bin/sh
+set -C -e -f -u
+TOP_SOURCE_DIR="`pwd`"
+cd "$ADTTMP"
+
+cat > p.gpr <<EOF
+with "anet";
+project P is
+   for Main use ("p.adb");
+end P;
+EOF
+cat > p.adb <<EOF
+with Anet;
+procedure P is
+   P : constant Anet.Port_Type := Anet.Any_Port;
+begin
+   null;
+end P;
+EOF
+gprbuild p.gpr
+./p
