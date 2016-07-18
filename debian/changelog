@@ -1,3 +1,23 @@
+anet (0.3.3-1) unstable; urgency=medium
+
+  * Update to release 0.3.3
+  * Update debian/copyright
+  * Drop explicit libanet0.3.1-dbg package
+  * Transition to gnat-6 compiler (Closes: #830336)
+  * Update binary package names
+  * Add arm64 to supported architectures
+  * Switch codelabs URLs to HTTPS
+  * Update to Standards-Version 3.9.8
+  * Update local gbp.conf
+  * Update ahven Build-Depends to libahven5-dev
+  * Include ada/debian_packaging-6.mk in debian/rules
+  * Update addon/anet.gpr file
+  * Drop obsolete Conflicts/Replaces
+  * Add link-with-shared autopkgtest
+  * Set TZ=UTC before calling asciidoc
+
+ -- Reto Buerki <reet@codelabs.ch>  Mon, 18 Jul 2016 10:44:06 +0200
+
 anet (0.3.1-1) unstable; urgency=medium
 
   * Update to release 0.3.1
