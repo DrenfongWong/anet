@@ -1,6 +1,6 @@
 PREFIX   ?= $(HOME)/libraries
-TESTDIR   = $(OS)/tests
-OBJDIR    = obj
+TESTDIR   = tests
+OBJDIR    = obj/$(OS)
 COVDIR    = $(OBJDIR)/cov
 LIBDIR    = lib
 SRCDIR    = src
