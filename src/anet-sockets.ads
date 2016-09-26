@@ -36,7 +36,7 @@ package Anet.Sockets is
       Stream_Socket);
    --  Supported socket modes.
 
-   type Level_Type is (Socket_Level);
+   type Level_Type is (Socket_Level, TCP_Level);
    --  Protocol level type.
 
    type Socket_Type is abstract tagged limited private;
@@ -136,7 +136,8 @@ private
    --  Socket mode mapping.
 
    Levels : constant array (Level_Type) of Interfaces.C.int
-     := (Socket_Level => Constants.Sys.SOL_SOCKET);
+     := (Socket_Level => Constants.Sys.SOL_SOCKET,
+         TCP_Level    => Constants.Sys.IPPROTO_TCP);
    --  Protocol level mapping.
 
    Options_Bool : constant array (Option_Name_Bool) of Interfaces.C.int
