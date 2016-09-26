@@ -243,6 +243,7 @@ package body Anet.Sockets is
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Bool;
       Value  : Boolean)
    is
@@ -251,7 +252,7 @@ package body Anet.Sockets is
       Errno.Check_Or_Raise
         (Result  => Thin.C_Setsockopt
            (S       => Socket.Sock_FD,
-            Level   => Levels (Socket_Level),
+            Level   => Levels (Level),
             Optname => Options_Bool (Option),
             Optval  => Val'Address,
             Optlen  => Val'Size / 8),
@@ -263,6 +264,7 @@ package body Anet.Sockets is
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Str;
       Value  : String)
    is
@@ -271,7 +273,7 @@ package body Anet.Sockets is
       Errno.Check_Or_Raise
         (Result  => Thin.C_Setsockopt
            (S       => Socket.Sock_FD,
-            Level   => Levels (Socket_Level),
+            Level   => Levels (Level),
             Optname => Options_Str (Option),
             Optval  => Val'Address,
             Optlen  => Val'Size / 8),

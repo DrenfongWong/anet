@@ -109,15 +109,19 @@ package Anet.Sockets is
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Bool;
       Value  : Boolean);
-   --  Set socket option of given socket to specified boolean value.
+   --  Set socket option of given socket to specified boolean value. The level
+   --  argument specifies the protocol level this option applies to.
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Str;
       Value  : String);
-   --  Set socket option of given socket to specified string value.
+   --  Set socket option of given socket to specified string value. The level
+   --  argument specifies the protocol level this option applies to.
 
 private
 
