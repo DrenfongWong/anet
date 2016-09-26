@@ -101,7 +101,8 @@ package Anet.Sockets is
 
    type Option_Name_Bool is
      (Broadcast,
-      Reuse_Address);
+      Reuse_Address,
+      TCP_Nodelay);
    --  Supported boolean socket options.
 
    type Option_Name_Str is (Bind_To_Device);
@@ -142,7 +143,9 @@ private
 
    Options_Bool : constant array (Option_Name_Bool) of Interfaces.C.int
      := (Reuse_Address => Constants.Sys.SO_REUSEADDR,
-         Broadcast     => Constants.Sys.SO_BROADCAST);
+         Broadcast     => Constants.Sys.SO_BROADCAST,
+         TCP_Nodelay   => Constants.Sys.TCP_NODELAY);
+
    --  Mapping for option names with boolean value.
 
    Options_Str : constant array (Option_Name_Str) of Interfaces.C.int
