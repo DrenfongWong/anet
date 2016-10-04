@@ -200,7 +200,7 @@ package body Anet.Sockets is
         (S     => Socket.Sock_FD,
          Buf   => Item'Address,
          Len   => Item'Length,
-         Flags => 0);
+         Flags => Constants.Sys.MSG_NOSIGNAL);
 
       Errno.Check_Or_Raise
         (Result  => C.int (Res),
