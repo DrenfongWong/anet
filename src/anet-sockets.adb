@@ -281,4 +281,20 @@ package body Anet.Sockets is
            Value & "'");
    end Set_Socket_Option;
 
+   -------------------------------------------------------------------------
+
+   procedure Shutdown
+     (Socket : Socket_Type;
+      Method : Sock_Shutdown_Cmd)
+   is
+   begin
+      if Socket.Sock_FD /= -1 then
+         Errno.Check_Or_Raise
+           (Result  => Thin.C_Shutdown
+              (S   => Socket.Sock_FD,
+               How => Shutdown_Methods (Method)),
+            Message => "Unable to shutdown socket");
+      end if;
+   end Shutdown;
+
 end Anet.Sockets;

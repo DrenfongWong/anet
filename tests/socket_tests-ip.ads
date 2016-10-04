@@ -56,4 +56,7 @@ package Socket_Tests.IP is
    procedure Non_Blocking;
    --  Test non-blocking mode of operation.
 
+   procedure Shutdown_Socket;
+   --  Test communication after socket shutdown.
+
 end Socket_Tests.IP;

@@ -132,4 +132,10 @@ package Anet.Sockets.Thin is
       return Interfaces.C.int;
    pragma Import (C, C_Fcntl, "fcntl");
 
+   function C_Shutdown
+     (S   : Interfaces.C.int;
+      How : Interfaces.C.int)
+      return Interfaces.C.int;
+   pragma Import (C, C_Shutdown, "shutdown");
+
 end Anet.Sockets.Thin;

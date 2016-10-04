@@ -39,11 +39,22 @@ package Anet.Sockets is
    type Level_Type is (Socket_Level, TCP_Level);
    --  Protocol level type.
 
+   type Sock_Shutdown_Cmd is
+     (Block_Reception,
+      Block_Transmission,
+      Block_All_Communication);
+   --  Socket shutdown methods.
+
    type Socket_Type is abstract tagged limited private;
    --  Communication socket.
 
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
+
+   procedure Shutdown
+     (Socket : Socket_Type;
+      Method : Sock_Shutdown_Cmd);
+   --  Controlled shutdown of given socket.
 
    procedure Send
      (Socket : Socket_Type;
@@ -145,12 +156,17 @@ private
      := (Reuse_Address => Constants.Sys.SO_REUSEADDR,
          Broadcast     => Constants.Sys.SO_BROADCAST,
          TCP_Nodelay   => Constants.Sys.TCP_NODELAY);
-
    --  Mapping for option names with boolean value.
 
    Options_Str : constant array (Option_Name_Str) of Interfaces.C.int
      := (Bind_To_Device => Constants.SO_BINDTODEVICE);
    --  Mapping for option names with string value.
+
+   Shutdown_Methods : constant array (Sock_Shutdown_Cmd) of Interfaces.C.int
+     := (Block_Reception         => Constants.Sys.SHUT_RD,
+         Block_Transmission      => Constants.Sys.SHUT_WR,
+         Block_All_Communication => Constants.Sys.SHUT_RDWR);
+   --  Mapping of socket shutdown methods.
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD  : Interfaces.C.int := -1;

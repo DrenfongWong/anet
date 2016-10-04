@@ -173,6 +173,9 @@ package body Socket_Tests.IP is
       T.Add_Test_Routine
         (Routine => Non_Blocking'Access,
          Name    => "Non-blocking operation");
+      T.Add_Test_Routine
+        (Routine => Shutdown_Socket'Access,
+         Name    => "Shutdown socket (IPv4)");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -574,5 +577,79 @@ package body Socket_Tests.IP is
          Rcvr.Stop;
          raise;
    end Send_V6_Stream;
+
+   -------------------------------------------------------------------------
+
+   procedure Shutdown_Socket
+   is
+      use type Ada.Streams.Stream_Element_Offset;
+
+      Buffer       : Ada.Streams.Stream_Element_Array (1 .. 1024);
+      Last         : Ada.Streams.Stream_Element_Offset;
+      S_Srv, S_Cli : aliased Inet.TCPv4_Socket_Type;
+      Rcvr         : TCPv4_Receiver.Receiver_Type (S => S_Srv'Access);
+      Port         : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+   begin
+      S_Srv.Init;
+      S_Srv.Bind (Address => Loopback_Addr_V4,
+                  Port    => Port);
+      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+
+      --  Precautionary delay to make sure receiver task is ready.
+
+      delay 0.2;
+
+      S_Cli.Init;
+      S_Cli.Bind (Address => Loopback_Addr_V4,
+                  Port    => Port + 1);
+      S_Cli.Connect (Address => Loopback_Addr_V4,
+                     Port    => Port);
+      S_Cli.Send (Item => Ref_Chunk);
+
+      --  Confirm sending and receiving work as expected.
+
+      begin
+         S_Cli.Receive (Item => Buffer,
+                        Last => Last);
+
+         Assert (Condition => Buffer (Buffer'First .. Last) = Ref_Chunk,
+                 Message   => "Response mismatch");
+      end;
+
+      --  Confirm error occurs when sending on a socket that has shut down
+      --  sending before the server socket is closed.
+
+      S_Cli.Shutdown (Method => Block_Transmission);
+
+      begin
+         S_Cli.Send (Item => Ref_Chunk);
+         Fail (Message => "Exception expected");
+
+      exception
+         when Socket_Error => null;
+      end;
+
+      --  Confirm that there are no bytes received on a socket that has blocked
+      --  reception before the server socket is closed.
+
+      S_Cli.Shutdown (Method => Block_Reception);
+
+      S_Cli.Receive (Item => Buffer,
+                     Last => Last);
+      Assert (Condition => Last = 0,
+              Message   => "Last not zero");
+
+      Rcvr.Stop;
+      S_Cli.Close; --  Redundant
+      S_Srv.Close;
+
+   exception
+      when others =>
+         Rcvr.Stop;
+         S_Cli.Close;
+         S_Srv.Close;
+         raise;
+   end Shutdown_Socket;
 
 end Socket_Tests.IP;
