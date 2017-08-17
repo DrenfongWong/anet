@@ -4,16 +4,16 @@ Priority: optional
 Maintainer: Reto Buerki <reet@codelabs.ch>
 Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>
 Build-Depends: asciidoc, debhelper (>= 10),
- gnat, gnat-6,
+ gnat, gnat-7,
 # This line is parsed by debian/rules.
- libahven5-dev,
+ libahven6-dev,
  source-highlight
 Standards-Version: 4.0.1
 Homepage: https://www.codelabs.ch/anet/
 Vcs-Browser: https://git.codelabs.ch/?p=anet.git
 Vcs-Git: https://git.codelabs.ch/git/anet.git -b debian
 
-Package: libanet0.3.3
+Package: libanet0.3.4
 # This line is parsed by debian/rules.
 Architecture: amd64 arm64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
 Multi-Arch: same
@@ -23,11 +23,11 @@ Description: Ada networking library
  provides a BSD socket implementation with a high level of abstraction and an
  extendable socket type hierarchy.
 
-Package: libanet1-dev
+Package: libanet2-dev
 # This line is parsed by debian/rules.
 Section: libdevel
 Architecture: amd64 arm64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
-Depends: ${misc:Depends}, libanet0.3.3 (= ${binary:Version}), gnat, gnat-6
+Depends: ${misc:Depends}, libanet0.3.4 (= ${binary:Version}), gnat, gnat-7
 Description: Ada networking library (development)
  Anet is a networking library for the Ada programming language. The library
  provides a BSD socket implementation with a high level of abstraction and an
