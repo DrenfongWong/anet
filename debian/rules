@@ -1,12 +1,12 @@
 #!/usr/bin/make -f
 
 DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/architecture.mk
 include /usr/share/dpkg/buildflags.mk
 include /usr/share/ada/debian_packaging-6.mk
 
 export GNAT_BUILDER_FLAGS = $(BUILDER_OPTIONS)
 
-DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
 ifeq ($(DEB_HOST_ARCH_OS),kfreebsd)
 MAKE_OPTS += OS=bsd
 endif
