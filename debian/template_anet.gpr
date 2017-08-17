@@ -17,8 +17,8 @@
 project Anet is
    for Source_Dirs use ("/usr/share/ada/adainclude/anet");
    for Library_Name use "anet";
-   for Library_Dir use "/usr/lib";
-   for Library_ALI_Dir use "/usr/lib/ada/adalib/anet";
+   for Library_Dir use "/usr/lib/@DEB_HOST_MULTIARCH@";
+   for Library_ALI_Dir use "/usr/lib/@DEB_HOST_MULTIARCH@/ada/adalib/anet";
    for Library_Kind use "dynamic";
    for Externally_Built use "true";
 end Anet;

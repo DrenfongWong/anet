@@ -16,6 +16,7 @@ Vcs-Git: https://git.codelabs.ch/git/anet.git -b debian
 Package: libanet0.3.3
 # This line is parsed by debian/rules.
 Architecture: amd64 arm64 armel armhf i386 kfreebsd-amd64 kfreebsd-i386 powerpc s390x
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Ada networking library
  Anet is a networking library for the Ada programming language. The library

@@ -43,14 +43,17 @@ override_dh_auto_install:
 override_dh_auto_test:
 	$(MAKE) $(MAKE_OPTS) tests
 
-override_dh_install:
-	dh_install -p$(lib_pkg) lib/libanet.so.$(soversion) usr/lib
-	dh_install -p$(dev_pkg) lib/libanet.so usr/lib
-	dh_install -p$(dev_pkg) lib/libanet.a usr/lib
-	dh_install -p$(dev_pkg) lib/anet/*.ali usr/lib/ada/adalib/anet
+override_dh_install: debian/anet.gpr
+	dh_install -p$(lib_pkg) lib/libanet.so.$(soversion) usr/lib/$(DEB_HOST_MULTIARCH)
+	dh_install -p$(dev_pkg) lib/libanet.so usr/lib/$(DEB_HOST_MULTIARCH)
+	dh_install -p$(dev_pkg) lib/libanet.a usr/lib/$(DEB_HOST_MULTIARCH)
+	dh_install -p$(dev_pkg) lib/anet/*.ali usr/lib/$(DEB_HOST_MULTIARCH)/ada/adalib/anet
 	dh_install -p$(dev_pkg) include/anet/*.ad[bs] usr/share/ada/adainclude/anet
-	dh_install -p$(dev_pkg) debian/addon/anet.gpr usr/share/ada/adainclude
+	dh_install -p$(dev_pkg) debian/anet.gpr usr/share/gpr
 	dh_missing --fail-missing
+
+debian/anet.gpr: debian/template_anet.gpr
+	sed s/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/ $< > $@
 
 override_dh_installdocs: debian/$(dev_pkg).doc-base
 	dh_installdocs -p$(dev_pkg) doc/html/*
@@ -63,4 +66,4 @@ override_dh_compress:
 	dh_compress -X.ads -X.adb -XMakefile
 
 override_dh_clean:
-	dh_clean debian/$(dev_pkg).doc-base
+	dh_clean debian/$(dev_pkg).doc-base debian/anet.gpr
