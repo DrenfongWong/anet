@@ -1,10 +1,23 @@
 #!/usr/bin/make -f
 
+$(foreach line,$(shell sed -n '\
+  s/^ gnat, gnat-\([0-9.]\+\),$$/ \
+    gnat_version:=\1 \
+  /p;\
+  s/^Package: \(libanet\([0-9.]\+\)\)$$/ \
+    lib_pkg:=\1 \
+    soversion:=\2 \
+  /p;\
+  s/^Package: \(libanet[0-9.]\+-dev\)$$/ \
+    dev_pkg:=\1 \
+  /p;\
+  ' debian/control),$(eval $(line)))
+
 DEB_BUILD_MAINT_OPTIONS := hardening=+all
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/architecture.mk
 include /usr/share/dpkg/buildflags.mk
-include /usr/share/ada/debian_packaging-6.mk
+include /usr/share/ada/debian_packaging-$(gnat_version).mk
 
 export GNAT_BUILDER_FLAGS = $(BUILDER_OPTIONS)
 
@@ -31,8 +44,23 @@ override_dh_auto_test:
 	$(MAKE) $(MAKE_OPTS) tests
 
 override_dh_install:
-	dh_install
+	dh_install -p$(lib_pkg) lib/libanet.so.$(soversion) usr/lib
+	dh_install -p$(dev_pkg) lib/libanet.so usr/lib
+	dh_install -p$(dev_pkg) lib/libanet.a usr/lib
+	dh_install -p$(dev_pkg) lib/anet/*.ali usr/lib/ada/adalib/anet
+	dh_install -p$(dev_pkg) include/anet/*.ad[bs] usr/share/ada/adainclude/anet
+	dh_install -p$(dev_pkg) debian/addon/anet.gpr usr/share/ada/adainclude
 	dh_missing --fail-missing
+
+override_dh_installdocs: debian/$(dev_pkg).doc-base
+	dh_installdocs -p$(dev_pkg) doc/html/*
+	dh_installdocs --remaining-packages
+
+debian/$(dev_pkg).doc-base: debian/template_libanet-dev.doc-base
+	sed s/@dev_pkg@/$(dev_pkg)/ $< > $@
 
 override_dh_compress:
 	dh_compress -X.ads -X.adb -XMakefile
+
+override_dh_clean:
+	dh_clean debian/$(dev_pkg).doc-base
