@@ -1,6 +1,6 @@
 #!/bin/sh
 set -C -e -f -u
-TOP_SOURCE_DIR="`pwd`"
+
 cd "$ADTTMP"
 
 cat > p.gpr <<EOF
@@ -17,5 +17,5 @@ begin
    null;
 end P;
 EOF
-gprbuild p.gpr
+gprbuild -v p.gpr
 ./p
