@@ -5,7 +5,7 @@ Maintainer: Reto Buerki <reet@codelabs.ch>
 Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>
 Build-Depends: asciidoc, debhelper (>= 10), gnat, gnat-6, libahven5-dev,
  source-highlight
-Standards-Version: 3.9.8
+Standards-Version: 4.0.1
 Homepage: https://www.codelabs.ch/anet/
 Vcs-Browser: https://git.codelabs.ch/?p=anet.git
 Vcs-Git: https://git.codelabs.ch/git/anet.git -b debian

@@ -17,7 +17,9 @@ endif
 override_dh_auto_build:
 	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=dynamic
 	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=static
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) doc
+endif
 
 override_dh_auto_install:
 	$(MAKE) $(MAKE_OPTS) PREFIX=$(CURDIR)/debian/tmp install
