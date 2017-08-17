@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 
+DEB_BUILD_MAINT_OPTIONS := hardening=+all
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/architecture.mk
 include /usr/share/dpkg/buildflags.mk
