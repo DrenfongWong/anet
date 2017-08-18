@@ -36,14 +36,25 @@ package Anet.Sockets is
       Stream_Socket);
    --  Supported socket modes.
 
-   type Level_Type is (Socket_Level);
+   type Level_Type is (Socket_Level, TCP_Level);
    --  Protocol level type.
+
+   type Sock_Shutdown_Cmd is
+     (Block_Reception,
+      Block_Transmission,
+      Block_All_Communication);
+   --  Socket shutdown methods.
 
    type Socket_Type is abstract tagged limited private;
    --  Communication socket.
 
    procedure Close (Socket : in out Socket_Type);
    --  Close given socket.
+
+   procedure Shutdown
+     (Socket : Socket_Type;
+      Method : Sock_Shutdown_Cmd);
+   --  Controlled shutdown of given socket.
 
    procedure Send
      (Socket : Socket_Type;
@@ -101,7 +112,8 @@ package Anet.Sockets is
 
    type Option_Name_Bool is
      (Broadcast,
-      Reuse_Address);
+      Reuse_Address,
+      TCP_Nodelay);
    --  Supported boolean socket options.
 
    type Option_Name_Str is (Bind_To_Device);
@@ -109,15 +121,19 @@ package Anet.Sockets is
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Bool;
       Value  : Boolean);
-   --  Set socket option of given socket to specified boolean value.
+   --  Set socket option of given socket to specified boolean value. The level
+   --  argument specifies the protocol level this option applies to.
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Str;
       Value  : String);
-   --  Set socket option of given socket to specified string value.
+   --  Set socket option of given socket to specified string value. The level
+   --  argument specifies the protocol level this option applies to.
 
 private
 
@@ -132,17 +148,25 @@ private
    --  Socket mode mapping.
 
    Levels : constant array (Level_Type) of Interfaces.C.int
-     := (Socket_Level => Constants.Sys.SOL_SOCKET);
+     := (Socket_Level => Constants.Sys.SOL_SOCKET,
+         TCP_Level    => Constants.Sys.IPPROTO_TCP);
    --  Protocol level mapping.
 
    Options_Bool : constant array (Option_Name_Bool) of Interfaces.C.int
      := (Reuse_Address => Constants.Sys.SO_REUSEADDR,
-         Broadcast     => Constants.Sys.SO_BROADCAST);
+         Broadcast     => Constants.Sys.SO_BROADCAST,
+         TCP_Nodelay   => Constants.Sys.TCP_NODELAY);
    --  Mapping for option names with boolean value.
 
    Options_Str : constant array (Option_Name_Str) of Interfaces.C.int
      := (Bind_To_Device => Constants.SO_BINDTODEVICE);
    --  Mapping for option names with string value.
+
+   Shutdown_Methods : constant array (Sock_Shutdown_Cmd) of Interfaces.C.int
+     := (Block_Reception         => Constants.Sys.SHUT_RD,
+         Block_Transmission      => Constants.Sys.SHUT_WR,
+         Block_All_Communication => Constants.Sys.SHUT_RDWR);
+   --  Mapping of socket shutdown methods.
 
    type Socket_Type is new Ada.Finalization.Limited_Controlled with record
       Sock_FD  : Interfaces.C.int := -1;

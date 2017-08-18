@@ -430,7 +430,7 @@ package body Anet.Sockets.Inet is
         (S     => Socket.Sock_FD,
          Buf   => Item'Address,
          Len   => Item'Length,
-         Flags => 0,
+         Flags => Constants.Sys.MSG_NOSIGNAL,
          To    => Dst'Address,
          Tolen => Dst'Size / 8);
 
@@ -462,7 +462,7 @@ package body Anet.Sockets.Inet is
         (S     => Socket.Sock_FD,
          Buf   => Item'Address,
          Len   => Item'Length,
-         Flags => 0,
+         Flags => Constants.Sys.MSG_NOSIGNAL,
          To    => Dst'Address,
          Tolen => Dst'Size / 8);
 

@@ -200,7 +200,7 @@ package body Anet.Sockets is
         (S     => Socket.Sock_FD,
          Buf   => Item'Address,
          Len   => Item'Length,
-         Flags => 0);
+         Flags => Constants.Sys.MSG_NOSIGNAL);
 
       Errno.Check_Or_Raise
         (Result  => C.int (Res),
@@ -243,6 +243,7 @@ package body Anet.Sockets is
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Bool;
       Value  : Boolean)
    is
@@ -251,7 +252,7 @@ package body Anet.Sockets is
       Errno.Check_Or_Raise
         (Result  => Thin.C_Setsockopt
            (S       => Socket.Sock_FD,
-            Level   => Levels (Socket_Level),
+            Level   => Levels (Level),
             Optname => Options_Bool (Option),
             Optval  => Val'Address,
             Optlen  => Val'Size / 8),
@@ -263,6 +264,7 @@ package body Anet.Sockets is
 
    procedure Set_Socket_Option
      (Socket : Socket_Type;
+      Level  : Level_Type := Socket_Level;
       Option : Option_Name_Str;
       Value  : String)
    is
@@ -271,12 +273,28 @@ package body Anet.Sockets is
       Errno.Check_Or_Raise
         (Result  => Thin.C_Setsockopt
            (S       => Socket.Sock_FD,
-            Level   => Levels (Socket_Level),
+            Level   => Levels (Level),
             Optname => Options_Str (Option),
             Optval  => Val'Address,
             Optlen  => Val'Size / 8),
          Message => "Unable set string socket option " & Option'Img & " to '" &
            Value & "'");
    end Set_Socket_Option;
+
+   -------------------------------------------------------------------------
+
+   procedure Shutdown
+     (Socket : Socket_Type;
+      Method : Sock_Shutdown_Cmd)
+   is
+   begin
+      if Socket.Sock_FD /= -1 then
+         Errno.Check_Or_Raise
+           (Result  => Thin.C_Shutdown
+              (S   => Socket.Sock_FD,
+               How => Shutdown_Methods (Method)),
+            Message => "Unable to shutdown socket");
+      end if;
+   end Shutdown;
 
 end Anet.Sockets;
