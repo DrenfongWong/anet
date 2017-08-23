@@ -44,7 +44,9 @@ override_dh_auto_install:
 
 .PHONY: override_dh_auto_test
 override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) $(MAKE_OPTS) tests
+endif
 
 .PHONY: override_dh_install
 override_dh_install: debian/anet.gpr
