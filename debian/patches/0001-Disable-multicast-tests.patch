@@ -1,14 +1,9 @@
 From: Reto Buerki <reet@codelabs.ch>
 Date: Fri, 21 Mar 2014 13:29:06 +0000
 Subject: Disable multicast tests
+ These tests do not work on the buildd's.
+Forwarded: not-needed
 
-These tests do not work on the buildd's.
----
- tests/socket_tests-ip.adb | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/tests/socket_tests-ip.adb b/tests/socket_tests-ip.adb
-index c5da5c5..1ffc83b 100644
 --- a/tests/socket_tests-ip.adb
 +++ b/tests/socket_tests-ip.adb
 @@ -158,12 +158,12 @@ package body Socket_Tests.IP is
