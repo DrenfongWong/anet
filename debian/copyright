@@ -7,8 +7,10 @@ Source: https://www.codelabs.ch/download/
 
 Files: *
 Copyright:
+ (C) 2011-2013 secunet Security Networks AG
  (C) 2011-2016 Reto Buerki <reet@codelabs.ch>
  (C) 2011-2016 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+ (C) 2016      Stefan Berghofer <stefan.berghofer@secunet.com>
 License: GPL-2+ with Ada exception
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
