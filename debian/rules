@@ -1,17 +1,8 @@
 #!/usr/bin/make -f
 
-$(foreach line,$(shell sed -n '\
-  s/^ gnat, gnat-\([0-9.]\+\),$$/ \
-    gnat_version:=\1 \
-  /p;\
-  s/^Package: \(libanet\([0-9.]\+\)\)$$/ \
-    lib_pkg:=\1 \
-    soversion:=\2 \
-  /p;\
-  s/^Package: \(libanet[0-9.]\+-dev\)$$/ \
-    dev_pkg:=\1 \
-  /p;\
-  ' debian/control),$(eval $(line)))
+gnat_version := $(shell gnatgcc -dumpversion | sed 's/\..*//')
+dev_pkg := $(shell sed -n \
+  '/^Package: \(libanet[0-9.]\+-dev\)$$/{s//\1/;p;q}' debian/control)
 
 DEB_BUILD_MAINT_OPTIONS := hardening=+all
 include /usr/share/dpkg/architecture.mk
@@ -25,7 +16,7 @@ MAKE_OPTS := \
   GNAT_BUILDER_FLAGS='$(BUILDER_OPTIONS)'
 
 %:
-	dh ${@}
+	dh ${@} --with ada-library
 
 .PHONY: override_dh_auto_build
 override_dh_auto_build:
@@ -35,11 +26,8 @@ ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) doc
 endif
 
+# Ignore upstream install target.
 .PHONY: override_dh_auto_install
-override_dh_auto_install:
-	$(MAKE) $(MAKE_OPTS) PREFIX=$(CURDIR)/debian/tmp install
-	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=static PREFIX=$(CURDIR)/debian/tmp install
-	rm -rf debian/tmp/lib/gnat
 
 .PHONY: override_dh_auto_test
 override_dh_auto_test:
@@ -47,18 +35,9 @@ ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) $(MAKE_OPTS) tests
 endif
 
-.PHONY: override_dh_install
-override_dh_install: debian/anet.gpr
-	dh_install -p$(lib_pkg) lib/libanet.so.$(soversion) usr/lib/$(DEB_HOST_MULTIARCH)
-	dh_install -p$(dev_pkg) lib/libanet.so usr/lib/$(DEB_HOST_MULTIARCH)
-	dh_install -p$(dev_pkg) lib/libanet.a usr/lib/$(DEB_HOST_MULTIARCH)
-	dh_install -p$(dev_pkg) lib/anet/*.ali usr/lib/$(DEB_HOST_MULTIARCH)/ada/adalib/anet
-	dh_install -p$(dev_pkg) include/anet/*.ad[bs] usr/share/ada/adainclude/anet
-	dh_install -p$(dev_pkg) debian/anet.gpr usr/share/gpr
-	dh_missing --fail-missing
-
-debian/anet.gpr: debian/template_anet.gpr
-	sed s/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/ $< > $@
+.PHONY: override_dh_ada_library
+override_dh_ada_library:
+	dh_ada_library LIBRARY_KIND=dynamic OS=$(OS) anet_lib.gpr
 
 .PHONY: override_dh_installdocs
 override_dh_installdocs: debian/$(dev_pkg).doc-base
@@ -74,4 +53,4 @@ override_dh_compress:
 
 .PHONY: override_dh_clean
 override_dh_clean:
-	dh_clean debian/$(dev_pkg).doc-base debian/anet.gpr
+	dh_clean debian/$(dev_pkg).doc-base
