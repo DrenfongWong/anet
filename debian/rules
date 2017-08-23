@@ -28,6 +28,7 @@ endif
 %:
 	dh ${@}
 
+.PHONY: override_dh_auto_build
 override_dh_auto_build:
 	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=dynamic
 	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=static
@@ -35,14 +36,17 @@ ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) doc
 endif
 
+.PHONY: override_dh_auto_install
 override_dh_auto_install:
 	$(MAKE) $(MAKE_OPTS) PREFIX=$(CURDIR)/debian/tmp install
 	$(MAKE) $(MAKE_OPTS) LIBRARY_KIND=static PREFIX=$(CURDIR)/debian/tmp install
 	rm -rf debian/tmp/lib/gnat
 
+.PHONY: override_dh_auto_test
 override_dh_auto_test:
 	$(MAKE) $(MAKE_OPTS) tests
 
+.PHONY: override_dh_install
 override_dh_install: debian/anet.gpr
 	dh_install -p$(lib_pkg) lib/libanet.so.$(soversion) usr/lib/$(DEB_HOST_MULTIARCH)
 	dh_install -p$(dev_pkg) lib/libanet.so usr/lib/$(DEB_HOST_MULTIARCH)
@@ -55,6 +59,7 @@ override_dh_install: debian/anet.gpr
 debian/anet.gpr: debian/template_anet.gpr
 	sed s/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/ $< > $@
 
+.PHONY: override_dh_installdocs
 override_dh_installdocs: debian/$(dev_pkg).doc-base
 	dh_installdocs -p$(dev_pkg) doc/html/*
 	dh_installdocs --remaining-packages
@@ -62,8 +67,10 @@ override_dh_installdocs: debian/$(dev_pkg).doc-base
 debian/$(dev_pkg).doc-base: debian/template_libanet-dev.doc-base
 	sed s/@dev_pkg@/$(dev_pkg)/ $< > $@
 
+.PHONY: override_dh_compress
 override_dh_compress:
 	dh_compress -X.ads -X.adb -XMakefile
 
+.PHONY: override_dh_clean
 override_dh_clean:
 	dh_clean debian/$(dev_pkg).doc-base debian/anet.gpr
