@@ -8,7 +8,7 @@ Build-Depends: asciidoc, debhelper (>= 10),
 # This line is parsed by debian/rules.
  libahven6-dev,
  source-highlight
-Standards-Version: 4.0.1
+Standards-Version: 4.1.0
 Homepage: https://www.codelabs.ch/anet/
 Vcs-Browser: https://git.codelabs.ch/?p=anet.git
 Vcs-Git: https://git.codelabs.ch/git/anet.git -b debian
