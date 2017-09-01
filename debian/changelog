@@ -1,3 +1,32 @@
+anet (0.3.4-1) unstable; urgency=medium
+
+  [ Reto Buerki ]
+  * Update to release 0.3.4
+  * Don't restrict architectures (Closes: #758742)
+
+  [ Nicolas Boulenguez ]
+  * Watch file version 4.
+  * Drop applied UTC asciidoc patch.
+  * Use default compression for Debian diff.
+  * Runtime test: remove unused variable, display executed cmds for debuggers.
+  * Debhelper 10. Replace deprecated --fail-missing option.
+  * Standards-Version: 4.0.1. Handle DEB_BUILD_OPTIONS=nodoc.
+  * Include dpkg/architecture.mk instead of running dpkg-architecture.
+  * Enable all hardening flags.
+  * Replace many hardcoded versions with generated contents.
+  * Make runtime package Multi-Arch: same.
+  * Build with gnat 7 and ahven 6 (Closes: #872427).
+  * Standards-Version: 4.1.0.
+  * Declare phony targets.
+  * Handle DEB_BUILD_OPTIONS=nocheck.
+  * Avoid default values and silent transmission via the environment.
+  * Switch to dh-ada-library.
+  * Make patch header compliant with DEP-3.
+  * Check upstream archive signatures.
+  * Fix missing copyright attributions.
+
+ -- Reto Buerki <reet@codelabs.ch>  Sat, 02 Sep 2017 00:20:47 +0200
+
 anet (0.3.3-1) unstable; urgency=medium
 
   * Update to release 0.3.3
