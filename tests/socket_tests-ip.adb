@@ -43,7 +43,7 @@ package body Socket_Tests.IP is
    package UDPv4_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Inet.UDPv4_Socket_Type,
-      Address_Type => Inet.UDPv4_Sockaddr_Type,
+      Address_Type => Inet.IPv4_Sockaddr_Type,
       Receive      => Inet.Receive);
 
    package UDPv6_Receiver is new Receivers.Datagram

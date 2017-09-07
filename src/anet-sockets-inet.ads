@@ -37,6 +37,12 @@ package Anet.Sockets.Inet is
    -- IPv4 --
    ----------
 
+   type IPv4_Sockaddr_Type is record
+      Addr : IPv4_Addr_Type;
+      Port : Port_Type;
+   end record;
+   --  IPv4 socket address.
+
    type IPv4_Socket_Type is abstract new Inet_Socket_Type with private;
    --  IPv4 socket.
 
@@ -60,15 +66,9 @@ package Anet.Sockets.Inet is
    procedure Init (Socket : in out UDPv4_Socket_Type);
    --  Initialize given IPv4/UDP socket.
 
-   type UDPv4_Sockaddr_Type is record
-      Addr : IPv4_Addr_Type;
-      Port : Port_Type;
-   end record;
-   --  UDPv4 socket address.
-
    procedure Receive
      (Socket :     UDPv4_Socket_Type;
-      Src    : out UDPv4_Sockaddr_Type;
+      Src    : out IPv4_Sockaddr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given UDPv4 socket. This procedure blocks until data
