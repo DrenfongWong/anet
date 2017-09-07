@@ -50,26 +50,11 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv4_Socket_Type;
       New_Socket : out TCPv4_Socket_Type)
    is
-      Res  : C.int;
-      Sock : Thin.Inet.Sockaddr_In_Type
-        (Family => Socket_Families.Family_Inet);
-      Len  : aliased C.int := Sock'Size / 8;
+      Unreferenced : IPv4_Sockaddr_Type;
    begin
-      New_Socket.Sock_FD := -1;
-
-      Res := Thin.C_Accept (S       => Socket.Sock_FD,
-                            Name    => Sock'Address,
-                            Namelen => Len'Access);
-
-      case Check_Accept (Result => Res)
-      is
-         when Accept_Op_Aborted => return;
-         when Accept_Op_Error =>
-            raise Socket_Error with "Unable to accept connection on TCPv4 "
-              & "socket - " & Errno.Get_Errno_String;
-         when Accept_Op_Ok =>
-            New_Socket.Sock_FD := Res;
-      end case;
+      Accept_Connection (Socket     => Socket,
+                         New_Socket => New_Socket,
+                         Src        => Unreferenced);
    end Accept_Connection;
 
    -------------------------------------------------------------------------
