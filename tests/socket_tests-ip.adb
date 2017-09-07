@@ -303,6 +303,9 @@ package body Socket_Tests.IP is
       T.Add_Test_Routine
         (Routine => Accept_Source_V6'Access,
          Name    => "Peer src after accept (IPv6)");
+      T.Add_Test_Routine
+        (Routine => Receive_Source_V4'Access,
+         Name    => "Peer src after receive (IPv4)");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -395,6 +398,65 @@ package body Socket_Tests.IP is
       Assert (Condition => Aborted,
               Message   => "Receive not aborted");
    end Non_Blocking;
+
+   -------------------------------------------------------------------------
+
+   procedure Receive_Source_V4
+   is
+      Src : Inet.IPv4_Sockaddr_Type
+        := (Addr => Any_Addr,
+            Port => Any_Port);
+
+      Cli_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+      Srv_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+
+      task Server;
+
+      task body Server
+      is
+         Cli : Inet.UDPv4_Socket_Type;
+      begin
+         Cli.Init;
+         Cli.Bind (Address => Loopback_Addr_V4,
+                   Port    => Cli_Port);
+
+         --  Precautionary delay to make sure receiver is ready.
+
+         delay 0.2;
+
+         Cli.Send (Item     => Ada.Streams.Stream_Element_Array'(1 => 12),
+                   Dst_Addr => Loopback_Addr_V4,
+                   Dst_Port => Srv_Port);
+      end Server;
+
+      Sock    : Inet.UDPv4_Socket_Type;
+      Buffer  : Ada.Streams.Stream_Element_Array (1 .. 1);
+      Last    : Ada.Streams.Stream_Element_Offset;
+      Aborted : Boolean := False;
+   begin
+      Sock.Init;
+      Sock.Bind (Address => Loopback_Addr_V4,
+                 Port    => Srv_Port);
+
+      select
+         delay 2.0;
+         Aborted := True;
+      then abort
+         Sock.Receive (Src  => Src,
+                       Item => Buffer,
+                       Last => Last);
+      end select;
+      Assert (Condition => not Aborted,
+              Message   => "Receive aborted");
+
+      Assert (Condition => Src.Addr = Loopback_Addr_V4,
+              Message   => "Source address mismatch: "
+              & Anet.To_String (Address => Src.Addr));
+      Assert (Condition => Src.Port = Cli_Port,
+              Message   => "Source port mismatch:" & Src.Port'Img);
+   end Receive_Source_V4;
 
    -------------------------------------------------------------------------
 
