@@ -61,6 +61,44 @@ package body Anet.Sockets.Unix is
 
    -------------------------------------------------------------------------
 
+   procedure Accept_Connection
+     (Socket     :     TCP_Socket_Type;
+      New_Socket : out TCP_Socket_Type;
+      Src        : out Full_Path_Type)
+   is
+      Res  : C.int;
+      Sock : Thin.Unix.Sockaddr_Un_Type;
+      Len  : aliased C.int := Sock'Size / 8;
+   begin
+      New_Socket.Sock_FD := -1;
+      Src                := (others => ASCII.NUL);
+
+      Res := Thin.C_Accept (S       => Socket.Sock_FD,
+                            Name    => Sock'Address,
+                            Namelen => Len'Access);
+
+      case Check_Accept (Result => Res)
+      is
+         when Accept_Op_Aborted => return;
+         when Accept_Op_Error =>
+            raise Socket_Error with "Unable to accept connection on UNIX/TCP "
+              & "socket - " & Errno.Get_Errno_String;
+         when Accept_Op_Ok =>
+            New_Socket.Sock_FD         := Res;
+            New_Socket.Path            := Socket.Path;
+            New_Socket.Delete_On_Close := False;
+
+            declare
+               Path_Str : constant String
+                 := Ada.Strings.Unbounded.To_String (Socket.Path);
+            begin
+               Src (Src'First .. Path_Str'Length) := Path_Type (Path_Str);
+            end;
+      end case;
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
    procedure Bind
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)

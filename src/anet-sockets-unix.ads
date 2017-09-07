@@ -91,6 +91,14 @@ package Anet.Sockets.Unix is
    --  Accept first connection request from listening socket and return new
    --  connected socket.
 
+   procedure Accept_Connection
+     (Socket     :     TCP_Socket_Type;
+      New_Socket : out TCP_Socket_Type;
+      Src        : out Full_Path_Type);
+   --  Accept first connection request from listening socket and return new
+   --  connected socket. The source argument is set to the socket path from
+   --  which the data was received.
+
 private
 
    type Unix_Socket_Type is abstract new Socket_Type with record
