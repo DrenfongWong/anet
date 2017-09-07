@@ -114,8 +114,11 @@ package Test_Utils is
    function Get_Last_Address return Anet.Sockets.Unix.Full_Path_Type;
    --  Return last Unix path used in call to Dump procedure.
 
+   generic
+      type Address_Type is private;
    procedure Echo
-     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+     (Src       :     Address_Type;
+      Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;
       Send_Last : out Ada.Streams.Stream_Element_Offset);
    --  Echo the received data back to the sender.

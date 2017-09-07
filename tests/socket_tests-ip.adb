@@ -53,18 +53,27 @@ package body Socket_Tests.IP is
       Receive      => Inet.Receive);
 
    package TCPv4_Receiver is new Receivers.Stream
-     (Buffer_Size  => 1024,
-      Socket_Type  => Inet.TCPv4_Socket_Type);
+     (Buffer_Size       => 1024,
+      Socket_Type       => Inet.TCPv4_Socket_Type,
+      Address_Type      => Inet.IPv4_Sockaddr_Type,
+      Accept_Connection => Inet.Accept_Connection);
 
    package TCPv6_Receiver is new Receivers.Stream
-     (Buffer_Size  => 1024,
-      Socket_Type  => Inet.TCPv6_Socket_Type);
+     (Buffer_Size       => 1024,
+      Socket_Type       => Inet.TCPv6_Socket_Type,
+      Address_Type      => Inet.IPv6_Sockaddr_Type,
+      Accept_Connection => Inet.Accept_Connection);
 
    procedure Error_Handler
      (E         :        Ada.Exceptions.Exception_Occurrence;
       Stop_Flag : in out Boolean);
    --  Receiver error handler callback for testing purposes. It ignores the
    --  exception and tells the receiver to terminate by setting the stop flag.
+
+   procedure Inet4_Echo is new Test_Utils.Echo
+     (Address_Type => Inet.IPv4_Sockaddr_Type);
+   procedure Inet6_Echo is new Test_Utils.Echo
+     (Address_Type => Inet.IPv6_Sockaddr_Type);
 
    -------------------------------------------------------------------------
 
@@ -434,7 +443,7 @@ package body Socket_Tests.IP is
       S_Srv.Bind (Address => Loopback_Addr_V4,
                   Port    => Port);
 
-      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+      Rcvr.Listen (Callback => Inet4_Echo'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -537,7 +546,7 @@ package body Socket_Tests.IP is
       S_Srv.Bind (Address => Loopback_Addr_V6,
                   Port    => Port);
 
-      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+      Rcvr.Listen (Callback => Inet6_Echo'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -594,7 +603,7 @@ package body Socket_Tests.IP is
       S_Srv.Init;
       S_Srv.Bind (Address => Loopback_Addr_V4,
                   Port    => Port);
-      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+      Rcvr.Listen (Callback => Inet4_Echo'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 

@@ -22,6 +22,7 @@
 --
 
 with Ada.Streams;
+with Ada.Text_IO;
 
 with Anet.Streams;
 with Anet.Sockets.Unix;
@@ -30,22 +31,28 @@ with Anet.Receivers.Stream;
 procedure Server is
 
    package Unix_TCP_Receiver is new Anet.Receivers.Stream
-     (Socket_Type => Anet.Sockets.Unix.TCP_Socket_Type);
+     (Socket_Type       => Anet.Sockets.Unix.TCP_Socket_Type,
+      Address_Type      => Anet.Sockets.Unix.Full_Path_Type,
+      Accept_Connection => Anet.Sockets.Unix.Accept_Connection);
 
    procedure Handle_Request
-     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+     (Src       :     Anet.Sockets.Unix.Full_Path_Type;
+      Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;
       Send_Last : out Ada.Streams.Stream_Element_Offset);
    --  Handle requests from clients.
 
    procedure Handle_Request
-     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+     (Src       :     Anet.Sockets.Unix.Full_Path_Type;
+      Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;
       Send_Last : out Ada.Streams.Stream_Element_Offset)
    is
       Stream : aliased Anet.Streams.Memory_Stream_Type (Max_Elements => 4);
       Number : Integer;
    begin
+      Ada.Text_IO.Put_Line ("Received data on socket "
+                            & Anet.Sockets.Unix.To_String (Path => Src));
       Stream.Set_Buffer (Buffer => Recv_Data);
       Integer'Read (Stream'Access, Number);
 
