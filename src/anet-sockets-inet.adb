@@ -429,7 +429,8 @@ package body Anet.Sockets.Inet is
                Last   => Last);
 
       Src.Addr := Sockaddr.Sin_Addr;
-      Src.Port := Port_Type (Sockaddr.Sin_Port);
+      Src.Port := Byte_Swapping.Network_To_Host
+        (Input => Port_Type (Sockaddr.Sin_Port));
    end Receive;
 
    -------------------------------------------------------------------------
