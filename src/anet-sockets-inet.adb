@@ -27,6 +27,7 @@ with Anet.OS_Constants;
 with Anet.Sockets.Thin.Inet;
 with Anet.Net_Ifaces;
 with Anet.Sockets.Inet.Iface;
+with Anet.Byte_Swapping;
 
 package body Anet.Sockets.Inet is
 
@@ -68,6 +69,40 @@ package body Anet.Sockets.Inet is
               & "socket - " & Errno.Get_Errno_String;
          when Accept_Op_Ok =>
             New_Socket.Sock_FD := Res;
+      end case;
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
+   procedure Accept_Connection
+     (Socket     :     TCPv4_Socket_Type;
+      New_Socket : out TCPv4_Socket_Type;
+      Src        : out IPv4_Sockaddr_Type)
+   is
+      Res  : C.int;
+      Sock : Thin.Inet.Sockaddr_In_Type
+        (Family => Socket_Families.Family_Inet);
+      Len  : aliased C.int := Sock'Size / 8;
+   begin
+      New_Socket.Sock_FD := -1;
+      Src := (Addr => Any_Addr,
+              Port => Any_Port);
+
+      Res := Thin.C_Accept (S       => Socket.Sock_FD,
+                            Name    => Sock'Address,
+                            Namelen => Len'Access);
+
+      case Check_Accept (Result => Res)
+      is
+         when Accept_Op_Aborted => return;
+         when Accept_Op_Error =>
+            raise Socket_Error with "Unable to accept connection on TCPv4 "
+              & "socket - " & Errno.Get_Errno_String;
+         when Accept_Op_Ok =>
+            New_Socket.Sock_FD := Res;
+            Src := (Addr => Sock.Sin_Addr,
+                    Port => Byte_Swapping.Network_To_Host
+                      (Input => Port_Type (Sock.Sin_Port)));
       end case;
    end Accept_Connection;
 

@@ -100,6 +100,13 @@ package Anet.Sockets.Inet is
    --  Accept first connection request from listening socket and return new
    --  connected socket.
 
+   procedure Accept_Connection
+     (Socket     :     TCPv4_Socket_Type;
+      New_Socket : out TCPv4_Socket_Type;
+      Src        : out IPv4_Sockaddr_Type);
+   --  Accept first connection request from listening socket and return new
+   --  connected socket and the peer's address.
+
    procedure Init (Socket : in out TCPv4_Socket_Type);
    --  Initialize given IPv4/TCP socket.
 
