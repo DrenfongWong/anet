@@ -68,4 +68,7 @@ package Socket_Tests.IP is
    procedure Receive_Source_V4;
    --  Test source info handling of V4 Receive procedure.
 
+   procedure Receive_Source_V6;
+   --  Test source info handling of V6 Receive procedure.
+
 end Socket_Tests.IP;
