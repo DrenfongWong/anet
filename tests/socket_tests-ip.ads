@@ -59,4 +59,7 @@ package Socket_Tests.IP is
    procedure Shutdown_Socket;
    --  Test communication after socket shutdown.
 
+   procedure Accept_Source_V4;
+   --  Test source info handling of V4 Accept_Connection procedure.
+
 end Socket_Tests.IP;

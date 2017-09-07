@@ -77,6 +77,62 @@ package body Socket_Tests.IP is
 
    -------------------------------------------------------------------------
 
+   procedure Accept_Source_V4
+   is
+      Src : Inet.IPv4_Sockaddr_Type
+        := (Addr => Any_Addr,
+            Port => Any_Port);
+
+      Cli_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+      Srv_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+
+      task Server is
+         entry Finished;
+      end Server;
+
+      task body Server
+      is
+         Sock, New_Sock : Inet.TCPv4_Socket_Type;
+      begin
+         Sock.Init;
+         Sock.Bind (Address => Loopback_Addr_V4,
+                    Port    => Srv_Port);
+         Sock.Listen;
+         Sock.Accept_Connection (New_Socket => New_Sock,
+                                 Src        => Src);
+
+         accept Finished;
+      end Server;
+
+      Cli     : Inet.TCPv4_Socket_Type;
+      Aborted : Boolean := False;
+   begin
+      Cli.Init;
+      Cli.Bind (Address => Loopback_Addr_V4,
+                Port    => Cli_Port);
+      Cli.Connect (Address => Loopback_Addr_V4,
+                   Port    => Srv_Port);
+
+      select
+         delay 2.0;
+         Aborted := True;
+      then abort
+         Server.Finished;
+      end select;
+      Assert (Condition => not Aborted,
+              Message   => "Task aborted");
+
+      Assert (Condition => Src.Addr = Loopback_Addr_V4,
+              Message   => "Source address mismatch: "
+              & Anet.To_String (Address => Src.Addr));
+      Assert (Condition => Src.Port = Cli_Port,
+              Message   => "Source port mismatch:" & Src.Port'Img);
+   end Accept_Source_V4;
+
+   -------------------------------------------------------------------------
+
    procedure Error_Callbacks
    is
       Sock : aliased Inet.UDPv4_Socket_Type;
@@ -185,6 +241,9 @@ package body Socket_Tests.IP is
       T.Add_Test_Routine
         (Routine => Shutdown_Socket'Access,
          Name    => "Shutdown socket (IPv4)");
+      T.Add_Test_Routine
+        (Routine => Accept_Source_V4'Access,
+         Name    => "Peer src after accept (IPv4)");
    end Initialize;
 
    -------------------------------------------------------------------------
