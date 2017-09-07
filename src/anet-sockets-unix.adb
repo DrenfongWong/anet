@@ -36,27 +36,11 @@ package body Anet.Sockets.Unix is
      (Socket     :     TCP_Socket_Type;
       New_Socket : out TCP_Socket_Type)
    is
-      Res  : C.int;
-      Sock : Thin.Unix.Sockaddr_Un_Type;
-      Len  : aliased C.int := Sock'Size / 8;
+      Unreferenced : Full_Path_Type;
    begin
-      New_Socket.Sock_FD := -1;
-
-      Res := Thin.C_Accept (S       => Socket.Sock_FD,
-                            Name    => Sock'Address,
-                            Namelen => Len'Access);
-
-      case Check_Accept (Result => Res)
-      is
-         when Accept_Op_Aborted => return;
-         when Accept_Op_Error =>
-            raise Socket_Error with "Unable to accept connection on UNIX/TCP "
-              & "socket - " & Errno.Get_Errno_String;
-         when Accept_Op_Ok =>
-            New_Socket.Sock_FD         := Res;
-            New_Socket.Path            := Socket.Path;
-            New_Socket.Delete_On_Close := False;
-      end case;
+      Accept_Connection (Socket     => Socket,
+                         New_Socket => New_Socket,
+                         Src        => Unreferenced);
    end Accept_Connection;
 
    -------------------------------------------------------------------------
