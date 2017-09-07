@@ -113,6 +113,12 @@ package Anet.Sockets.Inet is
    -- IPv6 --
    ----------
 
+   type IPv6_Sockaddr_Type is record
+      Addr : IPv6_Addr_Type;
+      Port : Port_Type;
+   end record;
+   --  IPv6 socket address.
+
    type IPv6_Socket_Type is abstract new Inet_Socket_Type with private;
    --  IPv6 socket.
 
@@ -136,15 +142,9 @@ package Anet.Sockets.Inet is
    procedure Init (Socket : in out UDPv6_Socket_Type);
    --  Initialize given IPv6/UDP socket.
 
-   type UDPv6_Sockaddr_Type is record
-      Addr : IPv6_Addr_Type;
-      Port : Port_Type;
-   end record;
-   --  UDPv6 socket address.
-
    procedure Receive
      (Socket :     UDPv6_Socket_Type;
-      Src    : out UDPv6_Sockaddr_Type;
+      Src    : out IPv6_Sockaddr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset);
    --  Receive data from given UDPv6 socket. This procedure blocks until data

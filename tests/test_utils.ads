@@ -91,7 +91,7 @@ package Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Inet.UDPv6_Sockaddr_Type);
+      Src  : Anet.Sockets.Inet.IPv6_Sockaddr_Type);
    --  This procedure dumps the given data to an internal buffer. Use the
    --  Get_Dump function to retrieve the content of the buffer.
 
@@ -108,7 +108,7 @@ package Test_Utils is
    function Get_Last_Address return Anet.Sockets.Inet.IPv4_Sockaddr_Type;
    --  Return last IPv4 address used in call to Dump procedure.
 
-   function Get_Last_Address return Anet.Sockets.Inet.UDPv6_Sockaddr_Type;
+   function Get_Last_Address return Anet.Sockets.Inet.IPv6_Sockaddr_Type;
    --  Return last IPv6 address used in call to Dump procedure.
 
    function Get_Last_Address return Anet.Sockets.Unix.Full_Path_Type;
@@ -139,7 +139,7 @@ private
    Buffer         : Ada.Streams.Stream_Element_Array (1 .. 1500);
    Last           : Ada.Streams.Stream_Element_Offset;
    Last_Addr_v4   : Anet.Sockets.Inet.IPv4_Sockaddr_Type;
-   Last_Addr_v6   : Anet.Sockets.Inet.UDPv6_Sockaddr_Type;
+   Last_Addr_v6   : Anet.Sockets.Inet.IPv6_Sockaddr_Type;
    Last_Addr_Unix : Anet.Sockets.Unix.Full_Path_Type;
 
 end Test_Utils;

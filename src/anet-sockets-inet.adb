@@ -397,7 +397,7 @@ package body Anet.Sockets.Inet is
 
    procedure Receive
      (Socket :     UDPv6_Socket_Type;
-      Src    : out UDPv6_Sockaddr_Type;
+      Src    : out IPv6_Sockaddr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
