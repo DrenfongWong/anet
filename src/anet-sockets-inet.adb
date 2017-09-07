@@ -121,6 +121,40 @@ package body Anet.Sockets.Inet is
 
    -------------------------------------------------------------------------
 
+   procedure Accept_Connection
+     (Socket     :     TCPv6_Socket_Type;
+      New_Socket : out TCPv6_Socket_Type;
+      Src        : out IPv6_Sockaddr_Type)
+   is
+      Res  : C.int;
+      Sock : Thin.Inet.Sockaddr_In_Type
+        (Family => Socket_Families.Family_Inet6);
+      Len  : aliased C.int := Sock'Size / 8;
+   begin
+      New_Socket.Sock_FD := -1;
+      Src := (Addr => Any_Addr_V6,
+              Port => Any_Port);
+
+      Res := Thin.C_Accept (S       => Socket.Sock_FD,
+                            Name    => Sock'Address,
+                            Namelen => Len'Access);
+
+      case Check_Accept (Result => Res)
+      is
+         when Accept_Op_Aborted => return;
+         when Accept_Op_Error =>
+            raise Socket_Error with "Unable to accept connection on TCPv6 "
+              & "socket - " & Errno.Get_Errno_String;
+         when Accept_Op_Ok =>
+            New_Socket.Sock_FD := Res;
+            Src := (Addr => Sock.Sin6_Addr,
+                    Port => Byte_Swapping.Network_To_Host
+                      (Input => Port_Type (Sock.Sin_Port)));
+      end case;
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
    procedure Bind
      (Socket : in out Inet_Socket_Type;
       Iface  :        Types.Iface_Name_Type)
