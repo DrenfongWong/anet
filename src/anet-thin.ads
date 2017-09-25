@@ -20,11 +20,28 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Interfaces.C;
+with System;
+
+with Interfaces.C.Strings;
 
 package Anet.Thin is
 
    function C_Getpid return Interfaces.C.int;
    pragma Import (C, C_Getpid, "getpid");
+
+   function C_Inet_Pton
+     (Af  : Interfaces.C.int;
+      Src : Interfaces.C.Strings.chars_ptr;
+      Dst : System.Address)
+      return Interfaces.C.int;
+   pragma Import (C, C_Inet_Pton, "inet_pton");
+
+   function C_Inet_Ntop
+     (Af   : Interfaces.C.int;
+      Src  : System.Address;
+      Dst  : Interfaces.C.Strings.chars_ptr;
+      Size : Interfaces.C.unsigned)
+      return Interfaces.C.Strings.chars_ptr;
+   pragma Import (C, C_Inet_Ntop, "inet_ntop");
 
 end Anet.Thin;
