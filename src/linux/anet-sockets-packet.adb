@@ -42,6 +42,8 @@ package body Anet.Sockets.Packet is
      (Socket : in out Packet_Socket_Type;
       Iface  :        Types.Iface_Name_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       Value : Thin.Packet.Sockaddr_Ll_Type;
    begin
       Value.Sa_Protocol := C.unsigned_short (Socket.Protocol);
@@ -93,6 +95,7 @@ package body Anet.Sockets.Packet is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
       use type Ada.Streams.Stream_Element_Offset;
+      use type Interfaces.C.long;
 
       Res   : C.long;
       Saddr : Thin.Packet.Sockaddr_Ll_Type;
@@ -128,6 +131,8 @@ package body Anet.Sockets.Packet is
       To     : Hardware_Addr_Type;
       Iface  : Types.Iface_Name_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       Res     : C.long;
       Ll_Dest : Thin.Packet.Sockaddr_Ll_Type;
    begin

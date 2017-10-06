@@ -138,8 +138,6 @@ package Anet.Sockets is
 private
 
    use type Interfaces.C.int;
-   use type Interfaces.C.long;
-   use type Interfaces.C.unsigned_long;
 
    Modes : constant array (Mode_Type) of Interfaces.C.int
      := (Datagram_Socket => Constants.Sys.SOCK_DGRAM,

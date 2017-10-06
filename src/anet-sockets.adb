@@ -31,6 +31,9 @@ package body Anet.Sockets is
 
    package C renames Interfaces.C;
 
+   use type Interfaces.C.unsigned_long;
+   use type Interfaces.C.long;
+
    -------------------------------------------------------------------------
 
    function Check_Accept (Result : Interfaces.C.int) return Accept_Result_Type

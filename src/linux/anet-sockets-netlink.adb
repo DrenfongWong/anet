@@ -49,6 +49,7 @@ package body Anet.Sockets.Netlink is
       Groups  :        Group_Array := No_Groups)
    is
       use type Interfaces.Unsigned_32;
+      use type Interfaces.C.unsigned_long;
 
       Value : Thin.Netlink.Sockaddr_Nl_Type
         := (Nl_Pid => Interfaces.Unsigned_32 (Address),
@@ -93,6 +94,7 @@ package body Anet.Sockets.Netlink is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
       use type Ada.Streams.Stream_Element_Offset;
+      use type Interfaces.C.long;
 
       Res   : C.long;
       Saddr : Thin.Netlink.Sockaddr_Nl_Type;
@@ -127,6 +129,8 @@ package body Anet.Sockets.Netlink is
       Item   : Ada.Streams.Stream_Element_Array;
       To     : Netlink_Addr_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       Res : C.long;
       Dst : Thin.Netlink.Sockaddr_Nl_Type
         := (Nl_Pid => Interfaces.Unsigned_32 (To),

@@ -33,6 +33,8 @@ package body Anet.Sockets.Inet is
 
    package C renames Interfaces.C;
 
+   use type Interfaces.C.unsigned_long;
+
    procedure Receive
      (Socket :     C.int;
       Src    : out Thin.Inet.Sockaddr_In_Type;
@@ -380,6 +382,7 @@ package body Anet.Sockets.Inet is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
       use type Ada.Streams.Stream_Element_Offset;
+      use type Interfaces.C.long;
 
       Res : C.long;
       Len : aliased C.int := Src'Size / 8;

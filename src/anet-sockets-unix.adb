@@ -87,6 +87,8 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
@@ -123,6 +125,8 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
