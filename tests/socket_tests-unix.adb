@@ -84,7 +84,6 @@ package body Socket_Tests.Unix is
    procedure Send_Unix_Datagram
    is
       use type Receivers.Count_Type;
-      use type Sockets.Unix.Path_Type;
 
       C            : Receivers.Count_Type := 0;
       Path         : constant String      := "/tmp/mysock-"

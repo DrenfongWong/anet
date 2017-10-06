@@ -284,8 +284,6 @@ package body Anet.Sockets.Inet is
       Group  : IPv4_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      use type C.unsigned_short;
-
       Mreq       : Thin.IPv4_Mreq_Type;
       Iface_Addr : IPv4_Addr_Type := Any_Addr;
    begin
@@ -314,8 +312,6 @@ package body Anet.Sockets.Inet is
       Group  : IPv6_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      use type C.unsigned_short;
-
       Mreq6     : Thin.IPv6_Mreq_Type;
       Iface_Idx : Natural := 0;
    begin
