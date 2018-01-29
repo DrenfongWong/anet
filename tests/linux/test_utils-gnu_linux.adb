@@ -38,7 +38,7 @@ package body Test_Utils.GNU_Linux is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Packet.Ether_Addr_Type)
+      Src  : Anet.Ether_Addr_Type)
    is
       pragma Unreferenced (Src);
    begin

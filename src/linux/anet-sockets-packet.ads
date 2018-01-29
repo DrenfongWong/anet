@@ -25,9 +25,6 @@ with Anet.Types;
 
 package Anet.Sockets.Packet is
 
-   subtype Ether_Addr_Type is Hardware_Addr_Type (1 .. 6);
-   --  Ethernet address.
-
    type Protocol_Type is
      (Proto_Packet_Arp,
       Proto_Packet_Ip,
