@@ -29,7 +29,8 @@ package Anet.Sockets.Packet is
    --  Ethernet address.
 
    type Protocol_Type is
-     (Proto_Packet_Ip,
+     (Proto_Packet_Arp,
+      Proto_Packet_Ip,
       Proto_Packet_All);
    --  Packet protocols.
 
