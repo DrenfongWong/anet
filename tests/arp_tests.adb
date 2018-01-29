@@ -22,6 +22,7 @@
 --
 
 with Ada.Streams;
+with Ada.Exceptions;
 
 with Anet.ARP;
 
@@ -63,6 +64,62 @@ package body ARP_Tests is
       T.Add_Test_Routine
         (Routine => Header_To_Stream'Access,
          Name    => "Header to stream array");
+      T.Add_Test_Routine
+        (Routine => Stream_To_Header'Access,
+         Name    => "Stream array to header");
    end Initialize;
+
+   -------------------------------------------------------------------------
+
+   procedure Stream_To_Header
+   is
+      use type Ada.Streams.Stream_Element_Offset;
+      use type ARP.Header_Type;
+
+      Input : constant Ada.Streams.Stream_Element_Array
+        := (16#00#, 16#01#, 16#08#, 16#00#, 16#06#, 16#04#, 16#00#, 16#02#,
+            16#01#, 16#32#, 16#2a#, 16#a5#, 16#12#, 16#59#, 16#C0#, 16#00#,
+            16#d6#, 16#80#, 16#ff#, 16#ff#, 16#ff#, 16#ff#, 16#ff#, 16#ff#,
+            16#C0#, 16#01#, 16#d6#, 16#7f#);
+      Ref_Hdr : constant ARP.Header_Type
+        := (Operation => ARP.ARP_Reply,
+            Src_Ether => (16#01#, 16#32#, 16#2a#, 16#a5#, 16#12#,
+                          16#59#),
+            Src_IP    => (192, 0, 214, 128),
+            Dst_Ether => (others => 16#ff#),
+            Dst_IP    => (192, 1, 214, 127));
+   begin
+      Assert (Condition => ARP.To_Header (Buffer => Input) = Ref_Hdr,
+              Message   => "Header mismatch");
+
+      declare
+         Dummy : ARP.Header_Type;
+      begin
+         Dummy := ARP.To_Header (Buffer => Input
+                                 (Input'First .. Input'Last - 1));
+         Fail (Message => "Exception expected (1)");
+
+      exception
+         when E : ARP.Invalid_ARP_Packet =>
+            Assert (Condition => Ada.Exceptions.Exception_Message (X => E)
+                    = "Unexpected ARP packet size: 27",
+                    Message   => "Exception mismatch (1)");
+      end;
+
+      declare
+         Input2 : Ada.Streams.Stream_Element_Array := Input;
+         Dummy  : ARP.Header_Type;
+      begin
+         Input2 (Input2'First + 7) := 122;
+         Dummy := ARP.To_Header (Buffer => Input2);
+         Fail (Message => "Exception expected (1)");
+
+      exception
+         when E : ARP.Invalid_ARP_Packet =>
+            Assert (Condition => Ada.Exceptions.Exception_Message (X => E)
+                    = "Unknown ARP operation code: 122",
+                    Message   => "Exception mismatch (1)");
+      end;
+   end Stream_To_Header;
 
 end ARP_Tests;

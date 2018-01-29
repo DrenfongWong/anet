@@ -33,4 +33,7 @@ package ARP_Tests is
    procedure Header_To_Stream;
    --  Verify ARP header to stream conversion.
 
+   procedure Stream_To_Header;
+   --  Verify stream to ARP header conversion.
+
 end ARP_Tests;

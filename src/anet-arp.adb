@@ -59,6 +59,34 @@ package body Anet.ARP is
 
    -------------------------------------------------------------------------
 
+   function To_Header
+     (Buffer : Ada.Streams.Stream_Element_Array)
+      return Header_Type
+   is
+      Opcode  : Double_Byte;
+      Raw_Hdr : Raw_Hdr_Type;
+      for Raw_Hdr'Address use Buffer'Address;
+   begin
+      if Buffer'Length /= ARP_Header_Length then
+         raise Invalid_ARP_Packet with "Unexpected ARP packet size:"
+           & Buffer'Length'Img;
+      end if;
+
+      Opcode := Byte_Swapping.Network_To_Host (Input => Raw_Hdr.Opcode);
+      if Opcode > 2 then
+         raise Invalid_ARP_Packet with "Unknown ARP operation code:"
+           & Opcode'Img;
+      end if;
+
+      return (Operation => Operation_Type'Val (Opcode - 1),
+              Src_Ether => Raw_Hdr.Src_Ether,
+              Src_IP    => Raw_Hdr.Src_IP,
+              Dst_Ether => Raw_Hdr.Dst_Ether,
+              Dst_IP    => Raw_Hdr.Dst_IP);
+   end To_Header;
+
+   -------------------------------------------------------------------------
+
    function To_Stream
      (Header : Header_Type)
       return Ada.Streams.Stream_Element_Array

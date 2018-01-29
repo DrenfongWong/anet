@@ -44,4 +44,11 @@ package Anet.ARP is
       return Ada.Streams.Stream_Element_Array;
    --  Convert given ARP header to stream element array.
 
+   function To_Header
+     (Buffer : Ada.Streams.Stream_Element_Array)
+      return Header_Type;
+   --  Convert stream element array to ARP header.
+
+   Invalid_ARP_Packet : exception;
+
 end Anet.ARP;
