@@ -43,11 +43,11 @@ gprdir      = ${prefix}/lib/gnat
 all: build_lib
 
 build_lib:
-	@gnatmake $(GMAKE_OPTS) -Panet_lib -XVERSION="$(VERSION)" \
+	@gprbuild $(GMAKE_OPTS) -Panet_lib -XVERSION="$(VERSION)" \
 		-XLIBRARY_KIND="$(LIBRARY_KIND)" -XLDFLAGS="$(LDFLAGS)"
 
 build_tests:
-	@gnatmake $(GMAKE_OPTS) -Panet_tests
+	@gprbuild $(GMAKE_OPTS) -Panet_tests
 
 tests: build_tests
 	@$(OBJDIR)/$(TESTDIR)/test_runner
@@ -56,14 +56,14 @@ build_all: build_tests build_lib
 
 cov:
 	@rm -f $(COVDIR)/*.gcda
-	@gnatmake $(GMAKE_OPTS) -Panet_tests.gpr -XBUILD="coverage"
+	@gprbuild $(GMAKE_OPTS) -Panet_tests.gpr -XBUILD="coverage"
 	@$(COVDIR)/test_runner || true
 	@lcov -c -d $(COVDIR) -o $(COVDIR)/cov.info
 	@lcov -e $(COVDIR)/cov.info "$(PWD)/src/*.adb" -o $(COVDIR)/cov.info
 	@genhtml --no-branch-coverage $(COVDIR)/cov.info -o $(COVDIR)
 
 examples:
-	@gnatmake $(GMAKE_OPTS) -Panet_examples
+	@gprbuild $(GMAKE_OPTS) -Panet_examples
 
 install: install_lib install_$(LIBRARY_KIND)
 
