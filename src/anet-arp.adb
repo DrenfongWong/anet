@@ -91,8 +91,6 @@ package body Anet.ARP is
      (Header : Header_Type)
       return Ada.Streams.Stream_Element_Array
    is
-      use type Ada.Streams.Stream_Element_Offset;
-
       function Hton
         (Input : Double_Byte)
          return Double_Byte
