@@ -78,7 +78,7 @@ package Anet is
    function To_String (Address : Hardware_Addr_Type) return String;
    --  Return string representation of a hardware address.
 
-   Bcast_HW_Addr : constant Hardware_Addr_Type;
+   Bcast_HW_Addr : constant Ether_Addr_Type;
    --  ff:ff:ff:ff:ff:ff
 
    type IPv4_Addr_Type is array (1 .. 4) of Byte;
@@ -127,7 +127,7 @@ private
    for IPv4_Addr_Type'Size use 32;
    for IPv6_Addr_Type'Size use 128;
 
-   Bcast_HW_Addr : constant Hardware_Addr_Type (1 .. 6) := (others => 255);
+   Bcast_HW_Addr : constant Ether_Addr_Type := (others => 255);
 
    Any_Addr         : constant IPv4_Addr_Type := (others => 0);
    Loopback_Addr_V4 : constant IPv4_Addr_Type := (127, 0, 0, 1);
