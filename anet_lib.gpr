@@ -23,7 +23,7 @@
 
 with "anet_common";
 
-project Anet_Lib is
+library project Anet_Lib is
 
    Source_Dirs := ("src");
    case Anet_Common.OS is
@@ -45,4 +45,3 @@ project Anet_Lib is
    end Compiler;
 
 end Anet_Lib;
-

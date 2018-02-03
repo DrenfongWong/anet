@@ -24,7 +24,7 @@
 with "ahven";
 with "anet_common";
 
-project Anet_Tests is
+standard project Anet_Tests is
 
    type Build_Type is ("tests", "coverage");
    Build : Build_Type := external ("BUILD", "tests");
@@ -66,4 +66,3 @@ project Anet_Tests is
    end Binder;
 
 end Anet_Tests;
-

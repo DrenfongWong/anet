@@ -24,7 +24,7 @@
 with "anet_common";
 with "anet_lib";
 
-project Anet_Examples is
+standard project Anet_Examples is
 
    for Source_Dirs use ("examples");
    for Object_Dir use Anet_Common.Obj_Dir & "/examples";
@@ -43,4 +43,3 @@ project Anet_Examples is
    end Compiler;
 
 end Anet_Examples;
-

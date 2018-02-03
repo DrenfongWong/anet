@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-project Anet_Common is
+abstract project Anet_Common is
 
    for Source_Dirs use ();
 
@@ -46,4 +46,3 @@ project Anet_Common is
    Binder_Switches   := ("-E");
 
 end Anet_Common;
-
