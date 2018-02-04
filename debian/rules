@@ -49,6 +49,11 @@ override_dh_installdocs: debian/$(dev_pkg).doc-base
 debian/$(dev_pkg).doc-base: debian/template_libanet-dev.doc-base
 	sed s/@dev_pkg@/$(dev_pkg)/ $< > $@
 
+.PHONY: override_dh_installexamples
+override_dh_installexamples:
+	dh_installexamples -p$(dev_pkg) examples/*
+	dh_installexamples --remaining-packages
+
 .PHONY: override_dh_compress
 override_dh_compress:
 	dh_compress -X.ads -X.adb -XMakefile
