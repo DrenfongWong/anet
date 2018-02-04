@@ -1,7 +1,7 @@
 PREFIX   ?= $(HOME)/libraries
 TESTDIR   = tests
 OBJDIR    = obj/$(OS)
-COVDIR    = $(OBJDIR)/cov
+COVDIR    = $(OBJDIR)/coverage
 LIBDIR    = lib
 SRCDIR    = src
 GPR_FILES = gnat/*.gpr
