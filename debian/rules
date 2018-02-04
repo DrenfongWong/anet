@@ -38,7 +38,8 @@ endif
 
 .PHONY: override_dh_ada_library
 override_dh_ada_library:
-	dh_ada_library LIBRARY_KIND=dynamic OS=$(OS) anet_lib.gpr
+	dh_ada_library \
+	  LIBRARY_KIND=dynamic OS=$(OS) VERSION=ignored anet_lib.gpr
 
 .PHONY: override_dh_installdocs
 override_dh_installdocs: debian/$(dev_pkg).doc-base
