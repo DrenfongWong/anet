@@ -5,6 +5,7 @@ Maintainer: Reto Buerki <reet@codelabs.ch>
 Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>
 Build-Depends: asciidoc, debhelper (>= 11),
  gnat, gnat-7,
+# This line is parsed by debian/rules.
  dh-ada-library,
  gprbuild,
  libahven6-dev,

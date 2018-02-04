@@ -1,8 +1,9 @@
 #!/usr/bin/make -f
 
-gnat_version := $(shell gnatgcc -dumpversion | sed 's/\..*//')
-dev_pkg := $(shell sed -n \
-  '/^Package: \(libanet[0-9.]\+-dev\)$$/{s//\1/;p;q}' debian/control)
+$(foreach line,$(shell sed -n '\
+  s/^Package: \(libanet[0-9.]\+-dev\)$$/ dev_pkg:=\1      /p;\
+  s/^ gnat, gnat-\([0-9]\+\).*/          gnat_version:=\1 /p;\
+ ' debian/control),$(eval $(line)))
 
 DEB_BUILD_MAINT_OPTIONS := hardening=+all
 include /usr/share/dpkg/architecture.mk
