@@ -61,8 +61,6 @@ standard project Anet_Tests is
       for Switches ("ada") use Linker_Switches;
    end Linker;
 
-   package Binder is
-      for Switches ("ada") use Anet_Common.Binder_Switches;
-   end Binder;
+   package Binder renames Anet_Common.Binder;
 
 end Anet_Tests;

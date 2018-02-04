@@ -43,6 +43,8 @@ abstract project Anet_Common is
                          "-gnato",
                          "-g");
 
-   Binder_Switches   := ("-E");
+   package Binder is
+      for Switches ("Ada") use ("-E");
+   end Binder;
 
 end Anet_Common;

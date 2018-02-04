@@ -42,4 +42,6 @@ standard project Anet_Examples is
         & "-gnatwale";
    end Compiler;
 
+   package Binder renames Anet_Common.Binder;
+
 end Anet_Examples;
