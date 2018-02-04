@@ -54,7 +54,7 @@ standard project Anet_Tests is
    end Compiler;
 
    package Linker is
-      for Switches ("ada") use Linker_Switches;
+      for Switches ("ada") use Linker_Switches & Anet_Common.Ldflags;
    end Linker;
 
    package Binder renames Anet_Common.Binder;

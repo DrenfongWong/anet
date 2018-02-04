@@ -33,6 +33,9 @@ abstract project Anet_Common is
    type OS_Type is ("linux", "bsd");
    OS : OS_Type := external ("OS", "linux");
 
+   --  User settings should take precedence over any default.
+   Ldflags := External_As_List ("LDFLAGS", " ");
+
    Obj_Dir := "obj/" & OS;
 
    Compiler_Switches := ("-gnatygAdISuxo",
@@ -46,5 +49,9 @@ abstract project Anet_Common is
    package Binder is
       for Switches ("Ada") use ("-E");
    end Binder;
+
+   package Linker is
+      for Switches ("Ada") use Ldflags;
+   end Linker;
 
 end Anet_Common;

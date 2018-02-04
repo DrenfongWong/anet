@@ -44,4 +44,6 @@ standard project Anet_Examples is
 
    package Binder renames Anet_Common.Binder;
 
+   package Linker renames Anet_Common.Linker;
+
 end Anet_Examples;

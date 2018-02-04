@@ -31,7 +31,7 @@ NUM_CPUS ?= 1
 GNAT_BUILDER_FLAGS ?= -R -j$(NUM_CPUS)
 GNATFLAGS          ?= ${GNAT_BUILDER_FLAGS} -cargs ${ADAFLAGS}
 # GMAKE_OPTS should not be overridden because -p is essential.
-GMAKE_OPTS = -XOS=$(OS) -p ${GNATFLAGS} -margs
+GMAKE_OPTS = $(foreach v,LDFLAGS OS,'$(v)=$($(v))') -p ${GNATFLAGS} -margs
 
 # GNU-style directory variables
 prefix      = ${PREFIX}
@@ -44,7 +44,7 @@ all: build_lib
 
 build_lib:
 	@gprbuild $(GMAKE_OPTS) -Panet_lib -XVERSION="$(VERSION)" \
-		-XLIBRARY_KIND="$(LIBRARY_KIND)" -XLDFLAGS="$(LDFLAGS)"
+		-XLIBRARY_KIND="$(LIBRARY_KIND)"
 
 build_tests:
 	@gprbuild $(GMAKE_OPTS) -Panet_tests
