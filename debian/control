@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Reto Buerki <reet@codelabs.ch>
 Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>
-Build-Depends: asciidoc, debhelper (>= 10),
+Build-Depends: asciidoc, debhelper (>= 11),
  gnat, gnat-7,
  dh-ada-library,
  gprbuild,
