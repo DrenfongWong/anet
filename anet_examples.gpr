@@ -39,7 +39,7 @@ standard project Anet_Examples is
 
    package Compiler is
       for Switches ("ada") use Anet_Common.Compiler_Switches
-        & "-gnatwale";
+        & ("-gnatwale") & Anet_Common.Adaflags;
    end Compiler;
 
    package Binder renames Anet_Common.Binder;

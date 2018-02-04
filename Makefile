@@ -26,12 +26,12 @@ OS ?= linux
 
 NUM_CPUS ?= 1
 
-# GNAT_BUILDER_FLAGS, ADAFLAGS and GNATFLAGS may be overridden in the
+# GNAT_BUILDER_FLAGS may be overridden in the
 # environment or on the command line.
 GNAT_BUILDER_FLAGS ?= -R -j$(NUM_CPUS)
-GNATFLAGS          ?= ${GNAT_BUILDER_FLAGS} -cargs ${ADAFLAGS}
 # GMAKE_OPTS should not be overridden because -p is essential.
-GMAKE_OPTS = $(foreach v,LDFLAGS OS,'$(v)=$($(v))') -p ${GNATFLAGS} -margs
+GMAKE_OPTS = -p ${GNAT_BUILDER_FLAGS} \
+  $(foreach v,ADAFLAGS LDFLAGS OS,'$(v)=$($(v))')
 
 # GNU-style directory variables
 prefix      = ${PREFIX}

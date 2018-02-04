@@ -50,7 +50,7 @@ standard project Anet_Tests is
    end case;
 
    package Compiler is
-      for Switches ("ada") use Compiler_Switches;
+      for Switches ("ada") use Compiler_Switches & Anet_Common.Adaflags;
    end Compiler;
 
    package Linker is

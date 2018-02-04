@@ -34,7 +34,8 @@ abstract project Anet_Common is
    OS : OS_Type := external ("OS", "linux");
 
    --  User settings should take precedence over any default.
-   Ldflags := External_As_List ("LDFLAGS", " ");
+   Adaflags := External_As_List ("ADAFLAGS", " ");
+   Ldflags  := External_As_List ("LDFLAGS", " ");
 
    Obj_Dir := "obj/" & OS;
 

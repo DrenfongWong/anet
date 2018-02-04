@@ -37,7 +37,7 @@ library project Anet_Lib is
 
    package Compiler is
       for Switches ("ada") use Anet_Common.Compiler_Switches
-        & "-gnatwale";
+        & ("-gnatwale") & Anet_Common.Adaflags;
    end Compiler;
 
 end Anet_Lib;
