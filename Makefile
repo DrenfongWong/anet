@@ -31,7 +31,7 @@ NUM_CPUS ?= 1
 GNAT_BUILDER_FLAGS ?= -R -j$(NUM_CPUS)
 # GMAKE_OPTS should not be overridden because -p is essential.
 GMAKE_OPTS = -p ${GNAT_BUILDER_FLAGS} \
-  $(foreach v,ADAFLAGS LDFLAGS OS,'$(v)=$($(v))')
+  $(foreach v,ADAFLAGS LDFLAGS OS VERSION,'-X$(v)=$($(v))')
 
 # GNU-style directory variables
 prefix      = ${PREFIX}
@@ -43,11 +43,10 @@ gprdir      = ${prefix}/lib/gnat
 all: build_lib
 
 build_lib:
-	@gprbuild $(GMAKE_OPTS) -Panet_lib -XVERSION="$(VERSION)" \
-		-XLIBRARY_KIND="$(LIBRARY_KIND)"
+	@gprbuild $(GMAKE_OPTS) anet_lib.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
 
 build_tests:
-	@gprbuild $(GMAKE_OPTS) -Panet_tests
+	@gprbuild $(GMAKE_OPTS) anet_tests.gpr -XLIBRARY_KIND=static -XBUILD=tests
 
 tests: build_tests
 	@$(OBJDIR)/$(TESTDIR)/test_runner
@@ -56,14 +55,14 @@ build_all: build_tests build_lib
 
 cov:
 	@rm -f $(COVDIR)/*.gcda
-	@gprbuild $(GMAKE_OPTS) -Panet_tests.gpr -XBUILD="coverage"
+	@gprbuild $(GMAKE_OPTS) anet_tests.gpr -XLIBRARY_KIND=static -XBUILD=coverage
 	@$(COVDIR)/test_runner || true
 	@lcov -c -d $(COVDIR) -o $(COVDIR)/cov.info
 	@lcov -e $(COVDIR)/cov.info "$(PWD)/src/*.adb" -o $(COVDIR)/cov.info
 	@genhtml --no-branch-coverage $(COVDIR)/cov.info -o $(COVDIR)
 
 examples:
-	@gprbuild $(GMAKE_OPTS) -Panet_examples
+	@gprbuild $(GMAKE_OPTS) anet_examples.gpr -XLIBRARY_KIND=static
 
 install: install_lib install_$(LIBRARY_KIND)
 

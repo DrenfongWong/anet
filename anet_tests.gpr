@@ -27,7 +27,7 @@ with "anet_common";
 standard project Anet_Tests is
 
    type Build_Type is ("tests", "coverage");
-   Build : Build_Type := external ("BUILD", "tests");
+   Build : Build_Type := external ("BUILD");
 
    Compiler_Switches := Anet_Common.Compiler_Switches & "-gnatwal";
    Linker_Switches   := ();
