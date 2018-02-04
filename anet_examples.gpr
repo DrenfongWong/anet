@@ -38,7 +38,7 @@ standard project Anet_Examples is
    for Main use Examples;
 
    package Compiler is
-      for Default_Switches ("ada") use Anet_Common.Compiler_Switches
+      for Switches ("ada") use Anet_Common.Compiler_Switches
         & "-gnatwale";
    end Compiler;
 

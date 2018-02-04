@@ -54,15 +54,15 @@ standard project Anet_Tests is
    end case;
 
    package Compiler is
-      for Default_Switches ("ada") use Compiler_Switches;
+      for Switches ("ada") use Compiler_Switches;
    end Compiler;
 
    package Linker is
-      for Default_Switches ("ada") use Linker_Switches;
+      for Switches ("ada") use Linker_Switches;
    end Linker;
 
    package Binder is
-      for Default_Switches ("ada") use Anet_Common.Binder_Switches;
+      for Switches ("ada") use Anet_Common.Binder_Switches;
    end Binder;
 
 end Anet_Tests;
