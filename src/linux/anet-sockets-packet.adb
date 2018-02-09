@@ -22,7 +22,7 @@
 --
 
 with Anet.Errno;
-with Anet.Net_Ifaces;
+with Anet.Sockets.Net_Ifaces;
 with Anet.Sockets.Thin.Packet;
 with Anet.Constants;
 with Anet.Byte_Swapping;

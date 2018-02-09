@@ -23,7 +23,7 @@
 
 with Anet.Types;
 
-package Anet.Net_Ifaces is
+package Anet.Sockets.Net_Ifaces is
 
    function Get_Iface_Index (Name : Types.Iface_Name_Type) return Positive;
    --  Get interface index of interface given by name.
@@ -49,4 +49,4 @@ package Anet.Net_Ifaces is
    --  Set state of interface given by name. If state is True the interface is
    --  brought up.
 
-end Anet.Net_Ifaces;
+end Anet.Sockets.Net_Ifaces;

@@ -25,7 +25,7 @@ with Anet.Errno;
 with Anet.Constants;
 with Anet.OS_Constants;
 with Anet.Sockets.Thin.Inet;
-with Anet.Net_Ifaces;
+with Anet.Sockets.Net_Ifaces;
 with Anet.Sockets.Inet.Iface;
 with Anet.Byte_Swapping;
 

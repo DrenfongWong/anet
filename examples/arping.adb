@@ -27,8 +27,8 @@ with Ada.Command_Line;
 
 with Anet.ARP;
 with Anet.Types;
-with Anet.Net_Ifaces;
 with Anet.Sockets.Packet;
+with Anet.Sockets.Net_Ifaces;
 with Anet.Receivers.Datagram;
 
 --  Usage: ./arping <iface> <IP>
@@ -48,7 +48,7 @@ is
    --  Address to ping.
 
    My_Ether_Addr : constant Anet.Ether_Addr_Type
-     := Anet.Net_Ifaces.Get_Iface_Mac (Name => Iface);
+     := Anet.Sockets.Net_Ifaces.Get_Iface_Mac (Name => Iface);
    --  My hardware address.
 
    procedure Handle_Reply
@@ -86,7 +86,7 @@ is
    Socket   : aliased Anet.Sockets.Packet.UDP_Socket_Type;
    Receiver : Arp_Receiver.Receiver_Type (S => Socket'Access);
    My_IP    : constant Anet.IPv4_Addr_Type
-     := Anet.Net_Ifaces.Get_Iface_IP (Name => Iface);
+     := Anet.Sockets.Net_Ifaces.Get_Iface_IP (Name => Iface);
 begin
    Socket.Init (Protocol => Anet.Sockets.Packet.Proto_Packet_Arp);
    Socket.Bind (Iface => Iface);
