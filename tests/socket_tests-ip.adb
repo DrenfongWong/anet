@@ -89,6 +89,7 @@ package body Socket_Tests.IP is
         := Test_Utils.Get_Random_Port;
 
       task Server is
+         entry Start;
          entry Finished;
       end Server;
 
@@ -100,6 +101,8 @@ package body Socket_Tests.IP is
          Sock.Bind (Address => Loopback_Addr_V4,
                     Port    => Srv_Port);
          Sock.Listen;
+
+         accept Start;
          Sock.Accept_Connection (New_Socket => New_Sock,
                                  Src        => Src);
 
@@ -112,6 +115,8 @@ package body Socket_Tests.IP is
       Cli.Init;
       Cli.Bind (Address => Loopback_Addr_V4,
                 Port    => Cli_Port);
+
+      Server.Start;
       Cli.Connect (Address => Loopback_Addr_V4,
                    Port    => Srv_Port);
 
@@ -129,6 +134,11 @@ package body Socket_Tests.IP is
               & Anet.To_String (Address => Src.Addr));
       Assert (Condition => Src.Port = Cli_Port,
               Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
    end Accept_Source_V4;
 
    -------------------------------------------------------------------------
@@ -145,6 +155,7 @@ package body Socket_Tests.IP is
         := Test_Utils.Get_Random_Port;
 
       task Server is
+         entry Start;
          entry Finished;
       end Server;
 
@@ -156,6 +167,8 @@ package body Socket_Tests.IP is
          Sock.Bind (Address => Loopback_Addr_V6,
                     Port    => Srv_Port);
          Sock.Listen;
+
+         accept Start;
          Sock.Accept_Connection (New_Socket => New_Sock,
                                  Src        => Src);
 
@@ -168,6 +181,8 @@ package body Socket_Tests.IP is
       Cli.Init;
       Cli.Bind (Address => Loopback_Addr_V6,
                 Port    => Cli_Port);
+
+      Server.Start;
       Cli.Connect (Address => Loopback_Addr_V6,
                    Port    => Srv_Port);
 
@@ -185,6 +200,11 @@ package body Socket_Tests.IP is
               & Anet.To_String (Address => Src.Addr));
       Assert (Condition => Src.Port = Cli_Port,
               Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
    end Accept_Source_V6;
 
    -------------------------------------------------------------------------
@@ -459,6 +479,11 @@ package body Socket_Tests.IP is
               & Anet.To_String (Address => Src.Addr));
       Assert (Condition => Src.Port = Cli_Port,
               Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
    end Receive_Source_V4;
 
    -------------------------------------------------------------------------
@@ -518,6 +543,11 @@ package body Socket_Tests.IP is
               & Anet.To_String (Address => Src.Addr));
       Assert (Condition => Src.Port = Cli_Port,
               Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
    end Receive_Source_V6;
 
    -------------------------------------------------------------------------
