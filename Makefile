@@ -7,8 +7,8 @@ SRCDIR    = src
 GPR_FILES = gnat/*.gpr
 
 MAJOR    = 0
-MINOR    = 3
-REVISION = 4
+MINOR    = 4
+REVISION = 0
 VERSION  = $(MAJOR).$(MINOR).$(REVISION)
 ANET     = libanet-$(VERSION)
 TARBALL  = $(ANET).tar.bz2
