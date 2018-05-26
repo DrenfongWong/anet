@@ -17,7 +17,7 @@ Homepage: https://www.codelabs.ch/anet/
 Vcs-Browser: https://git.codelabs.ch/?p=anet.git
 Vcs-Git: https://git.codelabs.ch/git/anet.git -b debian
 
-Package: libanet0.3.4
+Package: libanet0.4.1
 Architecture: any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -26,7 +26,7 @@ Description: Ada networking library
  provides a BSD socket implementation with a high level of abstraction and an
  extendable socket type hierarchy.
 
-Package: libanet2-dev
+Package: libanet3-dev
 # This line is parsed by debian/rules.
 Section: libdevel
 Architecture: any
