@@ -43,26 +43,26 @@ gprdir      = ${prefix}/lib/gnat
 all: build_lib
 
 build_lib:
-	@gprbuild $(GMAKE_OPTS) anet_lib.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
+	gprbuild $(GMAKE_OPTS) anet_lib.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
 
 build_tests:
-	@gprbuild $(GMAKE_OPTS) anet_tests.gpr -XLIBRARY_KIND=static -XBUILD=tests
+	gprbuild $(GMAKE_OPTS) anet_tests.gpr -XLIBRARY_KIND=static -XBUILD=tests
 
 tests: build_tests
-	@$(OBJDIR)/$(TESTDIR)/test_runner
+	$(OBJDIR)/$(TESTDIR)/test_runner
 
 build_all: build_tests build_lib
 
 cov:
-	@rm -f $(COVDIR)/*.gcda
-	@gprbuild $(GMAKE_OPTS) anet_tests.gpr -XLIBRARY_KIND=static -XBUILD=coverage
-	@$(COVDIR)/test_runner || true
-	@lcov -c -d $(COVDIR) -o $(COVDIR)/cov.info
-	@lcov -e $(COVDIR)/cov.info "$(PWD)/src/*.adb" -o $(COVDIR)/cov.info
-	@genhtml --no-branch-coverage $(COVDIR)/cov.info -o $(COVDIR)
+	rm -f $(COVDIR)/*.gcda
+	gprbuild $(GMAKE_OPTS) anet_tests.gpr -XLIBRARY_KIND=static -XBUILD=coverage
+	$(COVDIR)/test_runner || true
+	lcov -c -d $(COVDIR) -o $(COVDIR)/cov.info
+	lcov -e $(COVDIR)/cov.info "$(PWD)/src/*.adb" -o $(COVDIR)/cov.info
+	genhtml --no-branch-coverage $(COVDIR)/cov.info -o $(COVDIR)
 
 examples:
-	@gprbuild $(GMAKE_OPTS) anet_examples.gpr -XLIBRARY_KIND=static
+	gprbuild $(GMAKE_OPTS) anet_examples.gpr -XLIBRARY_KIND=static
 
 install: install_lib install_$(LIBRARY_KIND)
 
@@ -88,15 +88,15 @@ install_tests: build_tests
 	cp -r data $(DESTDIR)$(prefix)/$(TESTDIR)
 
 doc:
-	@$(MAKE) -C doc
+	$(MAKE) -C doc
 
 clean:
-	@rm -rf $(OBJDIR)
-	@rm -rf $(LIBDIR)
-	@$(MAKE) -C doc clean
+	rm -rf $(OBJDIR)
+	rm -rf $(LIBDIR)
+	$(MAKE) -C doc clean
 
 dist:
 	@echo "Creating release tarball $(TARBALL) ... "
-	@git archive --format=tar HEAD --prefix $(ANET)/ | bzip2 > $(TARBALL)
+	git archive --format=tar HEAD --prefix $(ANET)/ | bzip2 > $(TARBALL)
 
 .PHONY: doc examples tests
