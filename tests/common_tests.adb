@@ -27,8 +27,6 @@ with Ahven.Text_Runner;
 with Type_Tests;
 with OS_Tests;
 with Util_Tests;
-with Socket_Tests.IP;
-with Socket_Tests.Unix;
 with ARP_Tests;
 with UDP_Tests;
 with IP_Tests;
@@ -52,10 +50,6 @@ package body Common_Tests is
                 T     => new OS_Tests.Testcase);
       Add_Test (Suite => Suite.all,
                 T     => new Util_Tests.Testcase);
-      Add_Test (Suite => Suite.all,
-                T     => new Socket_Tests.IP.Testcase);
-      Add_Test (Suite => Suite.all,
-                T     => new Socket_Tests.Unix.Testcase);
       Add_Test (Suite => Suite.all,
                 T     => new ARP_Tests.Testcase);
       Add_Test (Suite => Suite.all,
