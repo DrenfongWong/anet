@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with Anet.Net_Ifaces;
+with Anet.Sockets.Net_Ifaces;
 
 with Test_Utils;
 with Test_Constants;
@@ -40,7 +40,7 @@ package body Net_Ifaces_Tests is
          Index : Positive;
          pragma Unreferenced (Index);
       begin
-         Index := Net_Ifaces.Get_Iface_Index (Name => "nonexistent");
+         Index := Sockets.Net_Ifaces.Get_Iface_Index (Name => "nonexistent");
          Fail (Message => "Expected socket error (nonexistent)");
 
       exception
@@ -53,7 +53,7 @@ package body Net_Ifaces_Tests is
    procedure Get_Loopback_Interface_IP
    is
    begin
-      Assert (Condition => Net_Ifaces.Get_Iface_IP
+      Assert (Condition => Sockets.Net_Ifaces.Get_Iface_IP
               (Name => Test_Constants.Loopback_Iface_Name) = Loopback_Addr_V4,
               Message   => "Loopback IP not 127.0.0.1");
    end Get_Loopback_Interface_IP;
@@ -70,7 +70,7 @@ package body Net_Ifaces_Tests is
          Skip (Message => "Not supported");
       end if;
 
-      Assert (Condition => Net_Ifaces.Get_Iface_Mac
+      Assert (Condition => Sockets.Net_Ifaces.Get_Iface_Mac
               (Name => Test_Constants.Loopback_Iface_Name) = Ref_Mac,
               Message   => "Loopback Mac not zero");
 
@@ -78,7 +78,7 @@ package body Net_Ifaces_Tests is
          Mac : Hardware_Addr_Type (1 .. 6);
          pragma Unreferenced (Mac);
       begin
-         Mac := Net_Ifaces.Get_Iface_Mac (Name => "nonexistent");
+         Mac := Sockets.Net_Ifaces.Get_Iface_Mac (Name => "nonexistent");
          Fail (Message => "Expected socket error (nonexistent)");
 
       exception

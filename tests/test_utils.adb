@@ -39,7 +39,7 @@ package body Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Inet.UDPv4_Sockaddr_Type)
+      Src  : Anet.Sockets.Inet.IPv4_Sockaddr_Type)
    is
    begin
       Buffer (Buffer'First .. Data'Length) := Data;
@@ -51,7 +51,7 @@ package body Test_Utils is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Inet.UDPv6_Sockaddr_Type)
+      Src  : Anet.Sockets.Inet.IPv6_Sockaddr_Type)
    is
    begin
       Buffer (Buffer'First .. Data'Length) := Data;
@@ -74,10 +74,12 @@ package body Test_Utils is
    -------------------------------------------------------------------------
 
    procedure Echo
-     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+     (Src       :     Address_Type;
+      Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;
       Send_Last : out Ada.Streams.Stream_Element_Offset)
    is
+      pragma Unreferenced (Src);
    begin
       Send_Data (Send_Data'First .. Recv_Data'Length) := Recv_Data;
       Send_Last := Recv_Data'Length;
@@ -162,7 +164,7 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
-   function Get_Last_Address return Anet.Sockets.Inet.UDPv4_Sockaddr_Type
+   function Get_Last_Address return Anet.Sockets.Inet.IPv4_Sockaddr_Type
    is
    begin
       return Last_Addr_v4;
@@ -170,7 +172,7 @@ package body Test_Utils is
 
    -------------------------------------------------------------------------
 
-   function Get_Last_Address return Anet.Sockets.Inet.UDPv6_Sockaddr_Type
+   function Get_Last_Address return Anet.Sockets.Inet.IPv6_Sockaddr_Type
    is
    begin
       return Last_Addr_v6;
@@ -196,7 +198,7 @@ package body Test_Utils is
 
    procedure Raise_Error
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Inet.UDPv4_Sockaddr_Type)
+      Src  : Anet.Sockets.Inet.IPv4_Sockaddr_Type)
    is
    begin
       raise Constraint_Error with "DO NOT PANIC: Explicit raise";

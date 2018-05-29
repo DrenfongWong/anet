@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012      secunet Security Networks AG
---  Copyright (C) 2012-2014 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2018 secunet Security Networks AG
+--  Copyright (C) 2018 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2018 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -21,23 +21,34 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with "anet_common";
+package Anet.ARP is
 
-library project Anet_Lib is
+   ARP_Header_Length : constant := 28;
+   --  ARP for IPv4 header size in bytes.
 
-   for Source_Dirs use
-     ("src",
-      "src/" & Anet_Common.OS);
-   for Object_Dir use Anet_Common.Obj_Dir & "/lib/" & Anet_Common.Libtype;
-   for Library_Name use "anet";
-   for Library_Dir use "lib/" & Anet_Common.OS & "/" & Anet_Common.Libtype;
-   for Library_Kind use Anet_Common.Libtype;
-   for Library_Version use "libanet.so." & Anet_Common.Version;
-   for Leading_Library_Options use Anet_Common.Ldflags;
+   type Operation_Type is
+     (ARP_Request,
+      ARP_Reply);
 
-   package Compiler is
-      for Switches ("ada") use Anet_Common.Compiler_Switches
-        & ("-gnatwale") & Anet_Common.Adaflags;
-   end Compiler;
+   type Header_Type is record
+      Operation : Operation_Type;
+      Src_Ether : Ether_Addr_Type;
+      Src_IP    : IPv4_Addr_Type;
+      Dst_Ether : Ether_Addr_Type;
+      Dst_IP    : IPv4_Addr_Type;
+   end record;
+   --  ARP header data.
 
-end Anet_Lib;
+   function To_Stream
+     (Header : Header_Type)
+      return Ada.Streams.Stream_Element_Array;
+   --  Convert given ARP header to stream element array.
+
+   function To_Header
+     (Buffer : Ada.Streams.Stream_Element_Array)
+      return Header_Type;
+   --  Convert stream element array to ARP header.
+
+   Invalid_ARP_Packet : exception;
+
+end Anet.ARP;

@@ -21,7 +21,7 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-project Anet is
+library project Anet is
    for Source_Dirs use ("../../include/anet");
    for Library_Name use "anet";
    for Library_Dir use "../../lib";

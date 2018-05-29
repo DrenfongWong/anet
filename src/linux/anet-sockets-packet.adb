@@ -22,7 +22,7 @@
 --
 
 with Anet.Errno;
-with Anet.Net_Ifaces;
+with Anet.Sockets.Net_Ifaces;
 with Anet.Sockets.Thin.Packet;
 with Anet.Constants;
 with Anet.Byte_Swapping;
@@ -32,7 +32,8 @@ package body Anet.Sockets.Packet is
    package C renames Interfaces.C;
 
    Protocols : constant array (Protocol_Type) of Double_Byte
-     := (Proto_Packet_Ip  => Constants.ETH_P_IP,
+     := (Proto_Packet_Arp => Constants.ETH_P_ARP,
+         Proto_Packet_Ip  => Constants.ETH_P_IP,
          Proto_Packet_All => Constants.ETH_P_ALL);
    --  Packet protocol mapping.
 
@@ -42,6 +43,8 @@ package body Anet.Sockets.Packet is
      (Socket : in out Packet_Socket_Type;
       Iface  :        Types.Iface_Name_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       Value : Thin.Packet.Sockaddr_Ll_Type;
    begin
       Value.Sa_Protocol := C.unsigned_short (Socket.Protocol);
@@ -93,6 +96,7 @@ package body Anet.Sockets.Packet is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
       use type Ada.Streams.Stream_Element_Offset;
+      use type Interfaces.C.long;
 
       Res   : C.long;
       Saddr : Thin.Packet.Sockaddr_Ll_Type;
@@ -128,6 +132,8 @@ package body Anet.Sockets.Packet is
       To     : Hardware_Addr_Type;
       Iface  : Types.Iface_Name_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       Res     : C.long;
       Ll_Dest : Thin.Packet.Sockaddr_Ll_Type;
    begin

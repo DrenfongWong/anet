@@ -42,6 +42,8 @@ package body Anet.Sockets.Filters is
      (Socket : Socket_Type;
       Filter : Sock_Filter_Array)
    is
+      use type Interfaces.C.unsigned_long;
+
       Meta : Sock_Fprog_Type := (Len    => Filter'Length,
                                  Filter => Filter'Address);
    begin

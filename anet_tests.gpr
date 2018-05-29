@@ -24,29 +24,25 @@
 with "ahven";
 with "anet_common";
 
-project Anet_Tests is
+standard project Anet_Tests is
 
    type Build_Type is ("tests", "coverage");
-   Build : Build_Type := external ("BUILD", "tests");
+   Build : Build_Type := external ("BUILD");
 
    Compiler_Switches := Anet_Common.Compiler_Switches & "-gnatwal";
    Linker_Switches   := ();
-   Source_Dirs       := ("src", "tests");
 
    for Main use ("test_runner.adb");
-
-   case Anet_Common.OS is
-      when "linux" => Source_Dirs := Source_Dirs & "src/linux" & "tests/linux";
-      when "bsd"   => Source_Dirs := Source_Dirs & "src/bsd"   & "tests/bsd";
-   end case;
-   for Source_Dirs use Source_Dirs;
+   for Source_Dirs use
+     ("src",
+      "src/" & Anet_Common.OS,
+      "tests",
+      "tests/" & Anet_Common.OS);
+   for Object_Dir use Anet_Common.Obj_Dir & "/" & Build;
 
    case Build is
-      when "tests" =>
-         for Object_Dir use Anet_Common.Obj_Dir & "/tests";
-
+      when "tests"    => null;
       when "coverage" =>
-         for Object_Dir use Anet_Common.Obj_Dir & "/cov";
          Compiler_Switches := Compiler_Switches
            & ("-ftest-coverage", "-fprofile-arcs");
          Linker_Switches   := Linker_Switches
@@ -54,16 +50,13 @@ project Anet_Tests is
    end case;
 
    package Compiler is
-      for Default_Switches ("ada") use Compiler_Switches;
+      for Switches ("ada") use Compiler_Switches & Anet_Common.Adaflags;
    end Compiler;
 
    package Linker is
-      for Default_Switches ("ada") use Linker_Switches;
+      for Switches ("ada") use Linker_Switches & Anet_Common.Ldflags;
    end Linker;
 
-   package Binder is
-      for Default_Switches ("ada") use Anet_Common.Binder_Switches;
-   end Binder;
+   package Binder renames Anet_Common.Binder;
 
 end Anet_Tests;
-

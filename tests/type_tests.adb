@@ -136,14 +136,12 @@ package body Type_Tests is
       Addr3 : constant IPv6_Addr_Type :=
         (255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2);
    begin
-      Assert (Condition => To_String (Address => Addr1)
-              = "0000:0000:0000:0000:0000:0000:0000:0000",
+      Assert (Condition => To_String (Address => Addr1) = "::",
               Message   => "Addr1 mismatch");
       Assert (Condition => To_String (Address => Addr2)
-              = "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF",
+              = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
               Message   => "Addr2 mismatch");
-      Assert (Condition => To_String (Address => Addr3)
-              = "FF02:0000:0000:0000:0000:0000:0001:0002",
+      Assert (Condition => To_String (Address => Addr3) = "ff02::1:2",
               Message   => "Addr3 mismatch");
    end IPv6_Addr_To_String;
 
@@ -272,6 +270,14 @@ package body Type_Tests is
               (Str => "ff02:0000:0000:0000:0000:0000:0001:0002")
               = (255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2),
               Message   => "All_DHCP_Relay address mismatch");
+      Assert (Condition => To_IPv6_Addr
+              (Str => "ff02::0001:0002")
+              = (255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2),
+              Message   => "Shortform address mismatch (1)");
+      Assert (Condition => To_IPv6_Addr
+              (Str => "::1")
+              = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+              Message   => "Shortform address mismatch (2)");
 
       declare
          IP : IPv6_Addr_Type;

@@ -31,17 +31,28 @@ generic
    type Socket_Type is limited new Sockets.Stream_Socket_Type with private;
    --  Associated stream socket.
 
+   type Address_Type is private;
+   --  Associated address type.
+
+   with procedure Accept_Connection
+     (Socket     :     Socket_Type;
+      New_Socket : out Socket_Type;
+      Src        : out Address_Type);
+   --  Socket accept procedure.
+
 package Anet.Receivers.Stream is
 
    Buffsize : constant Ada.Streams.Stream_Element_Offset;
    --  Buffer size used.
 
    type Rcv_Send_Callback is not null access procedure
-     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+     (Src       :     Address_Type;
+      Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;
       Send_Last : out Ada.Streams.Stream_Element_Offset);
-   --  Receive/send callback. Recv_Data is the received data, the Send_Data out
-   --  parameter designates the response to the sender.
+   --  Receive/send callback. Recv_Data is the received data from the sender
+   --  identified by Src argument, the Send_Data out parameter designates the
+   --  response to the sender.
 
    type Receiver_Type (S : not null access Socket_Type)
      is tagged limited private;

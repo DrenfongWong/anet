@@ -21,17 +21,21 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-project Anet_Common is
+abstract project Anet_Common is
 
    for Source_Dirs use ();
 
-   Version := external ("VERSION", "unknown");
+   Version := external ("VERSION");
 
    type Lib_Type is ("static", "dynamic");
-   Libtype : Lib_Type := external ("LIBRARY_KIND", "static");
+   Libtype : Lib_Type := external ("LIBRARY_KIND");
 
    type OS_Type is ("linux", "bsd");
-   OS : OS_Type := external ("OS", "linux");
+   OS : OS_Type := external ("OS");
+
+   --  User settings should take precedence over any default.
+   Adaflags := External_As_List ("ADAFLAGS", " ");
+   Ldflags  := External_As_List ("LDFLAGS", " ");
 
    Obj_Dir := "obj/" & OS;
 
@@ -43,7 +47,12 @@ project Anet_Common is
                          "-gnato",
                          "-g");
 
-   Binder_Switches   := ("-E");
+   package Binder is
+      for Switches ("Ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      for Switches ("Ada") use Ldflags;
+   end Linker;
 
 end Anet_Common;
-

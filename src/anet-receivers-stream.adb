@@ -24,7 +24,8 @@
 package body Anet.Receivers.Stream is
 
    procedure Empty_Cb
-     (Recv_Data :     Ada.Streams.Stream_Element_Array;
+     (Src       :     Address_Type;
+      Recv_Data :     Ada.Streams.Stream_Element_Array;
       Send_Data : out Ada.Streams.Stream_Element_Array;
       Send_Last : out Ada.Streams.Stream_Element_Offset) is null;
 
@@ -79,6 +80,7 @@ package body Anet.Receivers.Stream is
 
    task body Receiver_Task
    is
+      Src            : Address_Type;
       Data_Callback  : Rcv_Send_Callback      := Empty_Cb'Access;
       Error_Callback : Error_Handler_Callback := No_Op_Cb'Access;
       Stop           : Boolean                := False;
@@ -110,8 +112,9 @@ package body Anet.Receivers.Stream is
                Parent.Trigger.Stop;
                exit Main_Loop;
             then abort
-               Parent.S.all.Accept_Connection
-                 (New_Socket => Parent.S_Comm);
+               Accept_Connection (Socket     => Parent.S.all,
+                                  New_Socket => Parent.S_Comm,
+                                  Src        => Src);
             end select;
 
             Processing_Loop :
@@ -138,7 +141,8 @@ package body Anet.Receivers.Stream is
                   Parent.Rcv_Count.Increment;
 
                   Data_Callback
-                    (Recv_Data => R_Buffer (R_Buffer'First .. R_Last),
+                    (Src       => Src,
+                     Recv_Data => R_Buffer (R_Buffer'First .. R_Last),
                      Send_Data => S_Buffer,
                      Send_Last => S_Last);
 

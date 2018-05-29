@@ -43,28 +43,169 @@ package body Socket_Tests.IP is
    package UDPv4_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Inet.UDPv4_Socket_Type,
-      Address_Type => Inet.UDPv4_Sockaddr_Type,
+      Address_Type => Inet.IPv4_Sockaddr_Type,
       Receive      => Inet.Receive);
 
    package UDPv6_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Inet.UDPv6_Socket_Type,
-      Address_Type => Inet.UDPv6_Sockaddr_Type,
+      Address_Type => Inet.IPv6_Sockaddr_Type,
       Receive      => Inet.Receive);
 
    package TCPv4_Receiver is new Receivers.Stream
-     (Buffer_Size  => 1024,
-      Socket_Type  => Inet.TCPv4_Socket_Type);
+     (Buffer_Size       => 1024,
+      Socket_Type       => Inet.TCPv4_Socket_Type,
+      Address_Type      => Inet.IPv4_Sockaddr_Type,
+      Accept_Connection => Inet.Accept_Connection);
 
    package TCPv6_Receiver is new Receivers.Stream
-     (Buffer_Size  => 1024,
-      Socket_Type  => Inet.TCPv6_Socket_Type);
+     (Buffer_Size       => 1024,
+      Socket_Type       => Inet.TCPv6_Socket_Type,
+      Address_Type      => Inet.IPv6_Sockaddr_Type,
+      Accept_Connection => Inet.Accept_Connection);
 
    procedure Error_Handler
      (E         :        Ada.Exceptions.Exception_Occurrence;
       Stop_Flag : in out Boolean);
    --  Receiver error handler callback for testing purposes. It ignores the
    --  exception and tells the receiver to terminate by setting the stop flag.
+
+   procedure Inet4_Echo is new Test_Utils.Echo
+     (Address_Type => Inet.IPv4_Sockaddr_Type);
+   procedure Inet6_Echo is new Test_Utils.Echo
+     (Address_Type => Inet.IPv6_Sockaddr_Type);
+
+   -------------------------------------------------------------------------
+
+   procedure Accept_Source_V4
+   is
+      Src : Inet.IPv4_Sockaddr_Type
+        := (Addr => Any_Addr,
+            Port => Any_Port);
+
+      Cli_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+      Srv_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+
+      task Server is
+         entry Start;
+         entry Finished;
+      end Server;
+
+      task body Server
+      is
+         Sock, New_Sock : Inet.TCPv4_Socket_Type;
+      begin
+         Sock.Init;
+         Sock.Bind (Address => Loopback_Addr_V4,
+                    Port    => Srv_Port);
+         Sock.Listen;
+
+         accept Start;
+         Sock.Accept_Connection (New_Socket => New_Sock,
+                                 Src        => Src);
+
+         accept Finished;
+      end Server;
+
+      Cli     : Inet.TCPv4_Socket_Type;
+      Aborted : Boolean := False;
+   begin
+      Cli.Init;
+      Cli.Bind (Address => Loopback_Addr_V4,
+                Port    => Cli_Port);
+
+      Server.Start;
+      Cli.Connect (Address => Loopback_Addr_V4,
+                   Port    => Srv_Port);
+
+      select
+         delay 2.0;
+         Aborted := True;
+      then abort
+         Server.Finished;
+      end select;
+      Assert (Condition => not Aborted,
+              Message   => "Task aborted");
+
+      Assert (Condition => Src.Addr = Loopback_Addr_V4,
+              Message   => "Source address mismatch: "
+              & Anet.To_String (Address => Src.Addr));
+      Assert (Condition => Src.Port = Cli_Port,
+              Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
+   end Accept_Source_V4;
+
+   -------------------------------------------------------------------------
+
+   procedure Accept_Source_V6
+   is
+      Src : Inet.IPv6_Sockaddr_Type
+        := (Addr => Any_Addr_V6,
+            Port => Any_Port);
+
+      Cli_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+      Srv_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+
+      task Server is
+         entry Start;
+         entry Finished;
+      end Server;
+
+      task body Server
+      is
+         Sock, New_Sock : Inet.TCPv6_Socket_Type;
+      begin
+         Sock.Init;
+         Sock.Bind (Address => Loopback_Addr_V6,
+                    Port    => Srv_Port);
+         Sock.Listen;
+
+         accept Start;
+         Sock.Accept_Connection (New_Socket => New_Sock,
+                                 Src        => Src);
+
+         accept Finished;
+      end Server;
+
+      Cli     : Inet.TCPv6_Socket_Type;
+      Aborted : Boolean := False;
+   begin
+      Cli.Init;
+      Cli.Bind (Address => Loopback_Addr_V6,
+                Port    => Cli_Port);
+
+      Server.Start;
+      Cli.Connect (Address => Loopback_Addr_V6,
+                   Port    => Srv_Port);
+
+      select
+         delay 2.0;
+         Aborted := True;
+      then abort
+         Server.Finished;
+      end select;
+      Assert (Condition => not Aborted,
+              Message   => "Task aborted");
+
+      Assert (Condition => Src.Addr = Loopback_Addr_V6,
+              Message   => "Source address mismatch: "
+              & Anet.To_String (Address => Src.Addr));
+      Assert (Condition => Src.Port = Cli_Port,
+              Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
+   end Accept_Source_V6;
 
    -------------------------------------------------------------------------
 
@@ -176,6 +317,18 @@ package body Socket_Tests.IP is
       T.Add_Test_Routine
         (Routine => Shutdown_Socket'Access,
          Name    => "Shutdown socket (IPv4)");
+      T.Add_Test_Routine
+        (Routine => Accept_Source_V4'Access,
+         Name    => "Peer src after accept (IPv4)");
+      T.Add_Test_Routine
+        (Routine => Accept_Source_V6'Access,
+         Name    => "Peer src after accept (IPv6)");
+      T.Add_Test_Routine
+        (Routine => Receive_Source_V4'Access,
+         Name    => "Peer src after receive (IPv4)");
+      T.Add_Test_Routine
+        (Routine => Receive_Source_V6'Access,
+         Name    => "Peer src after receive (IPv6)");
    end Initialize;
 
    -------------------------------------------------------------------------
@@ -268,6 +421,134 @@ package body Socket_Tests.IP is
       Assert (Condition => Aborted,
               Message   => "Receive not aborted");
    end Non_Blocking;
+
+   -------------------------------------------------------------------------
+
+   procedure Receive_Source_V4
+   is
+      Src : Inet.IPv4_Sockaddr_Type
+        := (Addr => Any_Addr,
+            Port => Any_Port);
+
+      Cli_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+      Srv_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+
+      task Server;
+
+      task body Server
+      is
+         Cli : Inet.UDPv4_Socket_Type;
+      begin
+         Cli.Init;
+         Cli.Bind (Address => Loopback_Addr_V4,
+                   Port    => Cli_Port);
+
+         --  Precautionary delay to make sure receiver is ready.
+
+         delay 0.2;
+
+         Cli.Send (Item     => Ada.Streams.Stream_Element_Array'(1 => 12),
+                   Dst_Addr => Loopback_Addr_V4,
+                   Dst_Port => Srv_Port);
+      end Server;
+
+      Sock    : Inet.UDPv4_Socket_Type;
+      Buffer  : Ada.Streams.Stream_Element_Array (1 .. 1);
+      Last    : Ada.Streams.Stream_Element_Offset;
+      Aborted : Boolean := False;
+   begin
+      Sock.Init;
+      Sock.Bind (Address => Loopback_Addr_V4,
+                 Port    => Srv_Port);
+
+      select
+         delay 2.0;
+         Aborted := True;
+      then abort
+         Sock.Receive (Src  => Src,
+                       Item => Buffer,
+                       Last => Last);
+      end select;
+      Assert (Condition => not Aborted,
+              Message   => "Receive aborted");
+
+      Assert (Condition => Src.Addr = Loopback_Addr_V4,
+              Message   => "Source address mismatch: "
+              & Anet.To_String (Address => Src.Addr));
+      Assert (Condition => Src.Port = Cli_Port,
+              Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
+   end Receive_Source_V4;
+
+   -------------------------------------------------------------------------
+
+   procedure Receive_Source_V6
+   is
+      Src : Inet.IPv6_Sockaddr_Type
+        := (Addr => Any_Addr_V6,
+            Port => Any_Port);
+
+      Cli_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+      Srv_Port : constant Test_Utils.Test_Port_Type
+        := Test_Utils.Get_Random_Port;
+
+      task Server;
+
+      task body Server
+      is
+         Cli : Inet.UDPv6_Socket_Type;
+      begin
+         Cli.Init;
+         Cli.Bind (Address => Loopback_Addr_V6,
+                   Port    => Cli_Port);
+
+         --  Precautionary delay to make sure receiver is ready.
+
+         delay 0.2;
+
+         Cli.Send (Item     => Ada.Streams.Stream_Element_Array'(1 => 12),
+                   Dst_Addr => Loopback_Addr_V6,
+                   Dst_Port => Srv_Port);
+      end Server;
+
+      Sock    : Inet.UDPv6_Socket_Type;
+      Buffer  : Ada.Streams.Stream_Element_Array (1 .. 1);
+      Last    : Ada.Streams.Stream_Element_Offset;
+      Aborted : Boolean := False;
+   begin
+      Sock.Init;
+      Sock.Bind (Address => Loopback_Addr_V6,
+                 Port    => Srv_Port);
+
+      select
+         delay 2.0;
+         Aborted := True;
+      then abort
+         Sock.Receive (Src  => Src,
+                       Item => Buffer,
+                       Last => Last);
+      end select;
+      Assert (Condition => not Aborted,
+              Message   => "Receive aborted");
+
+      Assert (Condition => Src.Addr = Loopback_Addr_V6,
+              Message   => "Source address mismatch: "
+              & Anet.To_String (Address => Src.Addr));
+      Assert (Condition => Src.Port = Cli_Port,
+              Message   => "Source port mismatch:" & Src.Port'Img);
+
+   exception
+      when others =>
+         abort Server;
+         raise;
+   end Receive_Source_V6;
 
    -------------------------------------------------------------------------
 
@@ -434,7 +715,7 @@ package body Socket_Tests.IP is
       S_Srv.Bind (Address => Loopback_Addr_V4,
                   Port    => Port);
 
-      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+      Rcvr.Listen (Callback => Inet4_Echo'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -537,7 +818,7 @@ package body Socket_Tests.IP is
       S_Srv.Bind (Address => Loopback_Addr_V6,
                   Port    => Port);
 
-      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+      Rcvr.Listen (Callback => Inet6_Echo'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 
@@ -594,7 +875,7 @@ package body Socket_Tests.IP is
       S_Srv.Init;
       S_Srv.Bind (Address => Loopback_Addr_V4,
                   Port    => Port);
-      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+      Rcvr.Listen (Callback => Inet4_Echo'Access);
 
       --  Precautionary delay to make sure receiver task is ready.
 

@@ -45,8 +45,13 @@ package body Socket_Tests.Unix is
       Receive      => Sockets.Unix.Receive);
 
    package Unix_TCP_Receiver is new Receivers.Stream
-     (Buffer_Size  => 1024,
-      Socket_Type  => Sockets.Unix.TCP_Socket_Type);
+     (Buffer_Size       => 1024,
+      Socket_Type       => Sockets.Unix.TCP_Socket_Type,
+      Address_Type      => Sockets.Unix.Full_Path_Type,
+      Accept_Connection => Sockets.Unix.Accept_Connection);
+
+   procedure Unix_Echo is new Test_Utils.Echo
+     (Address_Type => Sockets.Unix.Full_Path_Type);
 
    -------------------------------------------------------------------------
 
@@ -79,7 +84,6 @@ package body Socket_Tests.Unix is
    procedure Send_Unix_Datagram
    is
       use type Receivers.Count_Type;
-      use type Sockets.Unix.Path_Type;
 
       C            : Receivers.Count_Type := 0;
       Path         : constant String      := "/tmp/mysock-"
@@ -137,7 +141,7 @@ package body Socket_Tests.Unix is
       Util.Wait_For_File (Path     => Path,
                           Timespan => 2.0);
 
-      Rcvr.Listen (Callback => Test_Utils.Echo'Access);
+      Rcvr.Listen (Callback => Unix_Echo'Access);
 
       S_Cli.Init;
       S_Cli.Connect (Path => Sockets.Unix.Path_Type (Path));

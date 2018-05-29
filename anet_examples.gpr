@@ -24,16 +24,26 @@
 with "anet_common";
 with "anet_lib";
 
-project Anet_Examples is
+standard project Anet_Examples is
 
    for Source_Dirs use ("examples");
    for Object_Dir use Anet_Common.Obj_Dir & "/examples";
-   for Main use ("client", "server", "server_nonblocking");
+
+   Examples := ("client", "server", "server_nonblocking");
+   case Anet_Common.OS is
+      when "bsd"   => null;
+      when "linux" => Examples := Examples & "arping";
+   end case;
+
+   for Main use Examples;
 
    package Compiler is
-      for Default_Switches ("ada") use Anet_Common.Compiler_Switches
-        & "-gnatwale";
+      for Switches ("ada") use Anet_Common.Compiler_Switches
+        & ("-gnatwale") & Anet_Common.Adaflags;
    end Compiler;
 
-end Anet_Examples;
+   package Binder renames Anet_Common.Binder;
 
+   package Linker renames Anet_Common.Linker;
+
+end Anet_Examples;

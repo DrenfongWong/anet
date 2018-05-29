@@ -21,7 +21,6 @@
 --
 
 with Anet.Sockets.Netlink;
-with Anet.Sockets.Packet;
 
 package Test_Utils.GNU_Linux is
 
@@ -33,7 +32,7 @@ package Test_Utils.GNU_Linux is
 
    procedure Dump
      (Data : Ada.Streams.Stream_Element_Array;
-      Src  : Anet.Sockets.Packet.Ether_Addr_Type);
+      Src  : Anet.Ether_Addr_Type);
    --  This procedure dumps the given data to an internal buffer. Use the
    --  Get_Dump function to retrieve the content of the buffer.
 

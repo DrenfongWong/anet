@@ -25,12 +25,15 @@ with Anet.Errno;
 with Anet.Constants;
 with Anet.OS_Constants;
 with Anet.Sockets.Thin.Inet;
-with Anet.Net_Ifaces;
+with Anet.Sockets.Net_Ifaces;
 with Anet.Sockets.Inet.Iface;
+with Anet.Byte_Swapping;
 
 package body Anet.Sockets.Inet is
 
    package C renames Interfaces.C;
+
+   use type Interfaces.C.unsigned_long;
 
    procedure Receive
      (Socket :     C.int;
@@ -49,12 +52,28 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv4_Socket_Type;
       New_Socket : out TCPv4_Socket_Type)
    is
+      Unreferenced : IPv4_Sockaddr_Type;
+   begin
+      Accept_Connection (Socket     => Socket,
+                         New_Socket => New_Socket,
+                         Src        => Unreferenced);
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
+   procedure Accept_Connection
+     (Socket     :     TCPv4_Socket_Type;
+      New_Socket : out TCPv4_Socket_Type;
+      Src        : out IPv4_Sockaddr_Type)
+   is
       Res  : C.int;
       Sock : Thin.Inet.Sockaddr_In_Type
         (Family => Socket_Families.Family_Inet);
       Len  : aliased C.int := Sock'Size / 8;
    begin
       New_Socket.Sock_FD := -1;
+      Src := (Addr => Any_Addr,
+              Port => Any_Port);
 
       Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
@@ -68,6 +87,9 @@ package body Anet.Sockets.Inet is
               & "socket - " & Errno.Get_Errno_String;
          when Accept_Op_Ok =>
             New_Socket.Sock_FD := Res;
+            Src := (Addr => Sock.Sin_Addr,
+                    Port => Byte_Swapping.Network_To_Host
+                      (Input => Port_Type (Sock.Sin_Port)));
       end case;
    end Accept_Connection;
 
@@ -77,12 +99,28 @@ package body Anet.Sockets.Inet is
      (Socket     :     TCPv6_Socket_Type;
       New_Socket : out TCPv6_Socket_Type)
    is
+      Unreferenced : IPv6_Sockaddr_Type;
+   begin
+      Accept_Connection (Socket     => Socket,
+                         New_Socket => New_Socket,
+                         Src        => Unreferenced);
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
+   procedure Accept_Connection
+     (Socket     :     TCPv6_Socket_Type;
+      New_Socket : out TCPv6_Socket_Type;
+      Src        : out IPv6_Sockaddr_Type)
+   is
       Res  : C.int;
       Sock : Thin.Inet.Sockaddr_In_Type
         (Family => Socket_Families.Family_Inet6);
       Len  : aliased C.int := Sock'Size / 8;
    begin
       New_Socket.Sock_FD := -1;
+      Src := (Addr => Any_Addr_V6,
+              Port => Any_Port);
 
       Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
@@ -96,6 +134,9 @@ package body Anet.Sockets.Inet is
               & "socket - " & Errno.Get_Errno_String;
          when Accept_Op_Ok =>
             New_Socket.Sock_FD := Res;
+            Src := (Addr => Sock.Sin6_Addr,
+                    Port => Byte_Swapping.Network_To_Host
+                      (Input => Port_Type (Sock.Sin_Port)));
       end case;
    end Accept_Connection;
 
@@ -245,8 +286,6 @@ package body Anet.Sockets.Inet is
       Group  : IPv4_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      use type C.unsigned_short;
-
       Mreq       : Thin.IPv4_Mreq_Type;
       Iface_Addr : IPv4_Addr_Type := Any_Addr;
    begin
@@ -275,8 +314,6 @@ package body Anet.Sockets.Inet is
       Group  : IPv6_Addr_Type;
       Iface  : Types.Iface_Name_Type := "")
    is
-      use type C.unsigned_short;
-
       Mreq6     : Thin.IPv6_Mreq_Type;
       Iface_Idx : Natural := 0;
    begin
@@ -345,6 +382,7 @@ package body Anet.Sockets.Inet is
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
       use type Ada.Streams.Stream_Element_Offset;
+      use type Interfaces.C.long;
 
       Res : C.long;
       Len : aliased C.int := Src'Size / 8;
@@ -377,7 +415,7 @@ package body Anet.Sockets.Inet is
 
    procedure Receive
      (Socket :     UDPv4_Socket_Type;
-      Src    : out UDPv4_Sockaddr_Type;
+      Src    : out IPv4_Sockaddr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
@@ -390,14 +428,15 @@ package body Anet.Sockets.Inet is
                Last   => Last);
 
       Src.Addr := Sockaddr.Sin_Addr;
-      Src.Port := Port_Type (Sockaddr.Sin_Port);
+      Src.Port := Byte_Swapping.Network_To_Host
+        (Input => Port_Type (Sockaddr.Sin_Port));
    end Receive;
 
    -------------------------------------------------------------------------
 
    procedure Receive
      (Socket :     UDPv6_Socket_Type;
-      Src    : out UDPv6_Sockaddr_Type;
+      Src    : out IPv6_Sockaddr_Type;
       Item   : out Ada.Streams.Stream_Element_Array;
       Last   : out Ada.Streams.Stream_Element_Offset)
    is
@@ -410,7 +449,8 @@ package body Anet.Sockets.Inet is
                Last   => Last);
 
       Src.Addr := Sockaddr.Sin6_Addr;
-      Src.Port := Port_Type (Sockaddr.Sin_Port);
+      Src.Port := Byte_Swapping.Network_To_Host
+        (Input => Port_Type (Sockaddr.Sin_Port));
    end Receive;
 
    -------------------------------------------------------------------------

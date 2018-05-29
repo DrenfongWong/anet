@@ -66,15 +66,19 @@ package Anet is
    Any_Port : constant Port_Type;
 
    type HW_Addr_Len_Type is range 1 .. 16;
+   for HW_Addr_Len_Type'Size use 8;
    --  Allowed length for hardware addresses.
 
    type Hardware_Addr_Type is array (HW_Addr_Len_Type range <>) of Byte;
    --  Link-layer address.
 
+   subtype Ether_Addr_Type is Hardware_Addr_Type (1 .. 6);
+   --  Ethernet address.
+
    function To_String (Address : Hardware_Addr_Type) return String;
    --  Return string representation of a hardware address.
 
-   Bcast_HW_Addr : constant Hardware_Addr_Type;
+   Bcast_HW_Addr : constant Ether_Addr_Type;
    --  ff:ff:ff:ff:ff:ff
 
    type IPv4_Addr_Type is array (1 .. 4) of Byte;
@@ -122,9 +126,8 @@ private
    for Word32'Size use 32;
    for IPv4_Addr_Type'Size use 32;
    for IPv6_Addr_Type'Size use 128;
-   for HW_Addr_Len_Type'Size use 8;
 
-   Bcast_HW_Addr : constant Hardware_Addr_Type (1 .. 6) := (others => 255);
+   Bcast_HW_Addr : constant Ether_Addr_Type := (others => 255);
 
    Any_Addr         : constant IPv4_Addr_Type := (others => 0);
    Loopback_Addr_V4 : constant IPv4_Addr_Type := (127, 0, 0, 1);

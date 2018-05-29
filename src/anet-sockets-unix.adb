@@ -36,11 +36,26 @@ package body Anet.Sockets.Unix is
      (Socket     :     TCP_Socket_Type;
       New_Socket : out TCP_Socket_Type)
    is
+      Unreferenced : Full_Path_Type;
+   begin
+      Accept_Connection (Socket     => Socket,
+                         New_Socket => New_Socket,
+                         Src        => Unreferenced);
+   end Accept_Connection;
+
+   -------------------------------------------------------------------------
+
+   procedure Accept_Connection
+     (Socket     :     TCP_Socket_Type;
+      New_Socket : out TCP_Socket_Type;
+      Src        : out Full_Path_Type)
+   is
       Res  : C.int;
       Sock : Thin.Unix.Sockaddr_Un_Type;
       Len  : aliased C.int := Sock'Size / 8;
    begin
       New_Socket.Sock_FD := -1;
+      Src                := (others => ASCII.NUL);
 
       Res := Thin.C_Accept (S       => Socket.Sock_FD,
                             Name    => Sock'Address,
@@ -56,6 +71,13 @@ package body Anet.Sockets.Unix is
             New_Socket.Sock_FD         := Res;
             New_Socket.Path            := Socket.Path;
             New_Socket.Delete_On_Close := False;
+
+            declare
+               Path_Str : constant String
+                 := Ada.Strings.Unbounded.To_String (Socket.Path);
+            begin
+               Src (Src'First .. Path_Str'Length) := Path_Type (Path_Str);
+            end;
       end case;
    end Accept_Connection;
 
@@ -65,6 +87,8 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin
@@ -101,6 +125,8 @@ package body Anet.Sockets.Unix is
      (Socket : in out Unix_Socket_Type;
       Path   :        Path_Type)
    is
+      use type Interfaces.C.unsigned_long;
+
       C_Path : constant C.char_array := C.To_C (String (Path));
       Value  : Thin.Unix.Sockaddr_Un_Type;
    begin

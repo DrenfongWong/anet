@@ -25,11 +25,11 @@ with Interfaces.C;
 
 with Anet.Errno;
 with Anet.Constants;
+with Anet.Sockets.Inet;
 with Anet.Sockets.Thin.Netdev.Requests;
 
-package body Anet.Net_Ifaces is
+package body Anet.Sockets.Net_Ifaces is
 
-   use Anet.Sockets.Thin;
    use Anet.Sockets.Thin.Netdev;
    use Anet.Sockets.Thin.Netdev.Requests;
 
@@ -112,8 +112,6 @@ package body Anet.Net_Ifaces is
       Iface_Name : Types.Iface_Name_Type)
       return If_Req_Type
    is
-      use type C.int;
-
       C_Name : constant C.char_array := C.To_C (String (Iface_Name));
       If_Req : aliased If_Req_Type (Name => Request);
    begin
@@ -150,26 +148,21 @@ package body Anet.Net_Ifaces is
       return If_Req_Type
    is
       Req  : If_Req_Type;
-      Sock : C.int;
-      Res  : C.int;
-      pragma Unreferenced (Res);
-      --  Ignore socket close errors.
+      Sock : Sockets.Inet.UDPv4_Socket_Type;
    begin
-      Sock := C_Socket (Domain   => Constants.Sys.AF_INET,
-                        Typ      => Constants.Sys.SOCK_DGRAM,
-                        Protocol => 0);
+      Sock.Init;
 
       begin
-         Req := Ioctl_Get (Socket     => Sock,
+         Req := Ioctl_Get (Socket     => Socket_Type (Sock).Sock_FD,
                            Request    => Request,
                            Iface_Name => Iface_Name);
 
       exception
          when Socket_Error =>
-            Res := C_Close (Fd => Sock);
+            Sock.Close;
             raise;
       end;
-      Res := C_Close (Fd => Sock);
+      Sock.Close;
 
       return Req;
    end Query_Iface;
@@ -180,13 +173,10 @@ package body Anet.Net_Ifaces is
      (Name  : Types.Iface_Name_Type;
       State : Boolean)
    is
-      use type C.int;
-
-      Res, Sock : C.int;
+      Sock : Inet.UDPv4_Socket_Type;
+      Res  : C.int;
    begin
-      Sock := C_Socket (Domain   => Constants.Sys.AF_INET,
-                        Typ      => Constants.Sys.SOCK_DGRAM,
-                        Protocol => 0);
+      Sock.Init;
 
       declare
          C_Name : constant C.char_array := C.To_C (String (Name));
@@ -201,7 +191,7 @@ package body Anet.Net_Ifaces is
          end if;
 
          Res := C_Ioctl
-           (S   => Sock,
+           (S   => Socket_Type (Sock).Sock_FD,
             Req => Set_Requests (If_Flags),
             Arg => Req'Access);
          Errno.Check_Or_Raise
@@ -211,11 +201,10 @@ package body Anet.Net_Ifaces is
 
       exception
          when Socket_Error =>
-            Res := C_Close (Fd => Sock);
+            Sock.Close;
             raise;
       end;
-      Res := C_Close (Fd => Sock);
-      pragma Unreferenced (Res);
+      Sock.Close;
    end Set_Iface_State;
 
-end Anet.Net_Ifaces;
+end Anet.Sockets.Net_Ifaces;

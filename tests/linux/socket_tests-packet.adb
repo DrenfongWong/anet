@@ -37,13 +37,13 @@ package body Socket_Tests.Packet is
    package Packet_UDP_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Sockets.Packet.UDP_Socket_Type,
-      Address_Type => Sockets.Packet.Ether_Addr_Type,
+      Address_Type => Ether_Addr_Type,
       Receive      => Sockets.Packet.Receive);
 
    package Packet_Raw_Receiver is new Receivers.Datagram
      (Buffer_Size  => 1024,
       Socket_Type  => Sockets.Packet.Raw_Socket_Type,
-      Address_Type => Sockets.Packet.Ether_Addr_Type,
+      Address_Type => Ether_Addr_Type,
       Receive      => Sockets.Packet.Receive);
 
    -------------------------------------------------------------------------

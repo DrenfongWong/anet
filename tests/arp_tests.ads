@@ -1,7 +1,7 @@
 --
---  Copyright (C) 2012      secunet Security Networks AG
---  Copyright (C) 2012-2014 Reto Buerki <reet@codelabs.ch>
---  Copyright (C) 2012-2014 Adrian-Ken Rueegsegger <ken@codelabs.ch>
+--  Copyright (C) 2018 secunet Security Networks AG
+--  Copyright (C) 2018 Reto Buerki <reet@codelabs.ch>
+--  Copyright (C) 2018 Adrian-Ken Rueegsegger <ken@codelabs.ch>
 --
 --  This program is free software; you can redistribute it and/or modify it
 --  under the terms of the GNU General Public License as published by the
@@ -21,23 +21,19 @@
 --  executable file might be covered by the GNU Public License.
 --
 
-with "anet_common";
+with Ahven.Framework;
 
-library project Anet_Lib is
+package ARP_Tests is
 
-   for Source_Dirs use
-     ("src",
-      "src/" & Anet_Common.OS);
-   for Object_Dir use Anet_Common.Obj_Dir & "/lib/" & Anet_Common.Libtype;
-   for Library_Name use "anet";
-   for Library_Dir use "lib/" & Anet_Common.OS & "/" & Anet_Common.Libtype;
-   for Library_Kind use Anet_Common.Libtype;
-   for Library_Version use "libanet.so." & Anet_Common.Version;
-   for Leading_Library_Options use Anet_Common.Ldflags;
+   type Testcase is new Ahven.Framework.Test_Case with null record;
 
-   package Compiler is
-      for Switches ("ada") use Anet_Common.Compiler_Switches
-        & ("-gnatwale") & Anet_Common.Adaflags;
-   end Compiler;
+   procedure Initialize (T : in out Testcase);
+   --  Initialize testcase.
 
-end Anet_Lib;
+   procedure Header_To_Stream;
+   --  Verify ARP header to stream conversion.
+
+   procedure Stream_To_Header;
+   --  Verify stream to ARP header conversion.
+
+end ARP_Tests;
