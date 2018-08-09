@@ -2,7 +2,8 @@ Source: anet
 Section: libs
 Priority: optional
 Maintainer: Reto Buerki <reet@codelabs.ch>
-Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>
+Uploaders: Adrian-Ken Rueegsegger <ken@codelabs.ch>,
+ Nicolas Boulenguez <nicolas@debian.org>
 Build-Depends: asciidoc, debhelper (>= 10),
  gnat, gnat-7,
  dh-ada-library,
