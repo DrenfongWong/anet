@@ -1,0 +1,28 @@
+From: Nicolas Boulenguez <nicolas@debian.org>
+Date: Tue, 29 May 2018 21:14:18 +0200
+Subject: Disable socket tests
+
+With 0.3.4-1, one test freezes on amd64 pbuilder:
+tests/socket_tests-ip.Send_Multicast_V6.
+
+All tests in the socket_tests-ip and socket_tests-unix suites fail on a
+mips porterbox.
+---
+ tests/common_tests.adb | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/tests/common_tests.adb b/tests/common_tests.adb
+index 73715c4..7002796 100644
+--- a/tests/common_tests.adb
++++ b/tests/common_tests.adb
+@@ -52,10 +52,6 @@ package body Common_Tests is
+                 T     => new OS_Tests.Testcase);
+       Add_Test (Suite => Suite.all,
+                 T     => new Util_Tests.Testcase);
+-      Add_Test (Suite => Suite.all,
+-                T     => new Socket_Tests.IP.Testcase);
+-      Add_Test (Suite => Suite.all,
+-                T     => new Socket_Tests.Unix.Testcase);
+       Add_Test (Suite => Suite.all,
+                 T     => new ARP_Tests.Testcase);
+       Add_Test (Suite => Suite.all,
