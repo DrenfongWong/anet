@@ -1,3 +1,23 @@
+anet (0.4.1-1) experimental; urgency=medium
+
+  [ Reto Buerki ]
+  * Update to release 0.4.1 (Closes: #887406)
+  * Standards-Version: 4.1.5. Rules-Requires-Root: no
+  * Add gprbuild to Build-Depends
+  * Disable all socket tests
+
+  [ Nicolas Boulenguez ]
+  * Switch to debhelper 11
+  * Get dev_pkg and gnat_version slightly more efficiently
+  * Pass VERSION=unused to dh_ada_library
+  * Install examples
+  * Update copyright years
+  * Rename shared library and -dev package
+  * Drop source/local-options
+  * Rebuild with gnat-8 (Closes: #903978)
+
+ -- Reto Buerki <reet@codelabs.ch>  Thu, 09 Aug 2018 15:26:07 +0200
+
 anet (0.3.4-1) unstable; urgency=medium
 
   [ Reto Buerki ]
