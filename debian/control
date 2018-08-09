@@ -8,7 +8,8 @@ Build-Depends: asciidoc, debhelper (>= 10),
  dh-ada-library,
  libahven6-dev,
  source-highlight
-Standards-Version: 4.1.0
+Standards-Version: 4.1.5
+Rules-Requires-Root: no
 Homepage: https://www.codelabs.ch/anet/
 Vcs-Browser: https://git.codelabs.ch/?p=anet.git
 Vcs-Git: https://git.codelabs.ch/git/anet.git -b debian
