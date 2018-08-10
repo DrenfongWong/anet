@@ -41,7 +41,6 @@ abstract project Anet_Common is
 
    Compiler_Switches := ("-gnatygAdISuxo",
                          "-gnatVa",
-                         "-gnat05",
                          "-gnatf",
                          "-fstack-check",
                          "-gnato",
