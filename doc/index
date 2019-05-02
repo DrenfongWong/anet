@@ -1,3 +1,6 @@
+:description: Ada Networking Library
+:source-highlighter: pygments
+
 include::../README[]
 
 Example

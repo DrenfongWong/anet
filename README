@@ -39,10 +39,10 @@ http://www.codelabs.ch/download/.
 
 Verify a Release
 ~~~~~~~~~~~~~~~~
-To verify the integrity and authenticity of the distribution tarball, import
-the key http://www.codelabs.ch/keys/0xBB793815pub.asc and type the following
-command:
+To verify the integrity and authenticity of the distribution tarball type the
+following commands:
 
+  $ wget -q https://www.codelabs.ch/keys/0xBB793815pub.asc -O - | gpg --import
   $ gpg --verify libanet-{version}.tar.bz2.sig
 
 The key fingerprint of the public key ('0xBB793815') is:
@@ -65,7 +65,7 @@ To compile and install Anet on your system, you need to have the following
 software installed:
 
 * GNAT Ada compiler:
-  http://www.gnu.org/software/gnat/gnat.html
+  http://www.gnu.org/software/gnat
 
 If you want to run the unit tests before installation of Anet (which is
 recommended) you furthermore need to have the following installed:
